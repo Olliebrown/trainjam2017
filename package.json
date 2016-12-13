@@ -1,12 +1,13 @@
 {
-  "name": "PhaserES6Webpack",
+
+  "name": "GAME",
   "version": "1.0.0",
   "description": "",
-  "author": "leandro cabrera <leandcabrera@gmail.com>",
+  "author": "Anthony Finch <actionspeakslouder@gmail.com>",
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
-    "deploy": "webpack --config webpack.production.config.js",
+    "production": "webpack --config webpack.production.config.js",
     "test": "standard"
   },
   "license": "ISC",
