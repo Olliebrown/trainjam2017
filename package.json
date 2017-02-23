@@ -1,8 +1,7 @@
 {
-
-  "name": "GAME",
-  "version": "1.0.0",
-  "description": "",
+  "name": "Sewercraft",
+  "version": "0.0.1",
+  "description": "TrainJam 2017 game of crafting, battling, and mutant sewer people.",
   "author": "Anthony Finch <actionspeakslouder@gmail.com>",
   "main": "index.js",
   "scripts": {
