@@ -6,11 +6,14 @@ import BootState from './states/Boot'
 import SplashState from './states/Splash'
 import GameState from './states/Game'
 
+const TARGET_HEIGHT = 800
+const TARGET_WIDTH = 1280
+
 class Game extends Phaser.Game {
 
   constructor () {
-    let width = document.documentElement.clientWidth > 768 ? 768 : document.documentElement.clientWidth
-    let height = document.documentElement.clientHeight > 1024 ? 1024 : document.documentElement.clientHeight
+    let width = document.documentElement.clientWidth > TARGET_WIDTH ? TARGET_WIDTH : document.documentElement.clientWidth
+    let height = document.documentElement.clientHeight > TARGET_HEIGHT ? TARGET_HEIGHT : document.documentElement.clientHeight
 
     super(width, height, Phaser.AUTO, 'content', null)
 
