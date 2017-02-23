@@ -15,6 +15,7 @@ export default class extends Phaser.State {
     //
     this.game.load.tilemap('game', 'assets/tilemaps/game.json', null, Phaser.Tilemap.TILED_JSON)
     this.game.load.image('sewer-tiles', 'assets/images/sewer-tiles.png')
+    this.game.load.image('player', 'assets/images/player.png')
   }
 
   create () {
