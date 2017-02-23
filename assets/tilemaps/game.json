@@ -1,10 +1,12 @@
 { "height":10,
  "layers":[
         {
-         "data":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADEAAAAyAAAAMQAAADIAAAAxAAAAMgAAADEAAAAyAAAAMQAAADIAAAAxAAAAMgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAOQAAADoAAAA5AAAAOgAAADkAAAA6AAAAOQAAADoAAAA5AAAAOgAAADkAAAA6AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAxAAAAMgAAADEAAAAyAAAAMQAAABEAAAASAAAAMgAAADEAAAAyAAAAMQAAADIAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADkAAAA6AAAAOQAAADoAAAA5AAAAGQAAABoAAAA6AAAAOQAAADoAAAA5AAAAOgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAMQAAADIAAAAxAAAAMgAAADEAAAAyAAAAMQAAADIAAAAxAAAAMgAAADEAAAAyAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA5AAAAOgAAADkAAAA6AAAAOQAAADoAAAA5AAAAOgAAADkAAAA6AAAAOQAAADoAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+         "data":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADoAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAOQAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAADAAAAAwAAAAMAAAADAAAAAwAAABEAAAASAAAAAwAAAAMAAAADAAAAAwAAAAMAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAMAAAADAAAAAwAAAAMAAAADAAAAGQAAABoAAAADAAAAAwAAAAMAAAADAAAAAwAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAyAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAADEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAAAkAAAAJAAAACQAAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
          "encoding":"base64",
          "height":10,
          "name":"bg",
+         "offsetx":-18.1159420289855,
+         "offsety":27.1739130434783,
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -40,6 +42,108 @@
          "spacing":0,
          "tilecount":64,
          "tileheight":128,
+         "tileproperties":
+            {
+             "0":
+                {
+                 "collidable":true
+                },
+             "1":
+                {
+                 "collidable":true
+                },
+             "16":
+                {
+                 "collidable":true
+                },
+             "17":
+                {
+                 "collidable":true
+                },
+             "24":
+                {
+                 "collidable":true
+                },
+             "25":
+                {
+                 "collidable":true
+                },
+             "32":
+                {
+                 "collidable":true
+                },
+             "33":
+                {
+                 "collidable":true
+                },
+             "40":
+                {
+                 "collidable":true
+                },
+             "41":
+                {
+                 "collidable":true
+                },
+             "8":
+                {
+                 "collidable":true
+                },
+             "9":
+                {
+                 "collidable":true
+                }
+            },
+         "tilepropertytypes":
+            {
+             "0":
+                {
+                 "collidable":"bool"
+                },
+             "1":
+                {
+                 "collidable":"bool"
+                },
+             "16":
+                {
+                 "collidable":"bool"
+                },
+             "17":
+                {
+                 "collidable":"bool"
+                },
+             "24":
+                {
+                 "collidable":"bool"
+                },
+             "25":
+                {
+                 "collidable":"bool"
+                },
+             "32":
+                {
+                 "collidable":"bool"
+                },
+             "33":
+                {
+                 "collidable":"bool"
+                },
+             "40":
+                {
+                 "collidable":"bool"
+                },
+             "41":
+                {
+                 "collidable":"bool"
+                },
+             "8":
+                {
+                 "collidable":"bool"
+                },
+             "9":
+                {
+                 "collidable":"bool"
+                }
+            },
          "tilewidth":128
         }],
  "tilewidth":128,
