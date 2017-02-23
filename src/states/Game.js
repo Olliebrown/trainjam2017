@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import {setResponsiveWidth} from '../utils'
 
-const PLAYER_SPEED = 5
+const PLAYER_SPEED = 100
 
 export default class extends Phaser.State {
   init () {}
@@ -21,7 +21,7 @@ export default class extends Phaser.State {
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
 
-    this.tilemap.setCollision([0, 1], true, 'sewer')
+    this.tilemap.setCollisionByExclusion([0], true, 'sewer')
 
     // player setup
     this.player = new Player({
@@ -32,7 +32,7 @@ export default class extends Phaser.State {
 
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
-
+    
 
     this.game.add.existing(this.player)
 
@@ -42,14 +42,15 @@ export default class extends Phaser.State {
 
   update () {
     this.game.physics.arcade.collide(this.player, this.sewer_layer)
+
     if (this.keys.left.isDown) {
-      this.player.x -= PLAYER_SPEED
+      this.player.body.velocity.x = -PLAYER_SPEED
     } else if (this.keys.right.isDown) {
-      this.player.x += PLAYER_SPEED
+      this.player.body.velocity.x = PLAYER_SPEED
     } else if (this.keys.up.isDown) {
-      this.player.y -= PLAYER_SPEED
+      this.player.body.velocity.y = -PLAYER_SPEED
     } else if (this.keys.down.isDown) {
-      this.player.y += PLAYER_SPEED
+      this.player.body.velocity.y = PLAYER_SPEED
     }
   }
 
