@@ -52,6 +52,10 @@ export default class {
       }
     }
 
+    if(currentNode.x != tX || currentNode.y != tY){
+      return [];
+    }
+
     return this.getListOfPoints(currentNode);
   }
 }
