@@ -8,12 +8,20 @@ import { centerGameObjects } from '../utils'
 
 const PLAYER_SPEED = 100
 
+const INVENTORY_SLOTS = []
+
 export default class extends Phaser.State {
   init () {}
   preload () {}
 
   create () {
     let state = this
+
+    for(let i=1; i<=8; i++) {
+      INVENTORY_SLOTS.push(
+        new Phaser.Rectangle(this.game.width - 50, this.game.height / 2 + 75*(i-4) - 35, 64, 64)
+      )
+    }
 
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -35,7 +43,7 @@ export default class extends Phaser.State {
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
 
-    this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
+    this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
 
     this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
     this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
@@ -92,8 +100,14 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
+    this.ui.inventory.push(new Item({
+      game: this.game, tile: item,
+      x: INVENTORY_SLOTS[this.ui.inventory.length].x,
+      y: INVENTORY_SLOTS[this.ui.inventory.length].y,
+    }))
+
+    this.game.add.existing(this.ui.inventory[this.ui.inventory.length-1])
     this.tilemap.removeTile(item.x, item.y, 'interact')
-    console.info('Picked up ' + item.properties.name)
   }
 
   makeItemList() {
@@ -101,7 +115,7 @@ export default class extends Phaser.State {
     let itemList = []
     Object.keys(tileProps).forEach((key) => {
       if(tileProps[key].isItem) {
-        itemList.push(key)
+        itemList.push(parseInt(key) + 1)
         console.info('item: ' + key)
       }
     });
@@ -113,7 +127,8 @@ export default class extends Phaser.State {
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
     return {
-      drawer: drawer
+      drawer: drawer,
+      inventory: []
     }
   }
 
