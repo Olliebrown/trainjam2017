@@ -64,12 +64,12 @@
             {
              "0":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "1":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "10":
@@ -108,12 +108,12 @@
                 },
              "16":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "17":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "18":
@@ -159,12 +159,12 @@
                 },
              "24":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "25":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "26":
@@ -208,12 +208,12 @@
                 },
              "32":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "33":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "34":
@@ -257,12 +257,12 @@
                 },
              "40":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "41":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "42":
@@ -317,7 +317,9 @@
              "50":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "description":"Almost as deadly as the ninja star (when used to store archival data).",
+                 "isItem":true,
+                 "name":"5.25in Floppy Disk"
                 },
              "51":
                 {
@@ -378,7 +380,9 @@
              "60":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "description":"WARNING! Do not place metal inside! (seriously)",
+                 "isItem":false,
+                 "name":"Microwave"
                 },
              "61":
                 {
@@ -402,12 +406,12 @@
                 },
              "8":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 },
              "9":
                 {
-                 "collidable":false,
+                 "collidable":true,
                  "isItem":false
                 }
             },
@@ -668,7 +672,9 @@
              "50":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "51":
                 {
@@ -729,7 +735,9 @@
              "60":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "61":
                 {

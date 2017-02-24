@@ -9,7 +9,7 @@ import { centerGameObjects } from '../utils'
 const PLAYER_SPEED = 100
 
 const INVENTORY_MAX = 8
-const INVENTORY_SLOTS = []
+let INVENTORY_SLOTS = []
 
 const STATES = {
   main: 1,
@@ -38,7 +38,6 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
-
 
     this.itemIndexList = this.makeItemList();
 
@@ -131,14 +130,14 @@ export default class extends Phaser.State {
       return;
     }
 
+    let invIndex = this.game.ui.inventory.length
     this.game.ui.inventory.push(new Item({
-      game: this.game, indeces: [item.index],
+      game: this.game, indeces: [item.index], invIndex: invIndex,
       name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
+      x: INVENTORY_SLOTS[invIndex].x, y: INVENTORY_SLOTS[invIndex].y
     }))
 
-    let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
+    let newItem = this.game.ui.inventory[invIndex]
     this.game.ui.drawer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
@@ -149,7 +148,6 @@ export default class extends Phaser.State {
     Object.keys(tileProps).forEach((key) => {
       if(tileProps[key].isItem) {
         itemList.push(parseInt(key) + 1)
-        console.info('item: ' + key)
       }
     });
     return itemList
@@ -222,7 +220,7 @@ export default class extends Phaser.State {
   render () {
     this.game.ui.inventory.forEach((item) => {
       this.game.debug.rectangle(new Phaser.Rectangle(
-        item.position.x, item.position.y, 64, 64), '#ffffff', false)
+        item.x, item.y, 64, 64), '#ffffff', false)
     })
     if (__DEV__) {
     }
