@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import {setResponsiveWidth} from '../utils'
 
-const PLAYER_SPEED = 100
+const PLAYER_SPEED = 200
 
 export default class extends Phaser.State {
   init () {}
@@ -25,11 +25,13 @@ export default class extends Phaser.State {
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.enemy_spawns_layer = this.tilemap.createLayer('enemy_spawns')
     // this.enemy_spawns_layer.visible = false
+    this.interact_layer = this.tilemap.createLayer('interact')
 
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     // this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
     this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
+    //this.tilemap.setCollisionByExclusion([0], true, 'interact')
 
     this.loadEnemyTriggers()
 
@@ -48,7 +50,8 @@ export default class extends Phaser.State {
     this.player = new Player({
       game: this.game,
       x: 512,
-      y: 512
+      y: 512,
+      image: this.tilemap.tiles[10]
     })
 
     this.keys = this.game.input.keyboard.createCursorKeys()
@@ -80,6 +83,9 @@ export default class extends Phaser.State {
   update () {
     this.game.physics.arcade.collide(this.player, this.sewer_layer)
     // this.game.physics.arcade.overlap(this.player, this.enemy_spawns_triggers, this.generateEnemy, null, this)
+    if(this.game.physics.arcade.collide(this.player, this.interact_layer)) {
+      console.info('interact collide')
+    }
 
     this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
     if (this.keys.left.isDown) {
