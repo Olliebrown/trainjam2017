@@ -12,6 +12,7 @@ export default class extends Phaser.Sprite {
     this.anchor.setTo(0.5)
     this.game.physics.arcade.enable(this)
     this.inMicrowave = false;
+    this.index = index;
   }
 
   update () {

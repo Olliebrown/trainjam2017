@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import Item from '../sprites/Item'
+import CombinedItem from '../sprites/CombinedItem'
 import XButton from '../sprites/XButton'
 import LaunchMicrowave from '../sprites/LaunchMicrowave'
 
@@ -38,13 +39,17 @@ export default class extends Phaser.State {
   microwave(){
     let state = this.game.state.getCurrentState();
     if(state.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE && state.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
+      let indeces = [];
       for(let i=0; i<state.items.length; i++){
         if(state.items[i].inMicrowave){
           state.items[i].destroy();
+          indeces.push(state.items[i].index);
           state.items.splice(i, 1);
           i--;
         }
       }
+      state.items.push(new CombinedItem({game:state.game, x:-1, y:-1, indeces:indeces}));
+      state.game.add.existing(state.items[state.items.length - 1]);
       console.log("Microwaving....");
     }
     else{
