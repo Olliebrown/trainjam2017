@@ -15,7 +15,7 @@ class Game extends Phaser.Game {
     let width = document.documentElement.clientWidth < TARGET_WIDTH ? TARGET_WIDTH : document.documentElement.clientWidth
     let height = document.documentElement.clientHeight < TARGET_HEIGHT ? TARGET_HEIGHT : document.documentElement.clientHeight
 
-    super(width, height, Phaser.WEBGL_MULTI, 'content', null)
+    super("100%", "100%", Phaser.WEBGL_MULTI, 'content', null)
 
     this.state.add('Boot', BootState, false)
     this.state.add('Splash', SplashState, false)
