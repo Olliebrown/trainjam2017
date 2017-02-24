@@ -76,15 +76,13 @@ export default class extends Phaser.State {
 
     this.game.add.existing(this.player)
 
-    this.ui = this.makeUI()
+    this.game.ui = this.makeUI()
 
     this.overlay = this.game.add.group()
     this.overlay.fixedToCamera = true
 
     // camera
     this.game.camera.follow(this.player)
-
-
   }
 
   showOverlay() {
@@ -116,17 +114,18 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
-    if(this.ui.inventory.length >= INVENTORY_MAX) {
+    if(this.game.ui.inventory.length >= INVENTORY_MAX) {
       return;
     }
 
-    this.ui.inventory.push(new ItemButton({
-      game: this.game, itemTile: item, index: this.ui.inventory.length,
-      x: INVENTORY_SLOTS[this.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.ui.inventory.length].y,
+    this.game.ui.inventory.push(new ItemButton({
+      game: this.game, itemTile: item, index: this.game.ui.inventory.length,
+      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
+      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
     }))
 
-    this.ui.drawer.add(this.ui.inventory[this.ui.inventory.length-1])
+    let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
+    this.game.ui.drawer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
 
@@ -181,6 +180,10 @@ export default class extends Phaser.State {
   }
 
   render () {
+    this.game.ui.inventory.forEach((item) => {
+      this.game.debug.rectangle(new Phaser.Rectangle(
+        item.position.x, item.position.y, 64, 64), '#ffffff', false)
+    })
     if (__DEV__) {
     }
   }

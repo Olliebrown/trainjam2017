@@ -33,22 +33,45 @@ export class ItemButton extends Phaser.Group {
   constructor({ game, x, y, index, itemTile }) {
     super(game)
     this.game = game
+    this.index = index
 
     this.item = new Item({ game, x, y, tile: itemTile })
     this.add(this.item)
 
-    let closeBtn = this.game.add.button(x + 20, y - 40, 'close-btn-sheet',
+    this.closeBtn = this.game.add.button(x + 20, y - 40, 'close-btn-sheet',
       onBtnClose, this, 2, 0, 1, 0, this)
-    closeBtn.scale.set(0.333)
-    this.add(closeBtn)
+    this.closeBtn.scale.set(0.333)
+    this.add(this.closeBtn)
 
-    let number = this.game.add.text(x - 40, y - 15, index, { font: 'Courier', fontSize: 24 }, this)
-    this.add(number)
+    this.number = this.game.add.text(x - 40, y - 15, index,
+      { font: 'Courier', fontSize: 24 }, this)
+    this.add(this.number)
 
-    this.fixedToCamera = true;
+    this.fixedToCamera = true
+  }
+
+  shiftUp() {
+    console.info('shifting up ' + this.index)
+    if(this.index > 0) {
+      this.index--
+      this.number.setText(this.index)
+      this.y -= 75
+    }
   }
 }
 
-function onBtnClose(button, group) {
-  console.info('Close button Clicked')
+function onBtnClose(itmButton) {
+  let reducedInventory = itmButton.game.ui.inventory.filter((item, index) => {
+    if(index == itmButton.parent.index) {
+      return false
+    } else if(index > itmButton.parent.index) {
+      item.shiftUp()
+      return true
+    } else {
+      return true
+    }
+  });
+
+  itmButton.game.ui.inventory = reducedInventory
+  itmButton.parent.destroy()
 }
