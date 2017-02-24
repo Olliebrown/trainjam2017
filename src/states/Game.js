@@ -79,7 +79,8 @@ export default class extends Phaser.State {
 
     this.ui = this.makeUI()
 
-    this.createCatwalk()
+    this.overlay = this.game.add.group()
+    this.overlay.fixedToCamera = true
 
     // camera
     this.game.camera.follow(this.player)
@@ -87,14 +88,11 @@ export default class extends Phaser.State {
 
   }
 
-  createCatwalk() {
-    this.overlay_group = new Phaser.Group(this.game)
-    this.overlay_layer = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
-    this.overlay_layer.width = this.game.width - 20
-    this.overlay_layer.height = this.game.height - 20
-    this.overlay_group.add(this.overlay_layer)
-    this.overlay_group.fixedToCamera = true
-    this.overlay_group.visible = false
+  showOverlay() {
+    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
+    overlay_bg.width = this.game.width - 20
+    overlay_bg.height = this.game.height - 20
+    this.overlay.add(overlay_bg)
   }
 
   createEnemyTriggers() {
@@ -154,8 +152,7 @@ export default class extends Phaser.State {
   }
 
   triggerCatwalk (player, enemy) {
-    console.log("player", player)
-    console.log("enemy", enemy)
+    this.showOverlay()
   }
 
   update () {
