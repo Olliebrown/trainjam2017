@@ -133,6 +133,7 @@ export default class extends Phaser.State {
       let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
         this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
       this.player.setListOfTargets(targets, this.tilemap.tileWidth, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY);
+      this.game.input.activePointer.reset();
     }
 
   }
