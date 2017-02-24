@@ -8,9 +8,6 @@ import { centerGameObjects } from '../utils'
 
 const PLAYER_SPEED = 100
 
-const INVENTORY_MAX = 8
-let INVENTORY_SLOTS = []
-
 const STATES = {
   main: 1,
   choosingItem: 2
@@ -19,17 +16,13 @@ const STATES = {
 export default class extends Phaser.State {
   init () {
     this.state = STATES.main
+    Item.init()
   }
+
   preload () {}
 
   create () {
     let state = this
-
-    for(let i=1; i<=8; i++) {
-      INVENTORY_SLOTS.push(
-        new Phaser.Rectangle(this.game.width - 50, this.game.height / 2 + 75*(i-4) - 35, 64, 64)
-      )
-    }
 
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -64,6 +57,9 @@ export default class extends Phaser.State {
     });
 
     this.musicIntro.play()
+
+    // Get sounds
+    this.game.sounds = this.game.add.audioSprite('sounds')
 
     // player setup
     this.player = new Player({
@@ -126,20 +122,20 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
-    if(this.game.ui.inventory.length >= INVENTORY_MAX) {
+    if(this.game.ui.inventory.length >= Item.INVENTORY_MAX) {
       return;
     }
 
     let invIndex = this.game.ui.inventory.length
-    this.game.ui.inventory.push(new Item({
+    let newItem = new Item({
       game: this.game, indeces: [item.index], invIndex: invIndex,
-      name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[invIndex].x, y: INVENTORY_SLOTS[invIndex].y
-    }))
+      name: item.properties.name, description: item.properties.description
+    })
 
-    let newItem = this.game.ui.inventory[invIndex]
-    this.game.ui.drawer.add(newItem)
+    this.game.ui.inventory.push(newItem)
+    this.game.ui.uiLayer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
+    this.game.sounds.play('reverb_pose_sound_1', 1)
   }
 
   makeItemList() {
@@ -160,7 +156,7 @@ export default class extends Phaser.State {
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
     return {
-      drawer: ui_group,
+      uiLayer: ui_group,
       inventory: []
     }
   }
@@ -219,8 +215,8 @@ export default class extends Phaser.State {
 
   render () {
     this.game.ui.inventory.forEach((item) => {
-      this.game.debug.rectangle(new Phaser.Rectangle(
-        item.x, item.y, 64, 64), '#ffffff', false)
+      this.game.debug.geom(new Phaser.Rectangle(
+        item.x - 45, item.y - 35, 90, 70), '#ffffff', false)
     })
     if (__DEV__) {
     }
