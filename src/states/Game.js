@@ -1,11 +1,12 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
+import {EnemyTrigger, Enemy} from '../sprites/Enemy'
 import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
-const PLAYER_SPEED = 200
+const PLAYER_SPEED = 100
 
 export default class extends Phaser.State {
   init () {}
@@ -21,7 +22,7 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
-    this.tilemap.addTilesetImage('triggers', 'player')
+
 
     this.itemIndexList = this.makeItemList();
 
@@ -35,7 +36,7 @@ export default class extends Phaser.State {
 
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
 
-    this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
+    this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
     this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
 
     this.musicIntro = this.game.add.audio('BGM-intro')
@@ -55,6 +56,10 @@ export default class extends Phaser.State {
       y: 512
     })
 
+    this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.createEnemyTriggers()
+
+
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
 
@@ -66,8 +71,20 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
   }
 
-  generateEnemy () {
-    console.info('Generating enemy?')
+  createEnemyTriggers() {
+    var tiles = this.enemy_spawns_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
+    for (var t in tiles) {
+      var tile = tiles[t]
+      if (tile.canCollide) {
+        var trigger = new EnemyTrigger({
+          game: this.game,
+          x: tile.x * tile.width,
+          y: tile.y * tile.height,
+          player: this.player
+        })
+        this.enemy_spawns_triggers.add(trigger)
+      }
+    }
   }
 
   itemTrigger (player, item) {
@@ -97,7 +114,6 @@ export default class extends Phaser.State {
   }
 
   update () {
-    this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
     this.game.physics.arcade.collide(this.player, this.interact_layer)
 
     if(this.game.input.activePointer.isDown){

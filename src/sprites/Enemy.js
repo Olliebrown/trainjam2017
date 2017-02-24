@@ -13,3 +13,20 @@ export default class extends Phaser.Sprite {
   }
 
 }
+
+export class EnemyTrigger extends Phaser.Sprite {
+
+  constructor ({ game, x, y, player}) {
+    super(game, x, y, 'trigger', 10)
+    this.player = player
+    this.active = false
+  }
+
+  update () {
+    if (this.game.physics.arcade.overlap(this.player, this)) {
+      this.active = true
+    } else {
+      this.active = false
+    }
+  }
+}
