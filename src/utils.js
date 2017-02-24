@@ -9,3 +9,11 @@ export const setResponsiveWidth = (sprite, percent, parent) => {
   sprite.width = parent.width / (100 / percent)
   sprite.height = sprite.texture.height - (sprite.texture.height * percentWidth / 100)
 }
+
+export const loadAudio = (game, key, file) => {
+  if (game.device.iOS || game.device.safari) {
+    game.load.audio(key, [file + '.m4a'])
+  } else {
+    game.load.audio(key, [file + '.ogg', file + '.mp3'])
+  }
+}

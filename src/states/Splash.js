@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { centerGameObjects } from '../utils'
+import { centerGameObjects, loadAudio } from '../utils'
 
 export default class extends Phaser.State {
   init () {}
@@ -16,6 +16,8 @@ export default class extends Phaser.State {
     this.game.load.tilemap('game', 'assets/tilemaps/game.json', null, Phaser.Tilemap.TILED_JSON)
     this.game.load.image('sewer-tiles', 'assets/images/sewer-tiles.png')
     this.game.load.image('player', 'assets/images/player.png')
+    loadAudio(this.game, 'BGM-intro', 'assets/music/mus_song1_1')
+    loadAudio(this.game, 'BGM-loop', 'assets/music/mus_song1_2')
   }
 
   create () {

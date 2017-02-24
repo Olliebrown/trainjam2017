@@ -33,6 +33,17 @@ export default class extends Phaser.State {
 
     this.loadEnemyTriggers()
 
+    this.musicIntro = this.game.add.audio('BGM-intro')
+    this.musicLoop = this.game.add.audio('BGM-loop')
+    this.musicLoop.loop = true
+
+    let state = this
+    this.musicIntro.onStop.addOnce(() => {
+      state.musicLoop.play()
+    });
+
+    this.musicIntro.play()
+
     // player setup
     this.player = new Player({
       game: this.game,
