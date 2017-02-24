@@ -34,7 +34,7 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 35, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 44, 0, 0, 0, 0, 0, 36, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":10,
          "name":"interact",
          "offsetx":-18.12,
@@ -88,7 +88,8 @@
              "12":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Ninja Star"
                 },
              "13":
                 {
@@ -97,7 +98,13 @@
                 },
              "14":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "15":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "16":
                 {
@@ -129,7 +136,8 @@
              "20":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Lightbulb"
                 },
              "21":
                 {
@@ -138,7 +146,13 @@
                 },
              "22":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "23":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "24":
                 {
@@ -179,7 +193,13 @@
                 },
              "30":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "31":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "32":
                 {
@@ -215,7 +235,13 @@
                 },
              "38":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "39":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "4":
                 {
@@ -235,12 +261,14 @@
              "42":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Soda Can"
                 },
              "43":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Wedding Ring"
                 },
              "44":
                 {
@@ -254,7 +282,13 @@
                 },
              "46":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "47":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "48":
                 {
@@ -279,12 +313,14 @@
              "51":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Table Lamp"
                 },
              "52":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"NES"
                 },
              "53":
                 {
@@ -293,7 +329,13 @@
                 },
              "54":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "55":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "56":
                 {
@@ -313,11 +355,13 @@
              "59":
                 {
                  "collidable":false,
-                 "isItem":false
+                 "isItem":true,
+                 "name":"Cell Phone"
                 },
              "6":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
                 },
              "60":
                 {
@@ -331,7 +375,18 @@
                 },
              "62":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
+                },
+             "63":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "7":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "8":
                 {
@@ -370,7 +425,8 @@
              "12":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "13":
                 {
@@ -379,7 +435,13 @@
                 },
              "14":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "15":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "16":
                 {
@@ -411,7 +473,8 @@
              "20":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "21":
                 {
@@ -420,7 +483,13 @@
                 },
              "22":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "23":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "24":
                 {
@@ -461,7 +530,13 @@
                 },
              "30":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "31":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "32":
                 {
@@ -497,7 +572,13 @@
                 },
              "38":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "39":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "4":
                 {
@@ -517,12 +598,14 @@
              "42":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "43":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "44":
                 {
@@ -536,7 +619,13 @@
                 },
              "46":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "47":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "48":
                 {
@@ -561,12 +650,14 @@
              "51":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "52":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "53":
                 {
@@ -575,7 +666,13 @@
                 },
              "54":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "55":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "56":
                 {
@@ -595,11 +692,13 @@
              "59":
                 {
                  "collidable":"bool",
-                 "isItem":"bool"
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "6":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "60":
                 {
@@ -613,7 +712,18 @@
                 },
              "62":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "63":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "7":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "8":
                 {
@@ -629,15 +739,15 @@
          "tilewidth":128
         }, 
         {
-         "columns":1,
+         "columns":8,
          "firstgid":65,
          "image":"..\/images\/player.png",
-         "imageheight":128,
-         "imagewidth":128,
+         "imageheight":1024,
+         "imagewidth":1024,
          "margin":0,
          "name":"triggers",
          "spacing":0,
-         "tilecount":1,
+         "tilecount":64,
          "tileheight":128,
          "tilewidth":128
         }],
