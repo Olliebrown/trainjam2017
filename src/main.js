@@ -13,10 +13,10 @@ const TARGET_WIDTH = 1280
 class Game extends Phaser.Game {
 
   constructor () {
-    let width = document.documentElement.clientWidth > TARGET_WIDTH ? TARGET_WIDTH : document.documentElement.clientWidth
-    let height = document.documentElement.clientHeight > TARGET_HEIGHT ? TARGET_HEIGHT : document.documentElement.clientHeight
+    let width = document.documentElement.clientWidth < TARGET_WIDTH ? TARGET_WIDTH : document.documentElement.clientWidth
+    let height = document.documentElement.clientHeight < TARGET_HEIGHT ? TARGET_HEIGHT : document.documentElement.clientHeight
 
-    super(width, height, Phaser.AUTO, 'content', null)
+    super(width, height, Phaser.WEBGL_MULTI, 'content', null)    
 
     this.state.add('Boot', BootState, false)
     this.state.add('Splash', SplashState, false)
