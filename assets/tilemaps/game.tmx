@@ -339,7 +339,7 @@
   </tile>
  </tileset>
  <tileset firstgid="65" name="triggers" tilewidth="128" tileheight="128" tilecount="1" columns="1">
-  <image source="../images/player.png" width="128" height="128"/>
+  <image source="../images/trigger.png" width="128" height="128"/>
  </tileset>
  <layer name="bg" width="20" height="10">
   <data encoding="csv">

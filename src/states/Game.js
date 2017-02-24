@@ -33,6 +33,7 @@ export default class extends Phaser.State {
     this.enemy_spawns_layer.visible = false
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
+    this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
 
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
 
@@ -56,7 +57,9 @@ export default class extends Phaser.State {
       y: 512
     })
 
+
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.enemies = new Phaser.Group(this.game)
     this.createEnemyTriggers()
 
 
@@ -80,7 +83,8 @@ export default class extends Phaser.State {
           game: this.game,
           x: tile.x * tile.width,
           y: tile.y * tile.height,
-          player: this.player
+          player: this.player,
+          enemy_group: this.enemies
         })
         this.enemy_spawns_triggers.add(trigger)
       }
