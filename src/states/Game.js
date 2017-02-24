@@ -10,7 +10,10 @@ import { centerGameObjects } from '../utils'
 const PLAYER_SPEED = 100
 
 const INVENTORY_MAX = 8
-const INVENTORY_SLOTS = []
+let INVENTORY_SLOTS = []
+
+const OVERLAY_WIDTH = 1600
+const OVERLAY_HEIGHT = 900
 
 const STATES = {
   main: 1,
@@ -39,7 +42,6 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
-
 
     this.itemIndexList = this.makeItemList();
 
@@ -91,17 +93,19 @@ export default class extends Phaser.State {
 
     // camera
     this.game.camera.follow(this.player)
+
+    // this.triggerCatwalkIntro()
   }
 
   showOverlay() {
-    var width = this.game.width - 20
-    var height = this.game.height - 20
-    var bm_data = this.game.add.bitmapData(width, height)
+    var bm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
     bm_data.ctx.beginPath()
-    bm_data.ctx.rect(0, 0, width, height)
+    bm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
     bm_data.ctx.fillStyle = '#111111'
     bm_data.ctx.fill()
-    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, bm_data)
+    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
+    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
+    var overlay_bg = new Phaser.Sprite(this.game, x_offset, y_offset, bm_data)
     overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
   }
@@ -132,14 +136,14 @@ export default class extends Phaser.State {
       return;
     }
 
+    let invIndex = this.game.ui.inventory.length
     this.game.ui.inventory.push(new Item({
-      game: this.game, indeces: [item.index],
+      game: this.game, indeces: [item.index], invIndex: invIndex,
       name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
+      x: INVENTORY_SLOTS[invIndex].x, y: INVENTORY_SLOTS[invIndex].y
     }))
 
-    let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
+    let newItem = this.game.ui.inventory[invIndex]
     this.game.ui.drawer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
@@ -150,7 +154,6 @@ export default class extends Phaser.State {
     Object.keys(tileProps).forEach((key) => {
       if(tileProps[key].isItem) {
         itemList.push(parseInt(key) + 1)
-        console.info('item: ' + key)
       }
     });
     return itemList
@@ -163,6 +166,7 @@ export default class extends Phaser.State {
     centerGameObjects([drawer])
     let microwave = new MicrowaveCrafting(this.game)
     ui_group.add(microwave);
+    drawer.fixedToCamera = true
 
     return {
       drawer: ui_group,
@@ -201,9 +205,42 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalkIntro () {
+    if (this.state == STATES.main) {
+      this.state = STATES.catwalkIntro
+      this.hideOverlay()
+      this.showOverlay()
+
+      var grad = new Phaser.Sprite(this.game, 0, 0, 'catwalk-intro-gradient')
+      grad.anchor.setTo(0.5)
+      grad.x = this.game.width / 2
+      grad.y = this.game.height / 2
+      grad.fixedToCamera = true
+      this.overlay.add(grad)
+
+      var strip = new Phaser.Sprite(this.game, -100, -100, 'catwalk-intro-strip')
+      strip.anchor.setTo(0.5)
+      var target_x = this.game.width / 2
+      console.log(target_x)
+      // strip.y = this.game.height / 2
+      strip.fixedToCamera = true
+      this.overlay.add(strip)
+
+      // var strip_tween = this.game.add.tween(strip)
+
+      // this.intween = strip_tween.to(
+      //   { x: target_x },
+      //   4000, Phaser.Easing.Bounce.Out, true)
+
+
+      // window.strip = strip_tween
+
+    }
+  }
+
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkIntro, null, this)
 
     let pointer = this.game.input.activePointer;
     if(pointer && !this.game.ui.microwave.alive && (pointer.isMouse && pointer.leftButton.isDown) ||
@@ -230,7 +267,7 @@ export default class extends Phaser.State {
   render () {
     this.game.ui.inventory.forEach((item) => {
       this.game.debug.rectangle(new Phaser.Rectangle(
-        item.position.x, item.position.y, 64, 64), '#ffffff', false)
+        item.x, item.y, 64, 64), '#ffffff', false)
     })
     if (__DEV__) {
     }

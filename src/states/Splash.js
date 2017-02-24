@@ -22,6 +22,10 @@ export default class extends Phaser.State {
     this.game.load.spritesheet('bclose-btn-sheet', 'assets/images/button-close.png', 100, 100);
     this.game.load.image('background', 'assets/images/background.png')
     this.game.load.image('trigger', 'assets/images/trigger.png')
+    this.game.load.image('catwalk-intro-strip', 'assets/images/catwalk-intro-stripe.png')
+    this.game.load.image('catwalk-intro-gradient', 'assets/images/catwalk-intro-grad.png')
+    this.game.load.spritesheet('close-btn-sheet', 'assets/images/button-close.png', 100, 100)
+    this.game.load.spritesheet('player', 'assets/images/char.png', 128, 128)
 
     loadAudio(this.game, 'BGM-intro', 'assets/music/mus_song1_1')
     loadAudio(this.game, 'BGM-loop', 'assets/music/mus_song1_2')

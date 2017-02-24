@@ -4,13 +4,13 @@
   <image source="../images/sewer-tiles.png" width="1024" height="1024"/>
   <tile id="0">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="1">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -52,13 +52,13 @@
   </tile>
   <tile id="8">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="9">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -104,13 +104,13 @@
   </tile>
   <tile id="16">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="17">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -158,13 +158,13 @@
   </tile>
   <tile id="24">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="25">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -210,13 +210,13 @@
   </tile>
   <tile id="32">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="33">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -262,13 +262,13 @@
   </tile>
   <tile id="40">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="41">
    <properties>
-    <property name="collidable" type="bool" value="false"/>
+    <property name="collidable" type="bool" value="true"/>
     <property name="isItem" type="bool" value="false"/>
    </properties>
   </tile>
@@ -327,7 +327,9 @@
   <tile id="50">
    <properties>
     <property name="collidable" type="bool" value="false"/>
-    <property name="isItem" type="bool" value="false"/>
+    <property name="description" value="Almost as deadly as the ninja star (when used to store archival data)."/>
+    <property name="isItem" type="bool" value="true"/>
+    <property name="name" value="5.25in Floppy Disk"/>
    </properties>
   </tile>
   <tile id="51">
@@ -393,7 +395,9 @@
   <tile id="60">
    <properties>
     <property name="collidable" type="bool" value="false"/>
+    <property name="description" value="WARNING! Do not place metal inside! (seriously)"/>
     <property name="isItem" type="bool" value="false"/>
+    <property name="name" value="Microwave"/>
    </properties>
   </tile>
   <tile id="61">
