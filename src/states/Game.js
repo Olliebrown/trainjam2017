@@ -1,6 +1,7 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
+import {EnemyTrigger, Enemy} from '../sprites/Enemy'
 import Pathfinder from '../ai/Pathfinder'
 import {setResponsiveWidth} from '../utils'
 
@@ -19,7 +20,6 @@ export default class extends Phaser.State {
 
     this.tilemap.addTilesetImage('sewer-tiles')
 
-    this.enemy_spawns_triggers = new Phaser.Group(this.game)
 
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
@@ -33,8 +33,6 @@ export default class extends Phaser.State {
 
     this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
-
-    this.createEnemyTriggers()
 
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
@@ -54,6 +52,10 @@ export default class extends Phaser.State {
       y: 512
     })
 
+    this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.createEnemyTriggers()
+
+
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
 
@@ -68,15 +70,15 @@ export default class extends Phaser.State {
     for (var t in tiles) {
       var tile = tiles[t]
       if (tile.canCollide) {
-        console.log(tile)
-        var trigger = new Phaser.Sprite(tile.x, tile.y, 'sewer-sprites', 10)
-        // this.enemy_spawns_triggers.add(trigger)
+        var trigger = new EnemyTrigger({
+          game: this.game,
+          x: tile.x * tile.width,
+          y: tile.y * tile.height,
+          player: this.player
+        })
+        this.enemy_spawns_triggers.add(trigger)
       }
     }
-  }
-
-  generateEnemy () {
-    console.log("Generating enemy?")
   }
 
   update () {
