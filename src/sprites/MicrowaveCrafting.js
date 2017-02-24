@@ -6,48 +6,68 @@ import LaunchMicrowave from '../sprites/LaunchMicrowave'
 const MIN_MICROWAVE = 2;
 const MAX_MICROWAVE = 4;
 
-export default class extends Phaser.Group {
-  constructor (game, items) {
+export class MicrowaveCrafting extends Phaser.Group {
+  constructor (game) {
     super(game);
 
-    this.items = [new Item({game: this.game, x: -1, y:-1, index:0}), new Item({game: this.game, x: -1, y:-1, index:1}),
-      new Item({game: this.game, x: -1, y:-1, index:5}), new Item({game: this.game, x: -1, y:-1, index:2}),
-      new Item({game: this.game, x: -1, y:-1, index:3})];
-    for(let i=0; i<this.items.length; i++){
-      this.game.add.existing(this.items[i]);
-    }
-    this.turnTheMicrowave = new LaunchMicrowave(this.game, this.game.width - 50, this.game.height/2, this.microwave);
-    this.goBack = new XButton(this.game, 0, 0, this.getBack);
-    this.game.add.existing(this.goBack);
-    this.game.add.existing(this.turnTheMicrowave);
-
+    this.background = new Phaser.Image(this.game, this.game.width/2, this.game.height/2 - 50, 'background');
+    this.background.anchor.set(0.5);
+    this.add(this.background);
+    this.turnTheMicrowave = new LaunchMicrowave(this.game, this.background.x + this.background.width/2,
+      this.background.y + this.background.height/2 - 30, this.microwave);
+    this.turnTheMicrowave.anchor.set(1);
+    this.goBack = new XButton(this.game, this.background.x - this.background.width/2 + 10,
+      this.background.y - this.background.height/2 + 10, this.getBack);
+    this.goBack.anchor.set(0);
+    this.add(this.goBack);
+    this.add(this.turnTheMicrowave);
+    this.fixedToCamera = true;
     this.game.camera.setPosition(0, 0);
+
+    this.alive = false;
+    this.visible = false;
   }
 
   getNumberOfItemsInMicrowave(){
     let result = 0;
-    for(let i=0; i<this.items.length; i++){
-      if(this.items[i].inMicrowave){
+    for(let i=0; i<this.game.ui.inventory.length; i++){
+      if(this.game.ui.inventory[i].inMicrowave){
         result += 1;
       }
     }
     return result;
   }
 
+  getInventoryIndex(object){
+    let items = [];
+    for(let i=0; i<this.game.ui.inventory.length; i++){
+      if(this.game.ui.inventory[i].inMicrowave){
+        items.push(this.game.ui.inventory[i]);
+      }
+    }
+
+    for(let i=0; i<items.length; i++){
+      if(object == items[i]){
+        return i;
+      }
+    }
+  }
+
   microwave(){
-    let state = this.game.state.getCurrentState();
-    if(state.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE && state.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
+    if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
+      this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
       let indeces = [];
-      for(let i=0; i<state.items.length; i++){
-        if(state.items[i].inMicrowave){
-          state.items[i].destroy();
+      for(let i=0; i<this.game.ui.inventory.length; i++){
+        if(this.game.items[i].inMicrowave){
+          this.game.ui.inventory[i].destroy();
           indeces.push(state.items[i].index);
-          state.items.splice(i, 1);
+          this.game.ui.inventory.splice(i, 1);
           i--;
         }
       }
-      state.items.push(new CombinedItem({game:state.game, x:-1, y:-1, indeces:indeces}));
-      state.game.add.existing(state.items[state.items.length - 1]);
+      this.state.ui.inventory.push(new Item({game:state.game, x:-1, y:-1,
+        indeces:indeces, name:"", description: ""}));
+      this.game.add.existing(this.state.ui.inventory[state.items.length - 1]);
       console.log("Microwaving....");
     }
     else{
@@ -56,43 +76,22 @@ export default class extends Phaser.Group {
   }
 
   getBack(){
-    let items = this.game.state.getCurrentState().items;
-    for(let i=0; i<items.length; i++){
-      items[i].inMicrowave = false;
+    for(let i=0; i<this.game.ui.inventory.length; i++){
+      this.game.ui.inventory[i].inMicrowave = false;
     }
-    this.destroy();
-  }
-
-  updateItemLocations(){
-    let microwave = [];
-    let outside = [];
-    for(let i=0; i<this.items.length; i++){
-      if(this.items[i].inMicrowave){
-        microwave.push(this.items[i]);
-      }
-      else{
-        outside.push(this.items[i]);
-      }
-    }
-
-    for(let i=0; i<microwave.length; i++){
-      microwave[i].x = this.game.width/2  + (i - microwave.length/2 + 0.5) * microwave[i].width;
-      microwave[i].y = this.game.height/2 - microwave[i].height/2;
-    }
-    for(let i=0; i<outside.length; i++){
-      outside[i].x = this.game.width/2  + (i - outside.length/2 + 0.5) * outside[i].width;
-      outside[i].y = this.game.height - outside[i].height/2 - 20;
-    }
+    this.game.ui.microwave.alive = false;
+    this.game.ui.microwave.visible = false;
   }
 
   update(){
-    this.updateItemLocations();
-
+    if(!this.alive){
+      return;
+    }
     if(this.game.input.activePointer.justPressed()){
-      for(let i=0; i<this.items.length; i++){
-        if(this.items[i].mouseOn(this.game.input.activePointer.worldX, this.game.input.activePointer.worldY)){
-          if(this.items[i].inMicrowave || this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE){
-            this.items[i].inMicrowave = !this.items[i].inMicrowave;
+      for(let i=0; i<this.game.ui.inventory.length; i++){
+        if(this.game.ui.inventory[i].mouseOn(this.game.input.activePointer.worldX, this.game.input.activePointer.worldY)){
+          if(this.game.ui.inventory[i].inMicrowave || this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE){
+            this.game.ui.inventory[i].inMicrowave = !this.game.ui.inventory[i].inMicrowave;
           }
           else{
             console.log("The Microwave is Full");

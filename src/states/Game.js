@@ -2,6 +2,7 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
@@ -161,13 +162,18 @@ export default class extends Phaser.State {
   makeUI() {
     let ui_group = this.game.add.group()
     let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
+    this.HUD = drawer;
+    this.game.physics.arcade.enable(drawer);
     ui_group.add(drawer)
     centerGameObjects([drawer])
+    let microwave = new MicrowaveCrafting(this.game)
+    ui_group.add(microwave);
     drawer.fixedToCamera = true
 
     return {
       drawer: ui_group,
-      inventory: []
+      inventory: [],
+      microwave: microwave
     }
   }
 
@@ -237,8 +243,8 @@ export default class extends Phaser.State {
     this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkIntro, null, this)
 
     let pointer = this.game.input.activePointer;
-    if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||
-                  (!pointer.isMouse && pointer.isDown)) {
+    if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
+      (pointer.isMouse && pointer.leftButton.isDown) || (!pointer.isMouse && pointer.isDown)) {
       let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
         Math.floor(pointer.worldY / this.tilemap.tileHeight));
 
@@ -250,6 +256,10 @@ export default class extends Phaser.State {
       }
 
       pointer.reset();
+    }
+    if(this.keys.space.justPressed()){
+      this.game.ui.microwave.alive = true;
+      this.game.ui.microwave.visible = true;
     }
 
   }

@@ -55,6 +55,19 @@ export class Item extends Phaser.Group {
   }
 
   update () {
+    for(let i=0; i<this.sprites.length; i++){
+      if(this.inMicrowave){
+        this.sprites[i].x = this.game.ui.microwave.background.x +
+          (this.game.ui.microwave.getInventoryIndex(this) -
+          this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width;
+        this.sprites[i].y = this.game.ui.microwave.background.y - 20;
+      }
+      else{
+        this.sprites[i].x = this.mainX;
+        this.sprites[i].y = this.mainY;
+      }
+
+    }
   }
 
   mouseOn(x, y){
