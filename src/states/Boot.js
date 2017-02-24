@@ -3,8 +3,8 @@ import Phaser from 'phaser'
 export default class extends Phaser.State {
   init () {
     this.stage.backgroundColor = '#466E7D'
-    this.fontsReady = false
-    this.fontsLoaded = this.fontsLoaded.bind(this)
+    this.fontsReady = true
+    // this.fontsLoaded = this.fontsLoaded.bind(this)
   }
 
   preload () {

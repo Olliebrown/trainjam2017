@@ -11,8 +11,15 @@ const PLAYER_SPEED = 100
 const INVENTORY_MAX = 8
 const INVENTORY_SLOTS = []
 
+const STATES = {
+  main: 1,
+  choosingItem: 2
+}
+
 export default class extends Phaser.State {
-  init () {}
+  init () {
+    this.state = STATES.main
+  }
   preload () {}
 
   create () {
@@ -80,7 +87,7 @@ export default class extends Phaser.State {
     this.ui = this.makeUI()
 
     this.overlay = this.game.add.group()
-    this.overlay.fixedToCamera = true
+    // this.overlay.fixedToCamera = true
 
     // camera
     this.game.camera.follow(this.player)
@@ -89,9 +96,15 @@ export default class extends Phaser.State {
   }
 
   showOverlay() {
-    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
-    overlay_bg.width = this.game.width - 20
-    overlay_bg.height = this.game.height - 20
+    var width = this.game.width - 20
+    var height = this.game.height - 20
+    var bm_data = this.game.add.bitmapData(width, height)
+    bm_data.ctx.beginPath()
+    bm_data.ctx.rect(0, 0, width, height)
+    bm_data.ctx.fillStyle = '#111111'
+    bm_data.ctx.fill()
+    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, bm_data)
+    overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
   }
 
@@ -155,13 +168,29 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalk (player, enemy) {
-    this.showOverlay()
+  triggerItemChoice (player, enemy) {
+    if (this.state == STATES.main) {
+      console.log("triggering item choice")
+      this.state = STATES.choosingItem
+      this.showOverlay()
+      var itemGroup = this.game.add.group()
+      for (var i in this.ui.inventory) {
+        var item = this.ui.inventory[i]
+        var new_item = item.copy(i * item.width, 400)
+        new_item.scale.setTo(2)
+        itemGroup.add(new_item)
+      }
+      var x_offset = (this.game.width - itemGroup.width) / 2
+      var y_offset = (this.game.height - itemGroup.height) / 2
+      itemGroup.x = x_offset
+      itemGroup.y = y_offset
+      this.overlay.add(itemGroup)
+    }
   }
 
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
 
     let pointer = this.game.input.activePointer;
     if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||

@@ -1,11 +1,12 @@
 import Phaser from 'phaser'
 import Glow from '../filters/Glow'
 
-export default class extends Phaser.Sprite {
+export default class Item extends Phaser.Sprite {
 
   constructor ({ game, x, y, tile }) {
     super(game, x, y, 'sewer-sprites', tile.index - 1)
 
+    this.tile = tile
     this.game = game
     this.anchor.setTo(0.5, 0.5)
     this.fixedToCamera = true
@@ -25,6 +26,15 @@ export default class extends Phaser.Sprite {
 
   mouseOn(x, y){
     return this.body.hitTest(x, y);
+  }
+
+  copy (x, y) {
+    return new Item({
+      game: this.game,
+      x: x,
+      y: y,
+      tile: this.tile
+    })
   }
 
 }
