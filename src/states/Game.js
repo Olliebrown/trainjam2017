@@ -66,19 +66,8 @@ export default class extends Phaser.State {
   }
 
   update () {
-// this.game.physics.arcade.collide(this.player, this.sewer_layer)
-  this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
-  this.game.physics.arcade.collide(this.player, this.interact_layer)
-    //
-    // if (this.keys.left.isDown) {
-    //   this.player.body.velocity.x = -PLAYER_SPEED
-    // } else if (this.keys.right.isDown) {
-    //   this.player.body.velocity.x = PLAYER_SPEED
-    // } else if (this.keys.up.isDown) {
-    //   this.player.body.velocity.y = -PLAYER_SPEED
-    // } else if (this.keys.down.isDown) {
-    //   this.player.body.velocity.y = PLAYER_SPEED
-    // }
+    this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
+    this.game.physics.arcade.collide(this.player, this.interact_layer)
 
     if(this.game.input.activePointer.isDown){
       let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),

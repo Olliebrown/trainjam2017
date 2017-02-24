@@ -6,7 +6,7 @@ export default class extends Phaser.Sprite {
     super(game, x, y, 'sewer-sprites', 10)
 
     this.listOfTargets = [];
-    this.speed = 2;
+    this.speed = 10;
 
     this.game = game
     this.anchor.setTo(0.5)
@@ -30,7 +30,9 @@ export default class extends Phaser.Sprite {
 
     if(this.listOfTargets.length > 0){
       let target = this.listOfTargets[0];
-      if(Math.abs(this.x - target.x) + Math.abs(this.y - target.Y) < 5){
+      if(Math.abs(this.x - target.x) + Math.abs(this.y - target.y) < this.speed){
+        this.x = target.x;
+        this.y = target.y;
         this.listOfTargets.splice(0, 1);
       }
       else{
