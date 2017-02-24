@@ -79,8 +79,24 @@ export default class extends Phaser.State {
 
     this.ui = this.makeUI()
 
+    this.overlay = this.game.add.group()
+    this.overlay.fixedToCamera = true
+
     // camera
     this.game.camera.follow(this.player)
+
+
+  }
+
+  showOverlay() {
+    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
+    overlay_bg.width = this.game.width - 20
+    overlay_bg.height = this.game.height - 20
+    this.overlay.add(overlay_bg)
+  }
+
+  hideOverlay() {
+    this.overlay.removeAll()
   }
 
   createEnemyTriggers() {
@@ -111,7 +127,7 @@ export default class extends Phaser.State {
       y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
 
-    this.game.add.existing(this.ui.inventory[this.ui.inventory.length-1])
+    this.ui.drawer.add(this.ui.inventory[this.ui.inventory.length-1])
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
 
@@ -128,18 +144,19 @@ export default class extends Phaser.State {
   }
 
   makeUI() {
-    let drawer = this.game.add.sprite(this.game.width - 50, this.game.height / 2, 'drawer')
+    let ui_group = this.game.add.group()
+    let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
+    ui_group.add(drawer)
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
     return {
-      drawer: drawer,
+      drawer: ui_group,
       inventory: []
     }
   }
 
   triggerCatwalk (player, enemy) {
-    console.log("player", player)
-    console.log("enemy", enemy)
+    this.showOverlay()
   }
 
   update () {
