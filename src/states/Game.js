@@ -1,6 +1,7 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
+import Pathfinder from '../ai/Pathfinder'
 import {setResponsiveWidth} from '../utils'
 
 const PLAYER_SPEED = 100
@@ -22,6 +23,7 @@ export default class extends Phaser.State {
     this.sewer_layer = this.tilemap.createLayer('sewer')
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
+    this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
 
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
@@ -52,17 +54,27 @@ export default class extends Phaser.State {
   }
 
   update () {
-    this.game.physics.arcade.collide(this.player, this.sewer_layer)
+    // this.game.physics.arcade.collide(this.player, this.sewer_layer)
+    //
+    // if (this.keys.left.isDown) {
+    //   this.player.body.velocity.x = -PLAYER_SPEED
+    // } else if (this.keys.right.isDown) {
+    //   this.player.body.velocity.x = PLAYER_SPEED
+    // } else if (this.keys.up.isDown) {
+    //   this.player.body.velocity.y = -PLAYER_SPEED
+    // } else if (this.keys.down.isDown) {
+    //   this.player.body.velocity.y = PLAYER_SPEED
+    // }
 
-    if (this.keys.left.isDown) {
-      this.player.body.velocity.x = -PLAYER_SPEED
-    } else if (this.keys.right.isDown) {
-      this.player.body.velocity.x = PLAYER_SPEED
-    } else if (this.keys.up.isDown) {
-      this.player.body.velocity.y = -PLAYER_SPEED
-    } else if (this.keys.down.isDown) {
-      this.player.body.velocity.y = PLAYER_SPEED
+    if(this.game.input.activePointer.isDown){
+      let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
+        Math.floor(this.game.input.activePointer.worldY / this.tilemap.tileHeight));
+      let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
+      let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+        this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
+      this.player.setListOfTargets(targets, this.tilemap.tileWidth);
     }
+
   }
 
   render () {
