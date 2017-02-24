@@ -186,37 +186,35 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro () {
+  triggerCatwalkIntro (player_item, enemy_item) {
     if (this.state == STATES.main) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
       this.showOverlay()
 
-      var grad = new Phaser.Sprite(this.game, 0, 0, 'catwalk-intro-gradient')
+      var centerX = this.game.width / 2
+      var centerY = this.game.height / 2
+
+      var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
       grad.anchor.setTo(0.5)
-      grad.x = this.game.width / 2
-      grad.y = this.game.height / 2
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
-      var strip = new Phaser.Sprite(this.game, -100, -100, 'catwalk-intro-strip')
+      var strip = new Phaser.Sprite(this.game, 0, this.game.height / 2, 'catwalk-intro-strip')
       strip.anchor.setTo(0.5)
-      var target_x = this.game.width / 2
-      console.info(target_x)
-      // strip.y = this.game.height / 2
       strip.fixedToCamera = true
       this.overlay.add(strip)
 
-      // var strip_tween = this.game.add.tween(strip)
+      var strip_tween = this.game.add.tween(strip.cameraOffset).to(
+        { x: this.game.width / 2 },
+        2000, Phaser.Easing.Bounce.Out, true)
 
-      // this.intween = strip_tween.to(
-      //   { x: target_x },
-      //   4000, Phaser.Easing.Bounce.Out, true)
-
-
-      // window.strip = strip_tween
+      strip_tween.onComplete.add((function() {this.camera.shake()}), this)
 
     }
+  }
+
+  endCatwalkIntro () {
   }
 
   update () {
