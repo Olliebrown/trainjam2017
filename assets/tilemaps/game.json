@@ -12,19 +12,6 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"interact",
-         "offsetx":-18.12,
-         "offsety":27.17,
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":true,
-         "width":20,
-         "x":0,
-         "y":0
-        }, 
-        {
          "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 34, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 25, 26, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 41, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":10,
          "name":"sewer",
@@ -39,6 +26,19 @@
          "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":10,
          "name":"enemy_spawns",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":20,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":10,
+         "name":"interact",
+         "offsetx":-18.12,
+         "offsety":27.17,
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -66,142 +66,564 @@
             {
              "0":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 },
              "1":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
+                },
+             "10":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "11":
+                {
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Tin Can"
+                },
+             "12":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "13":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "14":
+                {
+                 "collidable":false
                 },
              "16":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 },
              "17":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
+                },
+             "18":
+                {
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Plastic Bag"
+                },
+             "19":
+                {
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"K-Cup"
                 },
              "2":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "20":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "21":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "22":
                 {
                  "collidable":false
                 },
              "24":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 },
              "25":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 },
-             "32":
+             "26":
                 {
-                 "collidable":true
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Skateboard"
                 },
-             "33":
+             "27":
                 {
-                 "collidable":true
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Eggplant"
                 },
-             "40":
+             "28":
                 {
-                 "collidable":true
+                 "collidable":false,
+                 "isItem":false
                 },
-             "41":
+             "29":
                 {
-                 "collidable":true
+                 "collidable":false,
+                 "isItem":false
                 },
-             "48":
+             "3":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "30":
                 {
                  "collidable":false
                 },
+             "32":
+                {
+                 "collidable":true,
+                 "isItem":false
+                },
+             "33":
+                {
+                 "collidable":true,
+                 "isItem":false
+                },
+             "34":
+                {
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Band-Aid"
+                },
+             "35":
+                {
+                 "collidable":false,
+                 "isItem":true,
+                 "name":"Dead Battery"
+                },
+             "36":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "37":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "38":
+                {
+                 "collidable":false
+                },
+             "4":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "40":
+                {
+                 "collidable":true,
+                 "isItem":false
+                },
+             "41":
+                {
+                 "collidable":true,
+                 "isItem":false
+                },
+             "42":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "43":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "44":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "45":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "46":
+                {
+                 "collidable":false
+                },
+             "48":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
              "49":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "5":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "50":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "51":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "52":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "53":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "54":
                 {
                  "collidable":false
                 },
              "56":
                 {
-                 "collidable":false
+                 "collidable":false,
+                 "isItem":false
                 },
              "57":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "58":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "59":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "6":
+                {
+                 "collidable":false
+                },
+             "60":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "61":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "62":
                 {
                  "collidable":false
                 },
              "8":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 },
              "9":
                 {
-                 "collidable":true
+                 "collidable":true,
+                 "isItem":false
                 }
             },
          "tilepropertytypes":
             {
              "0":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "1":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "10":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "11":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "12":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "13":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "14":
                 {
                  "collidable":"bool"
                 },
              "16":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "17":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "18":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "19":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
                 },
              "2":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "20":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "21":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "22":
                 {
                  "collidable":"bool"
                 },
              "24":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "25":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "26":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "27":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "28":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "29":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "3":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "30":
                 {
                  "collidable":"bool"
                 },
              "32":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "33":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
-             "40":
+             "34":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "35":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "36":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "37":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "38":
                 {
                  "collidable":"bool"
                 },
+             "4":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "40":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
              "41":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "42":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "43":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "44":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "45":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "46":
                 {
                  "collidable":"bool"
                 },
              "48":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "49":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "5":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "50":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "51":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "52":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "53":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "54":
                 {
                  "collidable":"bool"
                 },
              "56":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "57":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "58":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "59":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "6":
+                {
+                 "collidable":"bool"
+                },
+             "60":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "61":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "62":
                 {
                  "collidable":"bool"
                 },
              "8":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "9":
                 {
-                 "collidable":"bool"
+                 "collidable":"bool",
+                 "isItem":"bool"
                 }
             },
          "tilewidth":128

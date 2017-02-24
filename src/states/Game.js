@@ -1,6 +1,7 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
+import {Item, ITEM_FRAMES} from '../sprites/Item'
 import {setResponsiveWidth} from '../utils'
 
 const PLAYER_SPEED = 200
@@ -10,6 +11,8 @@ export default class extends Phaser.State {
   preload () {}
 
   create () {
+    let state = this
+
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
     this.tilemap = this.game.add.tilemap('game')
@@ -19,22 +22,22 @@ export default class extends Phaser.State {
     this.tilemap.addTilesetImage('sewer-tiles')
     this.tilemap.addTilesetImage('triggers', 'player')
 
+    this.itemIndexList = this.makeItemList();
+
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
     this.enemy_spawns_layer = this.tilemap.createLayer('enemy_spawns')
     this.enemy_spawns_layer.visible = false
 
-
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
-    this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
+    this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
 
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
     this.musicLoop.loop = true
 
-    let state = this
     this.musicIntro.onStop.addOnce(() => {
       state.musicLoop.play()
     });
@@ -57,8 +60,25 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
   }
 
-  generateEnemy (player, tile) {
-    console.log("Generating enemy?")
+  generateEnemy () {
+    console.info('Generating enemy?')
+  }
+
+  itemTrigger (player, item) {
+    this.tilemap.removeTile(item.x, item.y, 'interact')
+    console.info('Picked up ' + item.properties.name)
+  }
+
+  makeItemList() {
+    let tileProps = this.tilemap.tilesets[0].tileProperties;
+    let itemList = []
+    Object.keys(tileProps).forEach((key) => {
+      if(tileProps[key].isItem) {
+        itemList.push(key)
+        console.info('item: ' + key)
+      }
+    });
+    return itemList
   }
 
   update () {
