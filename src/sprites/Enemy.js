@@ -1,9 +1,12 @@
 import Phaser from 'phaser'
+import { getRandomIntInclusive } from '../utils'
 
 export class Enemy extends Phaser.Sprite {
 
   constructor ({ game, x, y}) {
-    super(game, x, y, 'sewer-sprites', 10)
+    var frame_count = game.cache.getFrameCount('enemies')
+    var rand_frame = getRandomIntInclusive(0, frame_count - 1)
+    super(game, x, y, 'enemies', rand_frame)
 
     this.game = game
     this.anchor.setTo(0.5)
