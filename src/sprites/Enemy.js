@@ -1,9 +1,9 @@
 import Phaser from 'phaser'
 
-export default class extends Phaser.Sprite {
+export class Enemy extends Phaser.Sprite {
 
   constructor ({ game, x, y}) {
-    super(game, x, y, 'player')
+    super(game, x, y, 'sewer-sprites', 10)
 
     this.game = game
     this.anchor.setTo(0.5)
@@ -16,17 +16,35 @@ export default class extends Phaser.Sprite {
 
 export class EnemyTrigger extends Phaser.Sprite {
 
-  constructor ({ game, x, y, player}) {
+  constructor ({ game, x, y, player, enemy_group}) {
     super(game, x, y, 'trigger', 10)
+    this.game = game
     this.player = player
     this.active = false
+    this.enemy_group = enemy_group
   }
 
   update () {
     if (this.game.physics.arcade.overlap(this.player, this)) {
-      this.active = true
+      if (!this.active) {
+        console.log("ho")
+        if (Math.random() > 0.5) {
+          this.spawnEnemy()
+        }
+        this.active = true
+      }
     } else {
       this.active = false
     }
+  }
+
+  spawnEnemy () {
+    console.log("spawnEnemy")
+    var enemy = new Enemy({
+      game: this.game,
+      x: this.x,
+      y: this.y
+    })
+    this.enemy_group.add(enemy)
   }
 }
