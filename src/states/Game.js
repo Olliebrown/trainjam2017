@@ -1,8 +1,8 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import {EnemyTrigger, Enemy} from '../sprites/Enemy'
-import Item from '../sprites/Item'
+import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
@@ -70,9 +70,8 @@ export default class extends Phaser.State {
     this.player = new Player({
       game: this.game,
       x: 512,
-      y: 512
+      y: this.tilemap.heightInPixels - 256
     })
-
 
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
     this.enemies = new Phaser.Group(this.game)
@@ -84,15 +83,13 @@ export default class extends Phaser.State {
 
     this.game.add.existing(this.player)
 
-    this.ui = this.makeUI()
+    this.game.ui = this.makeUI()
 
     this.overlay = this.game.add.group()
     // this.overlay.fixedToCamera = true
 
     // camera
     this.game.camera.follow(this.player)
-
-
   }
 
   showOverlay() {
@@ -130,18 +127,19 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
-    if(this.ui.inventory.length >= INVENTORY_MAX) {
+    if(this.game.ui.inventory.length >= INVENTORY_MAX) {
       return;
     }
 
-    this.ui.inventory.push(new Item({
+    this.game.ui.inventory.push(new Item({
       game: this.game, indeces: [item.index],
       name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[this.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.ui.inventory.length].y,
+      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
+      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
     }))
 
-    this.ui.drawer.add(this.ui.inventory[this.ui.inventory.length-1])
+    let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
+    this.game.ui.drawer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
 
@@ -176,14 +174,24 @@ export default class extends Phaser.State {
       this.state = STATES.choosingItem
       this.showOverlay()
       var itemGroup = this.game.add.group()
+      var item_width = 0
       for (var i in this.ui.inventory) {
         var item = this.ui.inventory[i]
-        var new_item = item.copy(i * item.width, 400)
-        new_item.scale.setTo(2)
+        var new_item = item.copy(0, 0)
+        new_item.scale.setTo(1.5)
+        item_width = new_item.width
         itemGroup.add(new_item)
       }
-      var x_offset = (this.game.width - itemGroup.width) / 2
+      var selection_width = item_width * itemGroup.children.length
+      var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
+
+      for (var i in itemGroup.children) {
+        console.log("doing the thing")
+        var item = itemGroup.children[i]
+        item.x = i * item.width
+      }
+      console.log(itemGroup.children)
       itemGroup.x = x_offset
       itemGroup.y = y_offset
       this.overlay.add(itemGroup)
@@ -213,6 +221,10 @@ export default class extends Phaser.State {
   }
 
   render () {
+    this.game.ui.inventory.forEach((item) => {
+      this.game.debug.rectangle(new Phaser.Rectangle(
+        item.position.x, item.position.y, 64, 64), '#ffffff', false)
+    })
     if (__DEV__) {
     }
   }
