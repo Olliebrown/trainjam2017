@@ -79,8 +79,22 @@ export default class extends Phaser.State {
 
     this.ui = this.makeUI()
 
+    this.createCatwalk()
+
     // camera
     this.game.camera.follow(this.player)
+
+
+  }
+
+  createCatwalk() {
+    this.overlay_group = new Phaser.Group(this.game)
+    this.overlay_layer = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
+    this.overlay_layer.width = this.game.width - 20
+    this.overlay_layer.height = this.game.height - 20
+    this.overlay_group.add(this.overlay_layer)
+    this.overlay_group.fixedToCamera = true
+    this.overlay_group.visible = false
   }
 
   createEnemyTriggers() {
@@ -111,7 +125,7 @@ export default class extends Phaser.State {
       y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
 
-    this.game.add.existing(this.ui.inventory[this.ui.inventory.length-1])
+    this.ui.drawer.add(this.ui.inventory[this.ui.inventory.length-1])
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
 
@@ -128,11 +142,13 @@ export default class extends Phaser.State {
   }
 
   makeUI() {
-    let drawer = this.game.add.sprite(this.game.width - 50, this.game.height / 2, 'drawer')
+    let ui_group = this.game.add.group()
+    let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
+    ui_group.add(drawer)
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
     return {
-      drawer: drawer,
+      drawer: ui_group,
       inventory: []
     }
   }
