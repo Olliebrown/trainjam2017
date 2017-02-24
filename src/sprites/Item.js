@@ -1,29 +1,56 @@
 import Phaser from 'phaser'
 import Glow from '../filters/Glow'
 
-export class Item extends Phaser.Sprite {
+export default class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, tile }) {
-    super(game, x, y, 'sewer-sprites', tile.index - 1)
+  constructor ({ game, x, y, indeces, name, description}) {
+    super(game);
+
+    this.mainX = x;
+    this.mainY = y;
+
+    this.sprites = [];
+    this.indeces = indeces;
+    for(let i=0; i<indeces.length; i++){
+        let sprite = new Phaser.Sprite(game, this.mainX, this.mainY, 'sewer-sprites', indeces[i]);
+        sprite.anchor.set(0.5, 0.5);
+        sprite.scale.setTo(0.45, 0.45)
+        this.game.physics.arcade.enable(sprite);
+        this.sprites.push(sprite);
+        this.add(sprite);
+      }
 
     this.game = game
-    this.anchor.setTo(0.5, 0.5)
-    this.scale.setTo(0.45, 0.45)
-    this.game.physics.arcade.enable(this)
-    this.inMicrowave = false
+    this.fixedToCamera = true
+    this.inMicrowave = false;
 
-    this.name = tile.properties.name
-    this.description = tile.properties.description
+    this.name = name
+    this.description = description
     // this.filters = [ new Glow(game) ]
 
-    console.info('Picked up ' + this.name + ' with index ' + tile.index)
+    // console.info('Picked up ' + this.name + ' with index ' + tile.index)
   }
 
   update () {
   }
 
   mouseOn(x, y){
-    return this.body.hitTest(x, y);
+    let hitted = false;
+    for(let i=0; i<this.sprites.length; i++){
+      hitted |= this.sprites[i].body.hitTest(x, y);
+    }
+    return hitted;
+  }
+
+  copy (x, y) {
+    return new Item({
+      game: this.game,
+      x: x,
+      y: y,
+      indeces: this.indeces,
+      name: this.name,
+      description: this.description
+    })
   }
 
 }

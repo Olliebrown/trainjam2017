@@ -11,8 +11,15 @@ const PLAYER_SPEED = 100
 const INVENTORY_MAX = 8
 const INVENTORY_SLOTS = []
 
+const STATES = {
+  main: 1,
+  choosingItem: 2
+}
+
 export default class extends Phaser.State {
-  init () {}
+  init () {
+    this.state = STATES.main
+  }
   preload () {}
 
   create () {
@@ -63,7 +70,7 @@ export default class extends Phaser.State {
     this.player = new Player({
       game: this.game,
       x: 512,
-      y: 512
+      y: this.tilemap.heightInPixels - 256
     })
 
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
@@ -79,16 +86,22 @@ export default class extends Phaser.State {
     this.game.ui = this.makeUI()
 
     this.overlay = this.game.add.group()
-    this.overlay.fixedToCamera = true
+    // this.overlay.fixedToCamera = true
 
     // camera
     this.game.camera.follow(this.player)
   }
 
   showOverlay() {
-    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, 'sewer-sprites', 2)
-    overlay_bg.width = this.game.width - 20
-    overlay_bg.height = this.game.height - 20
+    var width = this.game.width - 20
+    var height = this.game.height - 20
+    var bm_data = this.game.add.bitmapData(width, height)
+    bm_data.ctx.beginPath()
+    bm_data.ctx.rect(0, 0, width, height)
+    bm_data.ctx.fillStyle = '#111111'
+    bm_data.ctx.fill()
+    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, bm_data)
+    overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
   }
 
@@ -118,10 +131,11 @@ export default class extends Phaser.State {
       return;
     }
 
-    this.game.ui.inventory.push(new ItemButton({
-      game: this.game, itemTile: item, index: this.game.ui.inventory.length,
-      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
+    this.ui.inventory.push(new Item({
+      game: this.game, indeces: [item.index],
+      name: item.properties.name, description: item.properties.description,
+      x: INVENTORY_SLOTS[this.ui.inventory.length].x,
+      y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
 
     let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
@@ -153,13 +167,39 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalk (player, enemy) {
-    this.showOverlay()
+  triggerItemChoice (player, enemy) {
+    if (this.state == STATES.main) {
+      console.log("triggering item choice")
+      this.state = STATES.choosingItem
+      this.showOverlay()
+      var itemGroup = this.game.add.group()
+      var item_width = 0
+      for (var i in this.ui.inventory) {
+        var item = this.ui.inventory[i]
+        var new_item = item.copy(0, 0)
+        new_item.scale.setTo(1.5)
+        item_width = new_item.width
+        itemGroup.add(new_item)
+      }
+      var selection_width = item_width * itemGroup.children.length
+      var x_offset = (this.game.width - selection_width) / 2
+      var y_offset = (this.game.height - itemGroup.height) / 2
+
+      for (var i in itemGroup.children) {
+        console.log("doing the thing")
+        var item = itemGroup.children[i]
+        item.x = i * item.width
+      }
+      console.log(itemGroup.children)
+      itemGroup.x = x_offset
+      itemGroup.y = y_offset
+      this.overlay.add(itemGroup)
+    }
   }
 
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
 
     let pointer = this.game.input.activePointer;
     if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||

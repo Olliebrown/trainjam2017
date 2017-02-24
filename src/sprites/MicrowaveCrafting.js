@@ -6,11 +6,10 @@ import LaunchMicrowave from '../sprites/LaunchMicrowave'
 const MIN_MICROWAVE = 2;
 const MAX_MICROWAVE = 4;
 
-export default class extends Phaser.State {
-  init () {}
-  preload () {}
+export default class extends Phaser.Group {
+  constructor (game, items) {
+    super(game);
 
-  create () {
     this.items = [new Item({game: this.game, x: -1, y:-1, index:0}), new Item({game: this.game, x: -1, y:-1, index:1}),
       new Item({game: this.game, x: -1, y:-1, index:5}), new Item({game: this.game, x: -1, y:-1, index:2}),
       new Item({game: this.game, x: -1, y:-1, index:3})];
@@ -38,13 +37,17 @@ export default class extends Phaser.State {
   microwave(){
     let state = this.game.state.getCurrentState();
     if(state.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE && state.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
+      let indeces = [];
       for(let i=0; i<state.items.length; i++){
         if(state.items[i].inMicrowave){
           state.items[i].destroy();
+          indeces.push(state.items[i].index);
           state.items.splice(i, 1);
           i--;
         }
       }
+      state.items.push(new CombinedItem({game:state.game, x:-1, y:-1, indeces:indeces}));
+      state.game.add.existing(state.items[state.items.length - 1]);
       console.log("Microwaving....");
     }
     else{
@@ -57,7 +60,7 @@ export default class extends Phaser.State {
     for(let i=0; i<items.length; i++){
       items[i].inMicrowave = false;
     }
-    this.game.state.start("Game", true, false);
+    this.destroy();
   }
 
   updateItemLocations(){
