@@ -14,7 +14,7 @@ export default class extends Phaser.Sprite {
     this.body.collideWorldBounds = true
   }
 
-  setListOfTargets(targets, tileSize){
+  setListOfTargets(targets, tileSize, tX, tY){
     this.listOfTargets = [];
     for(let i=0; i<targets.length; i++){
       this.listOfTargets.push(new Phaser.Point((targets[i].x + 0.5) * tileSize, (targets[i].y + 0.5) * tileSize));

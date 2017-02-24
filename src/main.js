@@ -5,6 +5,7 @@ import Phaser from 'phaser'
 import BootState from './states/Boot'
 import SplashState from './states/Splash'
 import GameState from './states/Game'
+import MicrowaveCrafting from './states/MicrowaveCrafting'
 
 const TARGET_HEIGHT = 800
 const TARGET_WIDTH = 1280
@@ -20,6 +21,7 @@ class Game extends Phaser.Game {
     this.state.add('Boot', BootState, false)
     this.state.add('Splash', SplashState, false)
     this.state.add('Game', GameState, false)
+    this.state.add('Microwave', MicrowaveCrafting, false);
 
     this.state.start('Boot')
   }
