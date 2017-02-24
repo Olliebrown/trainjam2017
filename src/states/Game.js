@@ -95,6 +95,10 @@ export default class extends Phaser.State {
     this.overlay.add(overlay_bg)
   }
 
+  hideOverlay() {
+    this.overlay.removeAll()
+  }
+
   createEnemyTriggers() {
     var tiles = this.enemy_spawns_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
     for (var t in tiles) {
