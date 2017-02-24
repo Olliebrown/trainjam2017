@@ -1,9 +1,9 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import {Item, ITEM_FRAMES} from '../sprites/Item'
+import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
-import {setResponsiveWidth} from '../utils'
+import { centerGameObjects } from '../utils'
 
 const PLAYER_SPEED = 200
 
@@ -60,6 +60,8 @@ export default class extends Phaser.State {
 
     this.game.add.existing(this.player)
 
+    this.ui = this.makeUI()
+
     // camera
     this.game.camera.follow(this.player)
   }
@@ -83,6 +85,15 @@ export default class extends Phaser.State {
       }
     });
     return itemList
+  }
+
+  makeUI() {
+    let drawer = this.game.add.sprite(this.game.width - 50, this.game.height / 2, 'drawer')
+    centerGameObjects([drawer])
+    drawer.fixedToCamera = true
+    return {
+      drawer: drawer
+    }
   }
 
   update () {
