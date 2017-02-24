@@ -4,7 +4,7 @@ import Phaser from 'phaser'
 
 export class Item extends Phaser.Sprite {
 
-  constructor ({ game, x, y, indeces, name, description, invIndex }) {
+  constructor ({ game, x, y, indeces, name, description, powerTier, invIndex }) {
     if(!x || !y) {
       x = Item.INVENTORY_SLOTS[invIndex].x
       y = Item.INVENTORY_SLOTS[invIndex].y
@@ -27,20 +27,22 @@ export class Item extends Phaser.Sprite {
       this.addChild(sprite)
     }
 
-    // Make close button
-    this.closeBtn = this.game.add.button(20, -40, 'close-btn-sheet',
-          onBtnClose, this, 2, 0, 1, 0)
-    this.closeBtn.scale.set(0.333)
-    this.closeBtn.fixedToCamera = true
-    this.addChild(this.closeBtn)
+    if(invIndex) {
+      // Make close button
+      this.closeBtn = this.game.add.button(20, -40, 'close-btn-sheet',
+            onBtnClose, this, 2, 0, 1, 0)
+      this.closeBtn.scale.set(0.333)
+      this.closeBtn.fixedToCamera = true
+      this.addChild(this.closeBtn)
 
-    // Make index number
-    if(invIndex != null) {
-      this.invIndex = invIndex
-      this.number = this.game.add.text(-40, -15, invIndex,
-        { font: 'Courier', fontSize: 24 })
-      this.number.fixedToCamera = true
-      this.addChild(this.number)
+      // Make index number
+      if(invIndex != null) {
+        this.invIndex = invIndex
+        this.number = this.game.add.text(-40, -15, invIndex,
+          { font: 'Courier', fontSize: 24 })
+        this.number.fixedToCamera = true
+        this.addChild(this.number)
+      }
     }
 
     this.game = game
@@ -48,6 +50,7 @@ export class Item extends Phaser.Sprite {
 
     this.name = name
     this.description = description
+    this.powerTier = powerTier
     // this.filters = [ new Glow(game) ]
 
     // console.info('Picked up ' + this.name + ' with index ' + tile.index)
@@ -122,13 +125,58 @@ function onBtnClose(itmButton) {
   inventory.pop();
 }
 
+// Static class members
 Item.INVENTORY_SLOTS = []
 Item.MAX_SLOTS = 8
 
-Item.init = () => {
+Item.init = (itemTileset) => {
+
+  // Build inventory slot coordinates
   for(let i=1; i<=8; i++) {
     Item.INVENTORY_SLOTS.push(
       new Phaser.Point(game.width - 50, game.height / 2 + 75*(i-4) - 35)
     )
   }
+
+  // Build item list from TILED info
+  let tileProps = itemTileset.tileProperties;
+  Item.ITEM_ARRAY = []
+  Item.TILE_INDEX_LIST = []
+  Object.keys(tileProps).forEach((key) => {
+    if(tileProps[key].isItem) {
+      Item.ITEM_ARRAY.push({
+        triggerIndex: parseInt(key) + 1,
+        tileID: parseInt(key),
+        name: tileProps[key].name,
+        description: tileProps[key].description,
+        powerTier: tileProps[key].powerTier
+      })
+
+      Item.TILE_INDEX_LIST.push(parseInt(key) + 1)
+    }
+  });
+
+  // Build reverse lookup arrays
+  Item.ITEM_BY_NAME = {}
+  Item.ITEM_BY_TILE_ID = {}
+  for(let i in Item.ITEM_ARRAY) {
+    Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
+    Item.ITEM_BY_TILE_ID[Item.ITEM_ARRAY[i].tileID] = Item.ITEM_ARRAY[i]
+  }
 };
+
+Item.makeFromName = (game, name, x, y) => {
+  let item = Item.ITEM_BY_NAME[name]
+  if(!item) { return null }
+
+  return new Item({ game, x, y, indices: [ item.tileID ],
+    name: item.name, description: item.description, powerTier: item.powerTier })
+}
+
+Item.makeFromID = (game, id, x, y) => {
+  let item = Item.ITEM_BY_TILE_ID[id]
+  if(!item) { return null }
+
+  return new Item({ game, x, y, indices: [ item.tileID ],
+    name: item.name, description: item.description, powerTier: item.powerTier })
+}

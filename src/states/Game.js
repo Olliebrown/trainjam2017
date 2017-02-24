@@ -1,16 +1,10 @@
-/* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { EnemyTrigger } from '../sprites/Enemy'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
-
-const PLAYER_SPEED = 100
-
-const INVENTORY_MAX = 8
-let INVENTORY_SLOTS = []
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -23,7 +17,6 @@ const STATES = {
 export default class extends Phaser.State {
   init () {
     this.state = STATES.main
-    Item.init()
   }
 
   preload () {}
@@ -34,12 +27,11 @@ export default class extends Phaser.State {
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
     this.tilemap = this.game.add.tilemap('game')
+    Item.init(this.tilemap.tilesets[0])
 
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
-
-    this.itemIndexList = this.makeItemList();
 
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
@@ -53,7 +45,7 @@ export default class extends Phaser.State {
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
 
     this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
-    this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
+    this.tilemap.setTileIndexCallback(Item.TILE_INDEX_LIST, this.itemTrigger, this, 'interact')
 
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
@@ -71,8 +63,7 @@ export default class extends Phaser.State {
     // player setup
     this.player = new Player({
       game: this.game,
-      x: 512,
-      y: this.tilemap.heightInPixels - 256
+      x: 128 + 64, y: this.tilemap.heightInPixels - 256 + 64
     })
 
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
@@ -147,17 +138,6 @@ export default class extends Phaser.State {
     this.game.sounds.play('reverb_pose_sound_1', 1)
   }
 
-  makeItemList() {
-    let tileProps = this.tilemap.tilesets[0].tileProperties;
-    let itemList = []
-    Object.keys(tileProps).forEach((key) => {
-      if(tileProps[key].isItem) {
-        itemList.push(parseInt(key) + 1)
-      }
-    });
-    return itemList
-  }
-
   makeUI() {
     let ui_group = this.game.add.group()
     let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
@@ -170,7 +150,7 @@ export default class extends Phaser.State {
     drawer.fixedToCamera = true
 
     return {
-      drawer: ui_group,
+      uiLayer: ui_group,
       inventory: [],
       microwave: microwave
     }
@@ -178,14 +158,14 @@ export default class extends Phaser.State {
 
   triggerItemChoice (player, enemy) {
     if (this.state == STATES.main) {
-      console.log("triggering item choice")
+      console.info('triggering item choice')
       this.state = STATES.choosingItem
       this.showOverlay()
       var itemGroup = this.game.add.group()
       var item_width = 0
-      for (var i in this.ui.inventory) {
-        var item = this.ui.inventory[i]
-        var new_item = item.copy(0, 0)
+      for (let i in this.ui.inventory) {
+        let item = this.ui.inventory[i]
+        let new_item = item.copy(0, 0)
         new_item.scale.setTo(1.5)
         item_width = new_item.width
         itemGroup.add(new_item)
@@ -194,12 +174,12 @@ export default class extends Phaser.State {
       var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
 
-      for (var i in itemGroup.children) {
-        console.log("doing the thing")
-        var item = itemGroup.children[i]
+      for (let i in itemGroup.children) {
+        console.info('doing the thing')
+        let item = itemGroup.children[i]
         item.x = i * item.width
       }
-      console.log(itemGroup.children)
+      console.info(itemGroup.children)
       itemGroup.x = x_offset
       itemGroup.y = y_offset
       this.overlay.add(itemGroup)
@@ -222,7 +202,7 @@ export default class extends Phaser.State {
       var strip = new Phaser.Sprite(this.game, -100, -100, 'catwalk-intro-strip')
       strip.anchor.setTo(0.5)
       var target_x = this.game.width / 2
-      console.log(target_x)
+      console.info(target_x)
       // strip.y = this.game.height / 2
       strip.fixedToCamera = true
       this.overlay.add(strip)
@@ -270,7 +250,5 @@ export default class extends Phaser.State {
       this.game.debug.geom(new Phaser.Rectangle(
         item.x - 45, item.y - 35, 90, 70), '#ffffff', false)
     })
-    if (__DEV__) {
-    }
   }
 }
