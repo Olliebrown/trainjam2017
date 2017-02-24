@@ -4,7 +4,7 @@ import Player from '../sprites/Player'
 import Pathfinder from '../ai/Pathfinder'
 import {setResponsiveWidth} from '../utils'
 
-const PLAYER_SPEED = 100
+const PLAYER_SPEED = 200
 
 export default class extends Phaser.State {
   init () {}
@@ -18,12 +18,21 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
+    this.tilemap.addTilesetImage('triggers', 'player')
 
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
+    this.interact_layer = this.tilemap.createLayer('interact')
+    this.enemy_spawns_layer = this.tilemap.createLayer('enemy_spawns')
+    this.enemy_spawns_layer.visible = false
+
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
+
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
+
+    this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
+    this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
 
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
@@ -46,15 +55,20 @@ export default class extends Phaser.State {
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
 
-
     this.game.add.existing(this.player)
 
     // camera
     this.game.camera.follow(this.player)
   }
 
+  generateEnemy (player, tile) {
+    console.log("Generating enemy?")
+  }
+
   update () {
-    // this.game.physics.arcade.collide(this.player, this.sewer_layer)
+// this.game.physics.arcade.collide(this.player, this.sewer_layer)
+  this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
+  this.game.physics.arcade.collide(this.player, this.interact_layer)
     //
     // if (this.keys.left.isDown) {
     //   this.player.body.velocity.x = -PLAYER_SPEED
@@ -79,7 +93,6 @@ export default class extends Phaser.State {
 
   render () {
     if (__DEV__) {
-      // this.game.debug.spriteInfo(this.mushroom, 32, 32)
     }
   }
 }

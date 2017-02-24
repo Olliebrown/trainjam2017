@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 export default class extends Phaser.Sprite {
 
   constructor ({ game, x, y }) {
-    super(game, x, y, 'player')
+    super(game, x, y, 'sewer-sprites', 10)
 
     this.listOfTargets = [];
     this.speed = 2;
