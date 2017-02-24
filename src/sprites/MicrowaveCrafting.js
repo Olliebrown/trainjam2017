@@ -7,11 +7,10 @@ import LaunchMicrowave from '../sprites/LaunchMicrowave'
 const MIN_MICROWAVE = 2;
 const MAX_MICROWAVE = 4;
 
-export default class extends Phaser.State {
-  init () {}
-  preload () {}
+export default class extends Phaser.Group {
+  constructor (game, items) {
+    super(game);
 
-  create () {
     this.items = [new Item({game: this.game, x: -1, y:-1, index:0}), new Item({game: this.game, x: -1, y:-1, index:1}),
       new Item({game: this.game, x: -1, y:-1, index:5}), new Item({game: this.game, x: -1, y:-1, index:2}),
       new Item({game: this.game, x: -1, y:-1, index:3})];
@@ -62,7 +61,7 @@ export default class extends Phaser.State {
     for(let i=0; i<items.length; i++){
       items[i].inMicrowave = false;
     }
-    this.game.state.start("Game", true, false);
+    this.destroy();
   }
 
   updateItemLocations(){
