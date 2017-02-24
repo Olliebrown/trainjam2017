@@ -8,15 +8,14 @@ export default class extends Phaser.Sprite {
     this.game = game
     this.anchor.setTo(0.5, 0.5)
     this.fixedToCamera = true
-    this.scale.setTo(0.5, 0.5)
+    this.scale.setTo(0.45, 0.45)
+    this.game.physics.arcade.enable(this)
+    this.inMicrowave = false;
 
     this.name = tile.properties.name
     this.description = tile.properties.description
 
     console.info('Picked up ' + this.name + ' with index ' + tile.index)
-    this.anchor.setTo(0.5)
-    this.game.physics.arcade.enable(this)
-    this.inMicrowave = false;
   }
 
   update () {

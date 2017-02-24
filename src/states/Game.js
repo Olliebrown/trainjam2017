@@ -2,12 +2,13 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import {EnemyTrigger, Enemy} from '../sprites/Enemy'
-import { Item } from '../sprites/Item'
+import Item from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
 const PLAYER_SPEED = 100
 
+const INVENTORY_MAX = 8
 const INVENTORY_SLOTS = []
 
 export default class extends Phaser.State {
@@ -100,6 +101,10 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
+    if(this.ui.inventory.length >= INVENTORY_MAX) {
+      return;
+    }
+
     this.ui.inventory.push(new Item({
       game: this.game, tile: item,
       x: INVENTORY_SLOTS[this.ui.inventory.length].x,
@@ -141,14 +146,19 @@ export default class extends Phaser.State {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
     this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
 
-    if(this.game.input.activePointer.isDown){
-      let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
-        Math.floor(this.game.input.activePointer.worldY / this.tilemap.tileHeight));
-      let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
-      let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
-        this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
-      this.player.setListOfTargets(targets, this.tilemap.tileWidth, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY);
-      this.game.input.activePointer.reset();
+    let pointer = this.game.input.activePointer;
+    if(pointer && (pointer.isMouse && pointer.leftButton.isDown) || (pointer.isDown)) {
+      let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
+        Math.floor(pointer.worldY / this.tilemap.tileHeight));
+
+      if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
+        let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
+        let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+          this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
+        this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
+      }
+
+      pointer.reset();
     }
 
   }
