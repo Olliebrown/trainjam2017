@@ -2,23 +2,36 @@
 import Phaser from 'phaser'
 //import Glow from '../filters/Glow'
 
-export class Item extends Phaser.Sprite {
+export class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, indeces, name, description, powerTier, invIndex }) {
-    if(!x || !y) {
+  constructor ({ game, x, y, indices, name, description, powerTier, invIndex }) {
+
+    // Should this be a button using an inventory slot
+    if((!x || !y) && invIndex !== null) {
       x = Item.INVENTORY_SLOTS[invIndex].x
       y = Item.INVENTORY_SLOTS[invIndex].y
     }
-    super(game, x, y, 0)
+
+    // Initialize empty Group as container
+    super(game, null, 'ItemBtnGroup', false);
+
+    // Initialize base properties
+    this.game = game
+    this.inMicrowave = false
+
+    this.name = name
+    this.description = description
+    this.powerTier = powerTier
 
     this.baseX = x
     this.baseY = y
 
     this.sprites = []
-    this.indeces = indeces
+    this.indices = indices
 
-    for(let i=0; i<indeces.length; i++) {
-      let sprite = new Phaser.Sprite(game, 0, 0, 'sewer-sprites', indeces[i] - 1)
+    // Make sprite(s)
+    for(let i=0; i<indices.length; i++) {
+      let sprite = new Phaser.Sprite(game, x, y, 'sewer-sprites', indices[i])
       sprite.anchor.set(0.5, 0.5)
       sprite.scale.setTo(0.45, 0.45)
       this.game.physics.arcade.enable(sprite)
@@ -27,9 +40,10 @@ export class Item extends Phaser.Sprite {
       this.addChild(sprite)
     }
 
-    if(invIndex) {
+    // Make inventory button
+    if(invIndex !== null) {
       // Make close button
-      this.closeBtn = this.game.add.button(20, -40, 'close-btn-sheet',
+      this.closeBtn = this.game.add.button(x + 20, y - 40, 'close-btn-sheet',
             onBtnClose, this, 2, 0, 1, 0)
       this.closeBtn.scale.set(0.333)
       this.closeBtn.fixedToCamera = true
@@ -38,22 +52,14 @@ export class Item extends Phaser.Sprite {
       // Make index number
       if(invIndex != null) {
         this.invIndex = invIndex
-        this.number = this.game.add.text(-40, -15, invIndex,
+        this.number = this.game.add.text(x - 40, y - 15, invIndex,
           { font: 'Courier', fontSize: 24 })
         this.number.fixedToCamera = true
         this.addChild(this.number)
       }
     }
 
-    this.game = game
-    this.inMicrowave = false
-
-    this.name = name
-    this.description = description
-    this.powerTier = powerTier
     // this.filters = [ new Glow(game) ]
-
-    // console.info('Picked up ' + this.name + ' with index ' + tile.index)
   }
 
   shiftUp() {
@@ -97,7 +103,7 @@ export class Item extends Phaser.Sprite {
   copy (x, y) {
     return new Item({
       game: this.game, x: x, y: y,
-      indeces: this.indeces, name: this.name,
+      indices: this.indices, name: this.name,
       description: this.description, invIndex: this.invIndex
     })
   }
@@ -105,7 +111,7 @@ export class Item extends Phaser.Sprite {
   copyDecriment (x, y) {
     return new Item({
       game: this.game, x: x, y: y,
-      indeces: this.indeces, name: this.name,
+      indices: this.indices, name: this.name,
       description: this.description, invIndex: this.invIndex-1
     })
   }
@@ -129,6 +135,7 @@ function onBtnClose(itmButton) {
 Item.INVENTORY_SLOTS = []
 Item.MAX_SLOTS = 8
 
+// Initialize static properties
 Item.init = (itemTileset) => {
 
   // Build inventory slot coordinates
@@ -163,20 +170,26 @@ Item.init = (itemTileset) => {
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
     Item.ITEM_BY_TILE_ID[Item.ITEM_ARRAY[i].tileID] = Item.ITEM_ARRAY[i]
   }
+
+  console.info(Item.TILE_INDEX_LIST)
+  console.info(Item.ITEM_BY_NAME)
+  console.info(Item.ITEM_BY_TILE_ID)
 };
 
-Item.makeFromName = (game, name, x, y) => {
+// Build a new Item from its name (as specified in the Tiled file)
+Item.makeFromName = ({ game, name, x, y, invIndex }) => {
   let item = Item.ITEM_BY_NAME[name]
   if(!item) { return null }
 
-  return new Item({ game, x, y, indices: [ item.tileID ],
+  return new Item({ game, x, y, invIndex, indices: [ item.tileID ],
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
-Item.makeFromID = (game, id, x, y) => {
+// Build a new Item from its ID (as specified in the Tiled file)
+Item.makeFromID = ({ game, id, x, y, invIndex }) => {
   let item = Item.ITEM_BY_TILE_ID[id]
   if(!item) { return null }
 
-  return new Item({ game, x, y, indices: [ item.tileID ],
+  return new Item({ game, x, y, invIndex, indices: [ item.tileID ],
     name: item.name, description: item.description, powerTier: item.powerTier })
 }

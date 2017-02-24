@@ -87,6 +87,22 @@ export default class extends Phaser.State {
     // this.triggerCatwalkIntro()
   }
 
+  makeTestInventory() {
+    for(let i = 0; i<8; i++) {
+      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i]-1, invIndex: i })
+      this.game.ui.inventory.push(newItem)
+      this.game.ui.uiLayer.add(newItem)
+    }
+  }
+
+  makeTestInventory2() {
+    for(let i = 0; i<8; i++) {
+      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i+7]-1, invIndex: i })
+      this.game.ui.inventory.push(newItem)
+      this.game.ui.uiLayer.add(newItem)
+    }
+  }
+
   showOverlay() {
     var bm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
     bm_data.ctx.beginPath()
@@ -128,7 +144,7 @@ export default class extends Phaser.State {
 
     let invIndex = this.game.ui.inventory.length
     let newItem = new Item({
-      game: this.game, indeces: [item.index], invIndex: invIndex,
+      game: this.game, indices: [item.index], invIndex: invIndex,
       name: item.properties.name, description: item.properties.description
     })
 
