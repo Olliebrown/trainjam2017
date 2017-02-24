@@ -2,16 +2,24 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import {EnemyTrigger, Enemy} from '../sprites/Enemy'
-import { Item } from '../sprites/Item'
+import Item from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
 const PLAYER_SPEED = 100
 
+const INVENTORY_MAX = 8
 const INVENTORY_SLOTS = []
 
+const STATES = {
+  main: 1,
+  choosingItem: 2
+}
+
 export default class extends Phaser.State {
-  init () {}
+  init () {
+    this.state = STATES.main
+  }
   preload () {}
 
   create () {
@@ -78,8 +86,30 @@ export default class extends Phaser.State {
 
     this.ui = this.makeUI()
 
+    this.overlay = this.game.add.group()
+    // this.overlay.fixedToCamera = true
+
     // camera
     this.game.camera.follow(this.player)
+
+
+  }
+
+  showOverlay() {
+    var width = this.game.width - 20
+    var height = this.game.height - 20
+    var bm_data = this.game.add.bitmapData(width, height)
+    bm_data.ctx.beginPath()
+    bm_data.ctx.rect(0, 0, width, height)
+    bm_data.ctx.fillStyle = '#111111'
+    bm_data.ctx.fill()
+    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, bm_data)
+    overlay_bg.fixedToCamera = true
+    this.overlay.add(overlay_bg)
+  }
+
+  hideOverlay() {
+    this.overlay.removeAll()
   }
 
   createEnemyTriggers() {
@@ -100,13 +130,18 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
+    if(this.ui.inventory.length >= INVENTORY_MAX) {
+      return;
+    }
+
     this.ui.inventory.push(new Item({
-      game: this.game, tile: item,
+      game: this.game, indeces: [item.index],
+      name: item.properties.name, description: item.properties.description,
       x: INVENTORY_SLOTS[this.ui.inventory.length].x,
       y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
 
-    this.game.add.existing(this.ui.inventory[this.ui.inventory.length-1])
+    this.ui.drawer.add(this.ui.inventory[this.ui.inventory.length-1])
     this.tilemap.removeTile(item.x, item.y, 'interact')
   }
 
@@ -123,32 +158,55 @@ export default class extends Phaser.State {
   }
 
   makeUI() {
-    let drawer = this.game.add.sprite(this.game.width - 50, this.game.height / 2, 'drawer')
+    let ui_group = this.game.add.group()
+    let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
+    ui_group.add(drawer)
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
     return {
-      drawer: drawer,
+      drawer: ui_group,
       inventory: []
     }
   }
 
-  triggerCatwalk (player, enemy) {
-    console.log("player", player)
-    console.log("enemy", enemy)
+  triggerItemChoice (player, enemy) {
+    if (this.state == STATES.main) {
+      console.log("triggering item choice")
+      this.state = STATES.choosingItem
+      this.showOverlay()
+      var itemGroup = this.game.add.group()
+      for (var i in this.ui.inventory) {
+        var item = this.ui.inventory[i]
+        var new_item = item.copy(i * item.width, 400)
+        new_item.scale.setTo(2)
+        itemGroup.add(new_item)
+      }
+      var x_offset = (this.game.width - itemGroup.width) / 2
+      var y_offset = (this.game.height - itemGroup.height) / 2
+      itemGroup.x = x_offset
+      itemGroup.y = y_offset
+      this.overlay.add(itemGroup)
+    }
   }
 
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
 
-    if(this.game.input.activePointer.isDown){
-      let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
-        Math.floor(this.game.input.activePointer.worldY / this.tilemap.tileHeight));
-      let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
-      let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
-        this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
-      this.player.setListOfTargets(targets, this.tilemap.tileWidth, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY);
-      this.game.input.activePointer.reset();
+    let pointer = this.game.input.activePointer;
+    if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||
+                  (!pointer.isMouse && pointer.isDown)) {
+      let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
+        Math.floor(pointer.worldY / this.tilemap.tileHeight));
+
+      if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
+        let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
+        let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+          this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
+        this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
+      }
+
+      pointer.reset();
     }
 
   }

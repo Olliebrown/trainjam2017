@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import Item from '../sprites/Item'
-import CombinedItem from '../sprites/CombinedItem'
 import XButton from '../sprites/XButton'
 import LaunchMicrowave from '../sprites/LaunchMicrowave'
 
