@@ -2,6 +2,7 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import {Item, ITEM_FRAMES} from '../sprites/Item'
+import Pathfinder from '../ai/Pathfinder'
 import {setResponsiveWidth} from '../utils'
 
 const PLAYER_SPEED = 200
@@ -31,6 +32,9 @@ export default class extends Phaser.State {
     this.enemy_spawns_layer.visible = false
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
+
+    this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height);
+
     this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
     this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
 
@@ -82,19 +86,18 @@ export default class extends Phaser.State {
   }
 
   update () {
-    this.game.physics.arcade.collide(this.player, this.sewer_layer)
     this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
     this.game.physics.arcade.collide(this.player, this.interact_layer)
 
-    if (this.keys.left.isDown) {
-      this.player.body.velocity.x = -PLAYER_SPEED
-    } else if (this.keys.right.isDown) {
-      this.player.body.velocity.x = PLAYER_SPEED
-    } else if (this.keys.up.isDown) {
-      this.player.body.velocity.y = -PLAYER_SPEED
-    } else if (this.keys.down.isDown) {
-      this.player.body.velocity.y = PLAYER_SPEED
+    if(this.game.input.activePointer.isDown){
+      let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
+        Math.floor(this.game.input.activePointer.worldY / this.tilemap.tileHeight));
+      let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
+      let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+        this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
+      this.player.setListOfTargets(targets, this.tilemap.tileWidth);
     }
+
   }
 
   render () {
