@@ -62,12 +62,78 @@
          "tileheight":128,
          "tileproperties":
             {
+             "0":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "1":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "10":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "11":
+                {
+                 "collidable":false,
+                 "description":"An old empty can with sharp edges and a sticky residue.",
+                 "isItem":true,
+                 "name":"Empty Tin Can"
+                },
+             "12":
+                {
+                 "collidable":false,
+                 "description":"It's razor sharp! What could possibly go wrong ...",
+                 "isItem":true,
+                 "name":"Ninja Star"
+                },
+             "13":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "14":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "15":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "16":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "17":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "18":
+                {
+                 "collidable":false,
+                 "description":"Keep away from small children and zombies.",
+                 "isItem":true,
+                 "name":"Plastic Bag"
+                },
              "19":
                 {
                  "collidable":false,
                  "description":"",
                  "isItem":true,
-                 "name":"K-Cup"
+                 "name":"Used K-Cup"
+                },
+             "2":
+                {
+                 "collidable":false,
+                 "isItem":false
                 },
              "20":
                 {
@@ -93,12 +159,12 @@
                 },
              "24":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "25":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "26":
@@ -125,6 +191,11 @@
                  "collidable":false,
                  "isItem":false
                 },
+             "3":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
              "30":
                 {
                  "collidable":false,
@@ -137,12 +208,12 @@
                 },
              "32":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "33":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "34":
@@ -179,14 +250,19 @@
                  "collidable":false,
                  "isItem":false
                 },
+             "4":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
              "40":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "41":
                 {
-                 "collidable":true,
+                 "collidable":false,
                  "isItem":false
                 },
              "42":
@@ -229,6 +305,11 @@
                  "isItem":false
                 },
              "49":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "5":
                 {
                  "collidable":false,
                  "isItem":false
@@ -289,6 +370,11 @@
                  "isItem":true,
                  "name":"Cell Phone"
                 },
+             "6":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
              "60":
                 {
                  "collidable":false,
@@ -308,16 +394,97 @@
                 {
                  "collidable":false,
                  "isItem":false
+                },
+             "7":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "8":
+                {
+                 "collidable":false,
+                 "isItem":false
+                },
+             "9":
+                {
+                 "collidable":false,
+                 "isItem":false
                 }
             },
          "tilepropertytypes":
             {
+             "0":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "1":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "10":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "11":
+                {
+                 "collidable":"bool",
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "12":
+                {
+                 "collidable":"bool",
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "13":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "14":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "15":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "16":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "17":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "18":
+                {
+                 "collidable":"bool",
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
+                },
              "19":
                 {
                  "collidable":"bool",
                  "description":"string",
                  "isItem":"bool",
                  "name":"string"
+                },
+             "2":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
                 },
              "20":
                 {
@@ -371,6 +538,11 @@
                  "isItem":"bool"
                 },
              "29":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "3":
                 {
                  "collidable":"bool",
                  "isItem":"bool"
@@ -429,6 +601,11 @@
                  "collidable":"bool",
                  "isItem":"bool"
                 },
+             "4":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
              "40":
                 {
                  "collidable":"bool",
@@ -479,6 +656,11 @@
                  "isItem":"bool"
                 },
              "49":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "5":
                 {
                  "collidable":"bool",
                  "isItem":"bool"
@@ -539,6 +721,11 @@
                  "isItem":"bool",
                  "name":"string"
                 },
+             "6":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
              "60":
                 {
                  "collidable":"bool",
@@ -555,6 +742,21 @@
                  "isItem":"bool"
                 },
              "63":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "7":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "8":
+                {
+                 "collidable":"bool",
+                 "isItem":"bool"
+                },
+             "9":
                 {
                  "collidable":"bool",
                  "isItem":"bool"
@@ -576,7 +778,6 @@
          "tilewidth":128
         }],
  "tilewidth":128,
- "type":"map",
  "version":1,
  "width":60
 }
