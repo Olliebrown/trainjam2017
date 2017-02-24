@@ -162,6 +162,8 @@ export default class extends Phaser.State {
   makeUI() {
     let ui_group = this.game.add.group()
     let drawer = new Phaser.Sprite(this.game, this.game.width - 50, this.game.height / 2, 'drawer')
+    this.HUD = drawer;
+    this.game.physics.arcade.enable(drawer);
     ui_group.add(drawer)
     centerGameObjects([drawer])
     let microwave = new MicrowaveCrafting(this.game)
@@ -243,8 +245,8 @@ export default class extends Phaser.State {
     this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkIntro, null, this)
 
     let pointer = this.game.input.activePointer;
-    if(pointer && !this.game.ui.microwave.alive && (pointer.isMouse && pointer.leftButton.isDown) ||
-                  (!pointer.isMouse && pointer.isDown)) {
+    if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
+      (pointer.isMouse && pointer.leftButton.isDown) || (!pointer.isMouse && pointer.isDown)) {
       let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
         Math.floor(pointer.worldY / this.tilemap.tileHeight));
 
