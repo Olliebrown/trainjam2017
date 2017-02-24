@@ -164,7 +164,8 @@ export default class extends Phaser.State {
     this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
 
     let pointer = this.game.input.activePointer;
-    if(pointer && (pointer.isMouse && pointer.leftButton.isDown) || (pointer.isDown)) {
+    if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||
+                  (!pointer.isMouse && pointer.isDown)) {
       let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
         Math.floor(pointer.worldY / this.tilemap.tileHeight));
 
