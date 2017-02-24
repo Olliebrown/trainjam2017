@@ -11,6 +11,9 @@ const PLAYER_SPEED = 100
 const INVENTORY_MAX = 8
 const INVENTORY_SLOTS = []
 
+const OVERLAY_WIDTH = 1600
+const OVERLAY_HEIGHT = 900
+
 const STATES = {
   main: 1,
   choosingItem: 2
@@ -90,17 +93,19 @@ export default class extends Phaser.State {
 
     // camera
     this.game.camera.follow(this.player)
+
+    // this.triggerCatwalkIntro()
   }
 
   showOverlay() {
-    var width = this.game.width - 20
-    var height = this.game.height - 20
-    var bm_data = this.game.add.bitmapData(width, height)
+    var bm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
     bm_data.ctx.beginPath()
-    bm_data.ctx.rect(0, 0, width, height)
+    bm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
     bm_data.ctx.fillStyle = '#111111'
     bm_data.ctx.fill()
-    var overlay_bg = new Phaser.Sprite(this.game, 10, 10, bm_data)
+    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
+    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
+    var overlay_bg = new Phaser.Sprite(this.game, x_offset, y_offset, bm_data)
     overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
   }
@@ -161,6 +166,7 @@ export default class extends Phaser.State {
     ui_group.add(drawer)
     centerGameObjects([drawer])
     drawer.fixedToCamera = true
+
     return {
       drawer: ui_group,
       inventory: []
@@ -197,9 +203,42 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalkIntro () {
+    if (this.state == STATES.main) {
+      this.state = STATES.catwalkIntro
+      this.hideOverlay()
+      this.showOverlay()
+
+      var grad = new Phaser.Sprite(this.game, 0, 0, 'catwalk-intro-gradient')
+      grad.anchor.setTo(0.5)
+      grad.x = this.game.width / 2
+      grad.y = this.game.height / 2
+      grad.fixedToCamera = true
+      this.overlay.add(grad)
+
+      var strip = new Phaser.Sprite(this.game, -100, -100, 'catwalk-intro-strip')
+      strip.anchor.setTo(0.5)
+      var target_x = this.game.width / 2
+      console.log(target_x)
+      // strip.y = this.game.height / 2
+      strip.fixedToCamera = true
+      this.overlay.add(strip)
+
+      // var strip_tween = this.game.add.tween(strip)
+
+      // this.intween = strip_tween.to(
+      //   { x: target_x },
+      //   4000, Phaser.Easing.Bounce.Out, true)
+
+
+      // window.strip = strip_tween
+
+    }
+  }
+
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkIntro, null, this)
 
     let pointer = this.game.input.activePointer;
     if(pointer && (pointer.isMouse && pointer.leftButton.isDown) ||
