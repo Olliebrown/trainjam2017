@@ -165,7 +165,8 @@ export default class extends Phaser.State {
     drawer.fixedToCamera = true
     return {
       drawer: ui_group,
-      inventory: []
+      inventory: [],
+      microwave: null
     }
   }
 
