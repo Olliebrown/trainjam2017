@@ -19,15 +19,26 @@ export class EnemyTrigger extends Phaser.Sprite {
   constructor ({ game, x, y, player, enemy_group}) {
     super(game, x, y, 'trigger', 10)
     this.game = game
+    this.x = this.x + this.width / 2
+    this.y = this.y + this.height / 2
     this.player = player
+    this.anchor.setTo(0.5)
     this.active = false
     this.enemy_group = enemy_group
   }
 
+  checkOverlap(player, trigger) {
+    var distance = this.game.physics.arcade.distanceBetween(player, trigger)
+    if (distance < 10) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   update () {
-    if (this.game.physics.arcade.overlap(this.player, this)) {
+    if (this.game.physics.arcade.overlap(this.player, this, null, this.checkOverlap, this)) {
       if (!this.active) {
-        console.log("ho")
         if (Math.random() > 0.5) {
           this.spawnEnemy()
         }
@@ -39,12 +50,12 @@ export class EnemyTrigger extends Phaser.Sprite {
   }
 
   spawnEnemy () {
-    console.log("spawnEnemy")
     var enemy = new Enemy({
       game: this.game,
       x: this.x,
       y: this.y
     })
+    enemy.y = enemy.y - enemy.height
     this.enemy_group.add(enemy)
   }
 }

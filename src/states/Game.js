@@ -117,8 +117,14 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalk (player, enemy) {
+    console.log("player", player)
+    console.log("enemy", enemy)
+  }
+
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
 
     if(this.game.input.activePointer.isDown){
       let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
