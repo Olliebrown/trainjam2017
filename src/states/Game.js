@@ -70,7 +70,7 @@ export default class extends Phaser.State {
     this.player = new Player({
       game: this.game,
       x: 512,
-      y: 512
+      y: this.tilemap.heightInPixels - 256
     })
 
 
@@ -174,14 +174,24 @@ export default class extends Phaser.State {
       this.state = STATES.choosingItem
       this.showOverlay()
       var itemGroup = this.game.add.group()
+      var item_width = 0
       for (var i in this.ui.inventory) {
         var item = this.ui.inventory[i]
-        var new_item = item.copy(i * item.width, 400)
-        new_item.scale.setTo(2)
+        var new_item = item.copy(0, 0)
+        new_item.scale.setTo(1.5)
+        item_width = new_item.width
         itemGroup.add(new_item)
       }
-      var x_offset = (this.game.width - itemGroup.width) / 2
+      var selection_width = item_width * itemGroup.children.length
+      var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
+
+      for (var i in itemGroup.children) {
+        console.log("doing the thing")
+        var item = itemGroup.children[i]
+        item.x = i * item.width
+      }
+      console.log(itemGroup.children)
       itemGroup.x = x_offset
       itemGroup.y = y_offset
       this.overlay.add(itemGroup)
