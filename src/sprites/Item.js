@@ -8,7 +8,6 @@ export class Item extends Phaser.Sprite {
 
     this.game = game
     this.anchor.setTo(0.5, 0.5)
-    this.fixedToCamera = true
     this.scale.setTo(0.45, 0.45)
     this.game.physics.arcade.enable(this)
     this.inMicrowave = false
@@ -31,14 +30,25 @@ export class Item extends Phaser.Sprite {
 
 export class ItemButton extends Phaser.Group {
 
-  constructor({ game, x, y, index }) {
+  constructor({ game, x, y, index, itemTile }) {
     super(game)
+    this.game = game
 
-    let closeBtn = game.make.Button(game, x, y, 'close-btn-sheet', this, this.onClose, 2, 0, 1, 0)
+    this.item = new Item({ game, x, y, tile: itemTile })
+    this.add(this.item)
+
+    let closeBtn = this.game.add.button(x + 20, y - 40, 'close-btn-sheet',
+      onBtnClose, this, 2, 0, 1, 0, this)
+    closeBtn.scale.set(0.333)
     this.add(closeBtn)
 
-    let number = game.make.text(game, x, y, index, { font: 'Courier' })
+    let number = this.game.add.text(x - 40, y - 15, index, { font: 'Courier', fontSize: 24 }, this)
     this.add(number)
-  }
 
+    this.fixedToCamera = true;
+  }
+}
+
+function onBtnClose(button, group) {
+  console.info('Close button Clicked')
 }

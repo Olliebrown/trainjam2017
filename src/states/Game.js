@@ -1,8 +1,8 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import {EnemyTrigger, Enemy} from '../sprites/Enemy'
-import Item from '../sprites/Item'
+import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { Item, ItemButton } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
@@ -66,7 +66,6 @@ export default class extends Phaser.State {
       y: 512
     })
 
-
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
     this.enemies = new Phaser.Group(this.game)
     this.createEnemyTriggers()
@@ -121,8 +120,8 @@ export default class extends Phaser.State {
       return;
     }
 
-    this.ui.inventory.push(new Item({
-      game: this.game, tile: item,
+    this.ui.inventory.push(new ItemButton({
+      game: this.game, itemTile: item, index: this.ui.inventory.length,
       x: INVENTORY_SLOTS[this.ui.inventory.length].x,
       y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
