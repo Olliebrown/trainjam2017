@@ -2,7 +2,7 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import { EnemyTrigger, Enemy } from '../sprites/Enemy'
-import { Item, ItemButton } from '../sprites/Item'
+import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
@@ -131,11 +131,11 @@ export default class extends Phaser.State {
       return;
     }
 
-    this.ui.inventory.push(new Item({
+    this.game.ui.inventory.push(new Item({
       game: this.game, indeces: [item.index],
       name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[this.ui.inventory.length].x,
-      y: INVENTORY_SLOTS[this.ui.inventory.length].y,
+      x: INVENTORY_SLOTS[this.game.ui.inventory.length].x,
+      y: INVENTORY_SLOTS[this.game.ui.inventory.length].y,
     }))
 
     let newItem = this.game.ui.inventory[this.game.ui.inventory.length-1]
