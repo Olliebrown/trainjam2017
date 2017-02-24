@@ -135,7 +135,8 @@ export default class extends Phaser.State {
     }
 
     this.ui.inventory.push(new Item({
-      game: this.game, tile: item,
+      game: this.game, indeces: [item.index],
+      name: item.properties.name, description: item.properties.description,
       x: INVENTORY_SLOTS[this.ui.inventory.length].x,
       y: INVENTORY_SLOTS[this.ui.inventory.length].y,
     }))
