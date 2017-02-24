@@ -15,7 +15,7 @@ export default class extends Phaser.Sprite {
 
     this.name = tile.properties.name
     this.description = tile.properties.description
-    this.filters = [ new Glow(game) ]
+    // this.filters = [ new Glow(game) ]
 
     console.info('Picked up ' + this.name + ' with index ' + tile.index)
   }
