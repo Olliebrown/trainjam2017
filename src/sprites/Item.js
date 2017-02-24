@@ -14,9 +14,16 @@ export default class extends Phaser.Sprite {
     this.description = tile.properties.description
 
     console.info('Picked up ' + this.name + ' with index ' + tile.index)
+    this.anchor.setTo(0.5)
+    this.game.physics.arcade.enable(this)
+    this.inMicrowave = false;
   }
 
   update () {
+  }
+
+  mouseOn(x, y){
+    return this.body.hitTest(x, y);
   }
 
 }

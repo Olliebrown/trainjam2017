@@ -741,9 +741,9 @@
         {
          "columns":8,
          "firstgid":65,
-         "image":"..\/images\/player.png",
-         "imageheight":1024,
-         "imagewidth":1024,
+         "image":"..\/images\/trigger.png",
+         "imageheight":128,
+         "imagewidth":128,
          "margin":0,
          "name":"triggers",
          "spacing":0,
@@ -752,6 +752,7 @@
          "tilewidth":128
         }],
  "tilewidth":128,
+ "type":"map",
  "version":1,
  "width":20
 }

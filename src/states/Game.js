@@ -1,11 +1,12 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import Item from '../sprites/Item'
+import {EnemyTrigger, Enemy} from '../sprites/Enemy'
+import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
-const PLAYER_SPEED = 200
+const PLAYER_SPEED = 100
 
 const INVENTORY_SLOTS = []
 
@@ -29,7 +30,7 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
-    this.tilemap.addTilesetImage('triggers', 'player')
+
 
     this.itemIndexList = this.makeItemList();
 
@@ -40,10 +41,11 @@ export default class extends Phaser.State {
     this.enemy_spawns_layer.visible = false
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
+    this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
 
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
 
-    this.tilemap.setTileIndexCallback([65], this.generateEnemy, this, 'enemy_spawns')
+    this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
     this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
 
     this.musicIntro = this.game.add.audio('BGM-intro')
@@ -63,6 +65,12 @@ export default class extends Phaser.State {
       y: 512
     })
 
+
+    this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.enemies = new Phaser.Group(this.game)
+    this.createEnemyTriggers()
+
+
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
 
@@ -74,8 +82,21 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
   }
 
-  generateEnemy () {
-    console.info('Generating enemy?')
+  createEnemyTriggers() {
+    var tiles = this.enemy_spawns_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
+    for (var t in tiles) {
+      var tile = tiles[t]
+      if (tile.canCollide) {
+        var trigger = new EnemyTrigger({
+          game: this.game,
+          x: tile.x * tile.width,
+          y: tile.y * tile.height,
+          player: this.player,
+          enemy_group: this.enemies
+        })
+        this.enemy_spawns_triggers.add(trigger)
+      }
+    }
   }
 
   itemTrigger (player, item) {
@@ -111,9 +132,14 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalk (player, enemy) {
+    console.log("player", player)
+    console.log("enemy", enemy)
+  }
+
   update () {
-    this.game.physics.arcade.collide(this.player, this.enemy_spawns_layer)
     this.game.physics.arcade.collide(this.player, this.interact_layer)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalk, null, this)
 
     if(this.game.input.activePointer.isDown){
       let mousePoint = new Phaser.Point(Math.floor(this.game.input.activePointer.worldX / this.tilemap.tileWidth),
@@ -121,7 +147,8 @@ export default class extends Phaser.State {
       let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
       let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
         this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
-      this.player.setListOfTargets(targets, this.tilemap.tileWidth);
+      this.player.setListOfTargets(targets, this.tilemap.tileWidth, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY);
+      this.game.input.activePointer.reset();
     }
 
   }
