@@ -23,6 +23,17 @@ export default class extends Phaser.State {
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
 
+    this.musicIntro = this.game.add.audio('BGM-intro')
+    this.musicLoop = this.game.add.audio('BGM-loop')
+    this.musicLoop.loop = true
+
+    let state = this
+    this.musicIntro.onStop.addOnce(() => {
+      state.musicLoop.play()
+    });
+
+    this.musicIntro.play()
+
     // player setup
     this.player = new Player({
       game: this.game,
@@ -32,7 +43,7 @@ export default class extends Phaser.State {
 
     this.keys = this.game.input.keyboard.createCursorKeys()
     this.keys.space = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
-    
+
 
     this.game.add.existing(this.player)
 
