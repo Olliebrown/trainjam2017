@@ -235,8 +235,6 @@ export default class extends Phaser.State {
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
-      var tier = enemy.pickItemPowerTier()
-
       var fontStyle = {
         font: 'bold 32px Arial',
         fill: '#fff',
@@ -261,7 +259,7 @@ export default class extends Phaser.State {
           game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
         })
 
-        new_item.setSelectionHandler(this, tier)
+        new_item.setSelectionHandler(this, enemy)
 
         this.overlay.add(new_item)
 
@@ -274,8 +272,9 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_indices, enemy_item_tier) {
+  triggerCatwalkIntro (player_item_indices, enemy) {
     if (this.state == STATES.choosingItem) {
+      var enemy_item_tier = enemy.pickItemPowerTier()
       this.state = STATES.catwalkIntro
       this.hideOverlay()
       this.showOverlay()
@@ -301,7 +300,7 @@ export default class extends Phaser.State {
       strip_tween.onComplete.add((function() {
         this.game.time.events.add(500, (function() {
           this.camera.shake()
-          this.triggerCatwalk(player_item_indices, enemy_item_tier)
+          this.triggerCatwalk(player_item_indices, enemy_item_tier, enemy)
         }), this)
       }), this)
 
@@ -332,7 +331,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalk (player_item_indices, enemy_item_tier) {
+  triggerCatwalk (player_item_indices, enemy_item_tier, enemy) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -413,15 +412,16 @@ export default class extends Phaser.State {
         outcome = 'lose'
       }
 
-      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome)}), this)
+      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, enemy)}), this)
 
     }
   }
 
-  endCatwalk(outcome) {
+  endCatwalk(outcome, enemy) {
     this.hideOverlay()
     this.state = STATES.main
     console.log("You " + outcome)
+    enemy.destroy()
   }
 
   triggerCatwalkStart(player, enemy) {
