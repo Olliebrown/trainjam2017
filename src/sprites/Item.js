@@ -80,13 +80,17 @@ export class Item extends Phaser.Group {
     this.closeBtn.visible = false
     this.number.visible = false
 
-    var itemDropTween = this.game.add.tween(this.sprites[0].cameraOffset).to(
-      { x: this.baseX, y: this.baseY }, 500, Phaser.Easing.Bounce.Out, true)
+    for(let i=0; i<this.sprites.length; i++){
+      var itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
+        { x: this.baseX, y: this.baseY }, 500, Phaser.Easing.Bounce.Out, true)
 
-    itemDropTween.onComplete.add(() => {
-      this.closeBtn.visible = true
-      this.number.visible = true
-    }, this)
+      if(i == 0){
+        itemDropTween.onComplete.add(() => {
+          this.closeBtn.visible = true
+          this.number.visible = true
+        }, this)
+      }
+    }
   }
 
   update () {
