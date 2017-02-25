@@ -50,8 +50,8 @@ export class Item extends Phaser.Group {
 
     // Build sprites
     shuffleArray(indices, this.game.rnd);
-    for(let i = 0; i<indices.length; i++){
-      if(this.game.rnd.realInRange(0, 1) < 0.05){
+    for(let i = 1; i<indices.length; i++){
+      if(this.game.rnd.realInRange(0, 1) < 0.1){
         let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
         indices.splice(i1, 1);
       }
