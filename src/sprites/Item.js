@@ -104,7 +104,7 @@ export class Item extends Phaser.Group {
     //this.number.visible = false
 
     for(let i=0; i<this.sprites.length; i++){
-      var itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
+      let itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
         { x: this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x,
           y: this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y}, 500, Phaser.Easing.Bounce.Out, true)
 
@@ -116,7 +116,8 @@ export class Item extends Phaser.Group {
       }
     }
     if(this.eyes != null){
-      var itemDropTween = this.game.add.tween(this.eyes.cameraOffset).to(
+      //let itemDropTween =
+      this.game.add.tween(this.eyes.cameraOffset).to(
         { x: this.baseX,y: this.baseY}, 500, Phaser.Easing.Bounce.Out, true)
     }
   }

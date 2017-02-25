@@ -1,13 +1,14 @@
 import Phaser from 'phaser'
 import { centerGameObjects, loadAudio } from '../utils'
+import { StartButton } from '../sprites/Buttons'
 
 export default class extends Phaser.State {
   init () {}
 
   preload () {
     this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')
-    this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 200, 'loaderBg')
-    this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 200, 'loaderBar')
+    this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
+    this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
     centerGameObjects([this.background, this.loaderBg, this.loaderBar])
 
     this.load.setPreloadSprite(this.loaderBar)
@@ -22,9 +23,8 @@ export default class extends Phaser.State {
 
     this.game.load.spritesheet('sewer-sprites', 'assets/images/sewer-tiles.png', 128, 128)
     this.game.load.spritesheet('item-sprites', 'assets/images/item-tiles.png', 128, 128)
-
-    this.game.load.spritesheet('slot-btn-sheet', 'assets/images/button-slot.png', 150, 125);
     this.game.load.spritesheet('start-btn-sheet', 'assets/images/button-start.png', 200, 100);
+    this.game.load.spritesheet('slot-btn-sheet', 'assets/images/button-slot.png', 150, 125);
     this.game.load.spritesheet('close-btn-sheet', 'assets/images/button-close.png', 100, 100)
 
     this.game.load.spritesheet('enemies', 'assets/images/enemies.png', 128, 128)
@@ -54,7 +54,21 @@ export default class extends Phaser.State {
   }
 
   create () {
-    this.state.start('Game')
+    this.loaderBg.visible = false
+    this.loaderBar.visible = false
+
+    let splash = this
+    let startButton = new StartButton(this.game, this.game.world.centerX,
+      this.game.world.centerY + 300, () => { splash.state.start('Game') })
+    let style = {fontSize:'36px', fill:'#ffffff'};
+    let startText = new Phaser.Text(this.game, startButton.x, startButton.y - 5,'Start', style);
+    startText.anchor.set(0.5);
+
+    this.add.existing(startButton)
+    this.add.existing(startText)
   }
 
+  moveOn() {
+
+  }
 }
