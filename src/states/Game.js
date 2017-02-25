@@ -105,23 +105,7 @@ export default class extends Phaser.State {
     this.game.ui = this.makeUI()
     this.overlay = this.game.add.group()
 
-    // this.makeTestInventory()
     // this.triggerCatwalkIntro()
-  }
-
-  makeTestInventory() {
-    for(let i = 0; i<8; i++) {
-      this.game.ui.inventory.push(Item.TILE_INDEX_LIST[i])
-    }
-    this.updateInventory()
-  }
-
-  makeTestInventory2() {
-    for(let i = 0; i<8; i++) {
-      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i+7]-1, invIndex: i })
-      this.game.ui.inventory.push(newItem)
-      this.game.ui.inventoryLayer.add(newItem)
-    }
   }
 
   showOverlay() {
@@ -155,24 +139,6 @@ export default class extends Phaser.State {
         tilemap: this.tilemap
       })
       this.enemy_spawns_triggers.push(trigger)
-    }
-  }
-
-  createEnemyTriggers() {
-    var tiles = this.slime_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
-    for (var t in tiles) {
-      var tile = tiles[t]
-      if (tile.index !== -1) {
-        var trigger = new EnemyTrigger({
-          game: this.game,
-          x: tile.x * tile.width,
-          y: tile.y * tile.height,
-          player: this.player,
-          enemy_group: this.enemies,
-          tilemap: this.tilemap
-        })
-        this.enemy_spawns_triggers.add(trigger)
-      }
     }
   }
 
