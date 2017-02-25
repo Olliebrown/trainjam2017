@@ -4,11 +4,15 @@ import Phaser from 'phaser'
 
 export class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, indices, name, description, powerTier, invIndex, animate }) {
+  constructor ({ game, x, y, scale, indices, name, description, powerTier, invIndex, animate }) {
 
     // Clean invIndex
     if(invIndex !== undefined) {
       invIndex = parseInt(invIndex)
+    }
+
+    if(scale === undefined) {
+      scale = 0.45
     }
 
     // Should this be a button using an inventory slot
@@ -34,9 +38,7 @@ export class Item extends Phaser.Group {
     this.sprites = []
     this.indices = indices
 
-    // Make sprite(s)
-
-    // Make sprite (should only ever be one)
+    // Pick starting positions
     if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
       x = Item.INVENTORY_START.x
       y = Item.INVENTORY_START.y
@@ -45,10 +47,14 @@ export class Item extends Phaser.Group {
       y = Item.INVENTORY_SLOTS[invIndex + 1].y
     }
 
+    // Build sprites
     for(let i=0; i<indices.length; i++) {
-      let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
-      sprite.anchor.set(0.5, 0.5)
-      sprite.scale.setTo(0.45, 0.45)
+      let sprite = new Phaser.Sprite(game,
+        x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
+        y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y,
+        'item-sprites', indices[i])
+      sprite.anchor.set(0.5)
+      sprite.scale.setTo(scale)
       sprite.inputEnabled = true
       this.game.physics.arcade.enable(sprite)
       sprite.fixedToCamera = true
@@ -84,7 +90,8 @@ export class Item extends Phaser.Group {
 
     for(let i=0; i<this.sprites.length; i++){
       var itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
-        { x: this.baseX, y: this.baseY }, 500, Phaser.Easing.Bounce.Out, true)
+        { x: this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x,
+          y: this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y}, 500, Phaser.Easing.Bounce.Out, true)
 
       if(i == 0){
         itemDropTween.onComplete.add(() => {
@@ -96,24 +103,51 @@ export class Item extends Phaser.Group {
   }
 
   update () {
-    for(let i=0; i<this.sprites.length; i++){
-      if(this.inMicrowave){
+    if(this.inMicrowave) {
+      for(let i=0; i<this.sprites.length; i++) {
         this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
           (this.game.ui.microwave.getInventoryIndex(this) -
-          this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width;
-        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20;
-      }
-      else{
-        this.sprites[i].cameraOffset.x = this.baseX;
-        this.sprites[i].cameraOffset.y = this.baseY;
+           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+
+        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
 
+      if(this.invIndex !== undefined) {
+        this.closeBtn.visible = false
+        this.number.visible = false
+      }
+    } else {
+      for(let i=0; i<this.sprites.length; i++) {
+        this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+        this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
+      }
+
+      if(this.invIndex !== undefined) {
+        this.closeBtn.visible = true
+        this.number.visible = true
+      }
     }
   }
 
-  mouseOn(x, y){
+  setMouseDown(onDown, context) {
+    for(let i in this.sprites) {
+      this.sprites[i].events.onInputDown.add(onDown, context)
+    }
+  }
+
+  makeTween({ startX, startY, finalLoc, time, easing, autostart }) {
+    for(let i=0; i<this.sprites.length; i++) {
+      if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
+      if(startY !== undefined) this.sprites[i].cameraOffset.y = startY
+
+      this.game.add.tween(this.sprites[i].cameraOffset).to(
+        finalLoc, time, easing, autostart)
+    }
+  }
+
+  mouseOn(x, y) {
     let hitted = false;
-    for(let i=0; i<this.sprites.length; i++){
+    for(let i=0; i<this.sprites.length; i++) {
       if(this.game.math.distance(x, y, this.sprites[i].cameraOffset.x, this.sprites[i].cameraOffset.y) < this.sprites[i].width){
         hitted = true;
       }
@@ -161,6 +195,12 @@ Item.init = (itemTileset) => {
     )
   }
 
+  Item.COMBINED_LOCATIONS = [
+    [new Phaser.Point(0, 0)],
+    [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
+    [new Phaser.Point(0, -10), new Phaser.Point(10, 10), new Phaser.Point(-10, 10)],
+    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10)]];
+
   // Start at the top of the inventory
   Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
 
@@ -183,10 +223,13 @@ Item.init = (itemTileset) => {
   });
 
   // Build reverse lookup arrays
+  Item.FRAME_2_GLOBAL = {}
   Item.ITEM_BY_NAME = {}
   Item.ITEM_BY_GLOBAL_ID = {}
   Item.ITEM_BY_POWER_TIER = {}
+
   for(let i in Item.ITEM_ARRAY) {
+    Item.FRAME_2_GLOBAL[Item.ITEM_ARRAY[i].frameID] = Item.ITEM_ARRAY[i].globalID
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
     Item.ITEM_BY_GLOBAL_ID[Item.ITEM_ARRAY[i].globalID] = Item.ITEM_ARRAY[i]
 
@@ -198,31 +241,43 @@ Item.init = (itemTileset) => {
 }
 
 // Build a new Item from its name (as specified in the Tiled file)
-Item.makeFromName = ({ game, name, x, y, invIndex, animate }) => {
+Item.makeFromName = ({ game, name, x, y, invIndex, animate, scale }) => {
   let item = Item.ITEM_BY_NAME[name]
   if(item === undefined) {
     console.error(`Unknown item name (${name})`)
     return null
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.tileID ], animate,
+  return new Item({ game, x, y, invIndex, indices: [ item.tileID ], animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
+Item.convertFrameToGlobal = (frameIDs) => {
+  let globalIDs = []
+  for(let i in frameIDs) {
+    globalIDs.push(Item.FRAME_2_GLOBAL[frameIDs[i]])
+  }
+  return globalIDs
+}
+
 // Build a new Item from its ID (as specified in the Tiled file)
-Item.makeFromGlobalID = ({ game, id, x, y, invIndex, animate }) => {
-  let item = Item.ITEM_BY_GLOBAL_ID[id]
-  if(item === undefined) {
-    console.error(`Unknown item global ID (${id})`)
-    return null
+Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => {
+  let item, indices = []
+  for(let i in idArray) {
+    item = Item.ITEM_BY_GLOBAL_ID[idArray[i]]
+    if(item === undefined) {
+      console.error(`Unknown item global ID (${idArray[i]})`)
+      return null
+    }
+    indices.push(item.frameID)
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate,
+  return new Item({ game, x, y, invIndex, indices, animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
 // Build a new Item from its power-tier plus an index
-Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate }) => {
+Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, scale }) => {
   if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
     console.error(`Unknown item power tier (${powerTier})`)
     return null
@@ -235,6 +290,6 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate }) =
     return null
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate,
+  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }

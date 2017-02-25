@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import { EnemyTrigger } from '../sprites/Enemy'
+import { Microwave } from '../sprites/Microwave'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
@@ -15,6 +16,7 @@ const STATES = {
   choosingItem: 3,
   catwalkIntro: 4,
   catwalk: 5,
+  microwaving: 6
 }
 
 export default class extends Phaser.State {
@@ -56,11 +58,15 @@ export default class extends Phaser.State {
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
     this.slime_layer = this.tilemap.createLayer('slime')
-    this.object_layer = this.tilemap.objects.object_spawns;
+    this.enemy_layer = this.tilemap.objects.object_spawns;
+    this.microwave_layer = this.tilemap.objects.microwaves;
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
     this.tilemap.setTileIndexCallback(Item.TILE_INDEX_LIST, this.itemTrigger, this, 'interact')
+
+    // Make the microwave sprites
+    this.createMicrowaves()
 
     // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
@@ -78,7 +84,7 @@ export default class extends Phaser.State {
       state.musicLoop.play()
     });
 
-    this.musicIntro.play()
+    // this.musicIntro.play()
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
@@ -93,7 +99,7 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
 
     // Setup enemy spawn triggers
-    this.enemy_spawns_triggers = [] //new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.enemy_spawns_triggers = []
     this.enemies = new Phaser.Group(this.game)
     this.createEnemyObjectTriggers()
 
@@ -140,7 +146,7 @@ export default class extends Phaser.State {
   }
 
   createEnemyObjectTriggers() {
-    let objects = this.object_layer
+    let objects = this.enemy_layer
     for (let i in objects) {
       let o = objects[i]
       let trigger = new EnemyTrigger({
@@ -155,6 +161,26 @@ export default class extends Phaser.State {
     }
   }
 
+  createMicrowaves() {
+    let mwaves = this.microwave_layer
+    for (let i in mwaves) {
+      let m = mwaves[i]
+      let newMicrowave = new Microwave({
+        game: this.game,
+        x: m.x + m.width/2,
+        y: m.y + m.height/2
+      })
+
+      newMicrowave.events.onInputDown.add(() => {
+        this.game.ui.microwave.alive = true
+        this.game.ui.microwave.visible = true
+        this.state = STATES.microwaving
+      }, this)
+
+      this.game.add.existing(newMicrowave)
+    }
+  }
+
   itemTrigger (player, item) {
     if(this.game.ui.inventory.length >= Item.INVENTORY_MAX) {
       if(this.game.lastItem.x != item.x && this.game.lastItem.y) {
@@ -165,7 +191,7 @@ export default class extends Phaser.State {
     }
 
     this.tilemap.removeTile(item.x, item.y, 'interact')
-    this.game.ui.inventory.push(item.index)
+    this.game.ui.inventory.push([item.index])
     this.game.sounds.play('item_pickup', 1)
     this.updateInventory()
   }
@@ -225,21 +251,24 @@ export default class extends Phaser.State {
 
       var itemGroup = this.game.add.group()
       itemGroup.fixedToCamera = true
-      var item_width = 0
-      var item_height = 0
 
-      var items = []
+      var yOffset = centerY - 100, xOffset = 200
       for (var i in this.game.ui.inventory) {
         var id_ = this.game.ui.inventory[i]
-        var new_item = Item.makeFromGlobalID({
-          game: this.game, x: i * 130 + 200, y: centerY - 100, id: id_
+        var new_item = Item.makeFromGlobalIDs({
+          game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
         })
-        new_item.sprites[0].scale.setTo(1.5)
-        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_, tier)}), this)
-        item_width = new_item.sprites[0].width
-        item_height = new_item.sprites[0].height
-        new_item.sprites[0].x = i * new_item.width
+
+        new_item.setMouseDown((function() {
+          this.triggerCatwalkIntro(id_, tier)}), this)
+
         this.overlay.add(new_item)
+
+        xOffset += new_item.sprites[0].width + 10
+        if(i == 3) {
+          yOffset += 200
+          xOffset = 200
+        }
       }
 
     }
@@ -259,44 +288,42 @@ export default class extends Phaser.State {
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
+      // Build and add versus strip
       var strip = new Phaser.Sprite(this.game, 0, this.game.height / 2, 'catwalk-intro-strip')
       strip.anchor.setTo(0.5)
       strip.fixedToCamera = true
       this.overlay.add(strip)
 
-      var player_item = Item.makeFromGlobalID({
-        game: this.game, x: 50, y: 400, id: player_item_id
-      })
-
-      player_item.sprites[0].scale.setTo(2)
-      player_item.sprites[0].cameraOffset.x = -100
-
-      var player_tween = this.game.add.tween(player_item.sprites[0].cameraOffset).to(
-        { x: 400},
-        1500, Phaser.Easing.Bounce.Out, true)
-
-      this.overlay.add(player_item)
-
-      var enemy_item = Item.makeFromPowerTier({
-        game: this.game, x: 50, y: 550, powerTier: enemy_item_tier
-      })
-
-      enemy_item.sprites[0].scale.setTo(2)
-      enemy_item.sprites[0].cameraOffset.x = -100
-
-      var enemy_tween = this.game.add.tween(enemy_item.sprites[0].cameraOffset).to(
-        { x: 1250},
-        1500, Phaser.Easing.Bounce.Out, true)
-
-      this.overlay.add(enemy_item)
-
       var strip_tween = this.game.add.tween(strip.cameraOffset).to(
         { x: this.game.width / 2 },
         2000, Phaser.Easing.Bounce.Out, true)
 
-      this.game.time.events.add(500, (function() {this.camera.shake()}), this)
+      strip_tween.onComplete.add((function() {
+        this.game.time.events.add(500, (function() {
+          this.camera.shake()
+          this.triggerCatwalk(player_item_id, enemy_item_tier)
+        }), this)
+      }), this)
 
-      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_tier)}), this)
+      // Build and add Player item
+      var player_item = Item.makeFromGlobalIDs({
+        game: this.game, x: 50, y: 400, idArray: player_item_id, scale: 2
+      })
+
+      player_item.makeTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
+        easing: Phaser.Easing.Bounce.Out, autostart: true })
+
+      this.overlay.add(player_item)
+
+      // Build and add enemy item
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 50, y: 550, powerTier: enemy_item_tier, scale: 2
+      })
+
+      enemy_item.makeTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
+        easing: Phaser.Easing.Bounce.Out, autostart: true })
+
+      this.overlay.add(enemy_item)
 
     }
   }
@@ -323,8 +350,8 @@ export default class extends Phaser.State {
       enemy_board.fixedToCamera = true
       this.overlay.add(enemy_board)
 
-      var player_item = Item.makeFromGlobalID({
-        game: this.game, x: 400, y: 400, id: player_item_id
+      var player_item = Item.makeFromGlobalIDs({
+        game: this.game, x: 400, y: 400, idArray: player_item_id
       })
 
       player_item.sprites[0].scale.setTo(2)
@@ -401,13 +428,13 @@ export default class extends Phaser.State {
       for(let i in this.game.ui.inventory) {
         let newItem = {}
         if (i >= this.game.ui.inventoryCascade) {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i],
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i],
             invIndex: i, animate: Item.DROP_CASCADE
           })
         } else {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
           })
         }
 
@@ -418,13 +445,13 @@ export default class extends Phaser.State {
       for(let i in this.game.ui.inventory) {
         let newItem = {}
         if (i == this.game.ui.inventory.length - 1) {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i],
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i],
             invIndex: i, animate: Item.DROP_FROM_TOP
           })
         } else {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
           })
         }
 

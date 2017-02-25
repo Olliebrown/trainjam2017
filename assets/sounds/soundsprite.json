@@ -21,24 +21,39 @@
       "end": 19.732154195011336,
       "loop": false
     },
-    "microwave": {
+    "microwave_button": {
       "start": 21,
-      "end": 27.855691609977324,
+      "end": 21.395578231292518,
+      "loop": false
+    },
+    "microwave_done": {
+      "start": 23,
+      "end": 26.243038548752835,
+      "loop": false
+    },
+    "microwave_start": {
+      "start": 28,
+      "end": 31.001496598639456,
       "loop": false
     },
     "pose1": {
-      "start": 29,
-      "end": 31.496326530612244,
+      "start": 33,
+      "end": 35.496326530612244,
       "loop": false
     },
     "pose2": {
-      "start": 33,
-      "end": 35.79761904761905,
+      "start": 37,
+      "end": 39.79761904761905,
       "loop": false
     },
     "pose3": {
-      "start": 37,
-      "end": 40.424943310657596,
+      "start": 41,
+      "end": 44.424943310657596,
+      "loop": false
+    },
+    "shutter_noise": {
+      "start": 46,
+      "end": 55.55673469387755,
       "loop": false
     }
   }
