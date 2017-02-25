@@ -107,8 +107,8 @@ export class Item extends Phaser.Group {
         this.sprites[i].y = this.game.ui.microwave.background.y - 20;
       }
       else{
-        this.sprites[i].x = this.mainX;
-        this.sprites[i].y = this.mainY;
+        this.sprites[i].x = this.baseX;
+        this.sprites[i].y = this.baseY;
       }
 
     }
@@ -117,7 +117,9 @@ export class Item extends Phaser.Group {
   mouseOn(x, y){
     let hitted = false;
     for(let i=0; i<this.sprites.length; i++){
-      hitted |= this.sprites[i].body.hitTest(x, y);
+      if(this.game.math.distance(x, y, this.baseX, this.baseY) < this.sprites[i].width){
+        hitted = true;
+      }
     }
     return hitted;
   }
