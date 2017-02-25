@@ -34,9 +34,7 @@ export class Item extends Phaser.Group {
     this.sprites = []
     this.indices = indices
 
-    // Make sprite(s)
-
-    // Make sprite (should only ever be one)
+    // Pick starting positions
     if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
       x = Item.INVENTORY_START.x
       y = Item.INVENTORY_START.y
@@ -45,16 +43,20 @@ export class Item extends Phaser.Group {
       y = Item.INVENTORY_SLOTS[invIndex + 1].y
     }
 
-      for(let i=0; i<indices.length; i++) {
-        let sprite = new Phaser.Sprite(game, x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x, y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y, 'item-sprites', indices[i])
-        sprite.anchor.set(0.5, 0.5)
-        sprite.scale.setTo(0.45, 0.45)
-        sprite.inputEnabled = true
-        this.game.physics.arcade.enable(sprite)
-        sprite.fixedToCamera = true
-        this.sprites.push(sprite)
-        this.addChild(sprite)
-      }
+    // Build sprites
+    for(let i=0; i<indices.length; i++) {
+      let sprite = new Phaser.Sprite(game,
+        x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
+        y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y,
+        'item-sprites', indices[i])
+      sprite.anchor.set(0.5, 0.5)
+      sprite.scale.setTo(0.45, 0.45)
+      sprite.inputEnabled = true
+      this.game.physics.arcade.enable(sprite)
+      sprite.fixedToCamera = true
+      this.sprites.push(sprite)
+      this.addChild(sprite)
+    }
 
     if(invIndex !== undefined) {
       // Make close button
@@ -98,17 +100,17 @@ export class Item extends Phaser.Group {
 
   update () {
     for(let i=0; i<this.sprites.length; i++){
-      if(this.inMicrowave){
+      if(this.inMicrowave) {
         this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
           (this.game.ui.microwave.getInventoryIndex(this) -
-          this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+
         this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
       else{
         this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
         this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
-
     }
   }
 
@@ -162,7 +164,9 @@ Item.init = (itemTileset) => {
     )
   }
 
-  Item.COMBINED_LOCATIONS = [[new Phaser.Point(0, 0)], [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
+  Item.COMBINED_LOCATIONS = [
+    [new Phaser.Point(0, 0)],
+    [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
     [new Phaser.Point(0, -10), new Phaser.Point(10, 10), new Phaser.Point(-10, 10)],
     [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10)]];
 
@@ -188,10 +192,13 @@ Item.init = (itemTileset) => {
   });
 
   // Build reverse lookup arrays
+  Item.FRAME_2_GLOBAL = {}
   Item.ITEM_BY_NAME = {}
   Item.ITEM_BY_GLOBAL_ID = {}
   Item.ITEM_BY_POWER_TIER = {}
+
   for(let i in Item.ITEM_ARRAY) {
+    Item.FRAME_2_GLOBAL[Item.ITEM_ARRAY[i].frameID] = Item.ITEM_ARRAY[i].globalID
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
     Item.ITEM_BY_GLOBAL_ID[Item.ITEM_ARRAY[i].globalID] = Item.ITEM_ARRAY[i]
 
@@ -214,15 +221,27 @@ Item.makeFromName = ({ game, name, x, y, invIndex, animate }) => {
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
+Item.convertFrameToGlobal = (frameIDs) => {
+  let globalIDs = []
+  for(let i in frameIDs) {
+    globalIDs.push(Item.FRAME_2_GLOBAL[frameIDs[i]])
+  }
+  return globalIDs
+}
+
 // Build a new Item from its ID (as specified in the Tiled file)
-Item.makeFromGlobalID = ({ game, id, x, y, invIndex, animate }) => {
-  let item = Item.ITEM_BY_GLOBAL_ID[id]
-  if(item === undefined) {
-    console.error(`Unknown item global ID (${id})`)
-    return null
+Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate }) => {
+  let item, indices = []
+  for(let i in idArray) {
+    item = Item.ITEM_BY_GLOBAL_ID[idArray[i]]
+    if(item === undefined) {
+      console.error(`Unknown item global ID (${idArray[i]})`)
+      return null
+    }
+    indices.push(item.frameID)
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate,
+  return new Item({ game, x, y, invIndex, indices, animate,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 

@@ -165,7 +165,7 @@ export default class extends Phaser.State {
     }
 
     this.tilemap.removeTile(item.x, item.y, 'interact')
-    this.game.ui.inventory.push(item.index)
+    this.game.ui.inventory.push([item.index])
     this.game.sounds.play('item_pickup', 1)
     this.updateInventory()
   }
@@ -225,19 +225,19 @@ export default class extends Phaser.State {
 
       var itemGroup = this.game.add.group()
       itemGroup.fixedToCamera = true
-      var item_width = 0
-      var item_height = 0
-
-      var items = []
+      // var item_width = 0
+      // var item_height = 0
+      //
+      // var items = []
       for (var i in this.game.ui.inventory) {
         var id_ = this.game.ui.inventory[i]
-        var new_item = Item.makeFromGlobalID({
-          game: this.game, x: i * 130 + 200, y: centerY - 100, id: id_
+        var new_item = Item.makeFromGlobalIDs({
+          game: this.game, x: i * 130 + 200, y: centerY - 100, idArray: id_
         })
         new_item.sprites[0].scale.setTo(1.5)
         new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_, tier)}), this)
-        item_width = new_item.sprites[0].width
-        item_height = new_item.sprites[0].height
+        // item_width = new_item.sprites[0].width
+        // item_height = new_item.sprites[0].height
         new_item.sprites[0].x = i * new_item.width
         this.overlay.add(new_item)
       }
@@ -264,16 +264,16 @@ export default class extends Phaser.State {
       strip.fixedToCamera = true
       this.overlay.add(strip)
 
-      var player_item = Item.makeFromGlobalID({
-        game: this.game, x: 50, y: 400, id: player_item_id
+      var player_item = Item.makeFromGlobalIDs({
+        game: this.game, x: 50, y: 400, idArray: player_item_id
       })
 
       player_item.sprites[0].scale.setTo(2)
       player_item.sprites[0].cameraOffset.x = -100
 
-      var player_tween = this.game.add.tween(player_item.sprites[0].cameraOffset).to(
-        { x: 400},
-        1500, Phaser.Easing.Bounce.Out, true)
+      //var player_tween =
+      this.game.add.tween(player_item.sprites[0].cameraOffset).to(
+        { x: 400}, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(player_item)
 
@@ -284,9 +284,9 @@ export default class extends Phaser.State {
       enemy_item.sprites[0].scale.setTo(2)
       enemy_item.sprites[0].cameraOffset.x = -100
 
-      var enemy_tween = this.game.add.tween(enemy_item.sprites[0].cameraOffset).to(
-        { x: 1250},
-        1500, Phaser.Easing.Bounce.Out, true)
+      //var enemy_tween =
+      this.game.add.tween(enemy_item.sprites[0].cameraOffset).to(
+        { x: 1250}, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(enemy_item)
 
@@ -323,8 +323,8 @@ export default class extends Phaser.State {
       enemy_board.fixedToCamera = true
       this.overlay.add(enemy_board)
 
-      var player_item = Item.makeFromGlobalID({
-        game: this.game, x: 400, y: 400, id: player_item_id
+      var player_item = Item.makeFromGlobalIDs({
+        game: this.game, x: 400, y: 400, idArray: player_item_id
       })
 
       player_item.sprites[0].scale.setTo(2)
@@ -360,13 +360,13 @@ export default class extends Phaser.State {
       for(let i in this.game.ui.inventory) {
         let newItem = {}
         if (i >= this.game.ui.inventoryCascade) {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i],
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i],
             invIndex: i, animate: Item.DROP_CASCADE
           })
         } else {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
           })
         }
 
@@ -377,13 +377,13 @@ export default class extends Phaser.State {
       for(let i in this.game.ui.inventory) {
         let newItem = {}
         if (i == this.game.ui.inventory.length - 1) {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i],
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i],
             invIndex: i, animate: Item.DROP_FROM_TOP
           })
         } else {
-          newItem = Item.makeFromGlobalID({
-            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          newItem = Item.makeFromGlobalIDs({
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
           })
         }
 
