@@ -4,7 +4,12 @@ import Phaser from 'phaser'
 
 export class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, indices, name, description, powerTier, invIndex, animate, animX, animY }) {
+  constructor ({ game, x, y, indices, name, description, powerTier, invIndex, animate }) {
+
+    // Clean invIndex
+    if(invIndex !== undefined) {
+      invIndex = parseInt(invIndex)
+    }
 
     // Should this be a button using an inventory slot
     if((x === undefined || y === undefined) && invIndex !== undefined) {
@@ -49,12 +54,12 @@ export class Item extends Phaser.Group {
       }
     } else {
       // Make sprite (should only ever be one)
-      if(animate == Item.DROP_FROM_TOP) {
+      if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
         x = Item.INVENTORY_START.x
         y = Item.INVENTORY_START.y
-      } else if(animate == Item.DROP_FROM_GIVEN) {
-        x = animX
-        y = animY
+      } else if(animate == Item.DROP_CASCADE) {
+        x = Item.INVENTORY_SLOTS[invIndex + 1].x
+        y = Item.INVENTORY_SLOTS[invIndex + 1].y
       }
 
       let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[0])
@@ -142,6 +147,7 @@ function onBtnClose(itmButton) {
 
   game.ui.inventory.pop();
   game.ui.inventoryNeedsUpdate = true
+  game.ui.inventoryCascade = removeIndex
 }
 
 // Static class members
@@ -150,7 +156,7 @@ Item.INVENTORY_MAX = 8
 Item.INVENTORY_START = {}
 
 Item.DROP_FROM_TOP = 0
-Item.DROP_FROM_GIVEN = 1
+Item.DROP_CASCADE = 1
 
 // Initialize static properties
 Item.init = (itemTileset) => {
@@ -163,7 +169,7 @@ Item.init = (itemTileset) => {
   }
 
   // Start at the top of the inventory
-  Item.INVENTORY_START = Item.INVENTORY_SLOTS[Item.INVENTORY_MAX-1];
+  Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
 
   // Build item list from TILED info
   let tileProps = itemTileset.tileProperties;
