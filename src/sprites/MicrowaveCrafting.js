@@ -62,16 +62,16 @@ export class MicrowaveCrafting extends Phaser.Group {
     if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
       this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
       let items = this.game.ui.microwave.getInMicrowave();
-      let indeces = [];
+      let indices = [];
       for(let i=0; i<items.length; i++){
-        for(let j=0; j<items[i].indeces.length; j++){
-          indeces.push(items[i].indeces[j]);
+        for(let j=0; j<items[i].indices.length; j++){
+          indices.push(items[i].indices[j]);
         }
         items[i].onBtnClose(items[i].closeBtn);
       }
 
       this.game.ui.inventory.push(new Item({game:this.game, x:-1, y:-1,
-        indeces:indeces, name:"", description: "", invIndex:this.game.ui.inventoryLayer.length}));
+        indices:indices, name:"", description: "", invIndex:this.game.ui.inventoryLayer.length}));
       this.game.add.existing(this.state.ui.inventory[this.game.ui.inventoryLayer.length - 1]);
       console.log("Microwaving....");
     }
