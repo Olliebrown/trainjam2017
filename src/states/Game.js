@@ -189,13 +189,12 @@ export default class extends Phaser.State {
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
 
-
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
-
+      var tier = enemy.pickItemPowerTier()
 
       var fontStyle = {
         font: 'bold 32px Arial',
@@ -203,13 +202,13 @@ export default class extends Phaser.State {
         boundsAlignH: 'center',
         boundsAlignV: 'center'
       }
+
       var text = new Phaser.Text(this.game, 0, 0, 'Choose your Object!', fontStyle)
       text.setTextBounds(0, 100, this.game.width, this.game.height)
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
       text.fixedToCamera = true
 
       this.overlay.add(text)
-
 
       var itemGroup = this.game.add.group()
       itemGroup.fixedToCamera = true
@@ -223,7 +222,7 @@ export default class extends Phaser.State {
           game: this.game, x: i * 130 + 200, y: centerY - 100, id: id_
         })
         new_item.sprites[0].scale.setTo(1.5)
-        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_)}), this)
+        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_, tier)}), this)
         item_width = new_item.sprites[0].width
         item_height = new_item.sprites[0].height
         new_item.sprites[0].x = i * new_item.width
@@ -233,7 +232,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_id, enemy_item_id) {
+  triggerCatwalkIntro (player_item_id, enemy_item_tier) {
     if (this.state == STATES.choosingItem) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
@@ -265,8 +264,8 @@ export default class extends Phaser.State {
 
       this.overlay.add(player_item)
 
-      var enemy_item = Item.makeFromGlobalID({
-        game: this.game, x: 50, y: 550, id: player_item_id
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 50, y: 550, powerTier: enemy_item_tier
       })
 
       enemy_item.sprites[0].scale.setTo(2)
@@ -284,12 +283,12 @@ export default class extends Phaser.State {
 
       this.game.time.events.add(500, (function() {this.camera.shake()}), this)
 
-      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_id)}), this)
+      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_tier)}), this)
 
     }
   }
 
-  triggerCatwalk (player_item_id, enemy_item_id) {
+  triggerCatwalk (player_item_id, enemy_item_tier) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -311,8 +310,8 @@ export default class extends Phaser.State {
 
       this.overlay.add(player_item)
 
-      var enemy_item = Item.makeFromGlobalID({
-        game: this.game, x: 1250, y: 550, id: player_item_id
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 1250, y: 550, powerTier: enemy_item_tier
       })
 
       enemy_item.sprites[0].scale.setTo(2)
@@ -322,10 +321,10 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkStart() {
+  triggerCatwalkStart(player, enemy) {
     if (this.state == STATES.main) {
       this.state = STATES.initCatwalk
-      this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this)
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this, player, enemy)
     }
   }
 
