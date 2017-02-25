@@ -36,14 +36,14 @@ export class Item extends Phaser.Group {
 
     // Make sprite(s)
 
-      // Make sprite (should only ever be one)
-      if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
-        x = Item.INVENTORY_START.x
-        y = Item.INVENTORY_START.y
-      } else if(animate == Item.DROP_CASCADE) {
-        x = Item.INVENTORY_SLOTS[invIndex + 1].x
-        y = Item.INVENTORY_SLOTS[invIndex + 1].y
-      }
+    // Make sprite (should only ever be one)
+    if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
+      x = Item.INVENTORY_START.x
+      y = Item.INVENTORY_START.y
+    } else if(animate == Item.DROP_CASCADE) {
+      x = Item.INVENTORY_SLOTS[invIndex + 1].x
+      y = Item.INVENTORY_SLOTS[invIndex + 1].y
+    }
 
       for(let i=0; i<indices.length; i++) {
         let sprite = new Phaser.Sprite(game, x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x, y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y, 'item-sprites', indices[i])
@@ -56,6 +56,7 @@ export class Item extends Phaser.Group {
         this.addChild(sprite)
       }
 
+    if(invIndex !== undefined) {
       // Make close button
       this.closeBtn = this.game.add.button(this.baseX + 20, this.baseY - 40, 'close-btn-sheet',
             onBtnClose, this, 2, 0, 1, 0)
@@ -71,6 +72,7 @@ export class Item extends Phaser.Group {
       this.addChild(this.number)
 
       if(animate !== undefined) { this.makeDrop() }
+    }
 
     // this.filters = [ new Glow(game) ]
   }
@@ -193,10 +195,10 @@ Item.init = (itemTileset) => {
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
     Item.ITEM_BY_GLOBAL_ID[Item.ITEM_ARRAY[i].globalID] = Item.ITEM_ARRAY[i]
 
-    if(Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].globalID] === undefined) {
-      Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].globalID] = new Array()
+    if(Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].powerTier] === undefined) {
+      Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].powerTier] = new Array()
     }
-    Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].globalID].push(Item.ITEM_ARRAY[i])
+    Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].powerTier].push(Item.ITEM_ARRAY[i])
   }
 }
 
@@ -231,6 +233,7 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate }) =
     return null
   }
 
+  if(index === undefined) index = 0
   let item = Item.ITEM_BY_POWER_TIER[powerTier][index]
   if(item === undefined) {
     console.error(`Unknown item power tier index (${powerTier}[${index}])`)

@@ -106,40 +106,37 @@ export default class extends Phaser.State {
     this.overlay = this.game.add.group()
 
     // this.makeTestInventory()
-    // this.triggerCatwalkIntro()
-  }
 
-  makeTestInventory() {
-    for(let i = 0; i<8; i++) {
-      this.game.ui.inventory.push(Item.TILE_INDEX_LIST[i])
-    }
-    this.updateInventory()
-  }
-
-  makeTestInventory2() {
-    for(let i = 0; i<8; i++) {
-      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i+7]-1, invIndex: i })
-      this.game.ui.inventory.push(newItem)
-      this.game.ui.inventoryLayer.add(newItem)
-    }
+    // this.state = STATES.choosingItem
+    // this.triggerCatwalkIntro(37, 37)
   }
 
   showOverlay() {
-    var bm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    var bm_data = this.game.add.bitmapData(this.game.width, this.game.height)
     bm_data.ctx.beginPath()
-    bm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    bm_data.ctx.rect(0, 0, this.game.width, this.game.height)
     bm_data.ctx.fillStyle = '#111111'
     bm_data.ctx.fill()
-    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
-    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
-    var overlay_bg = new Phaser.Sprite(this.game, x_offset, y_offset, bm_data)
+    var overlay_bg = new Phaser.Sprite(this.game, 0, 0, bm_data)
+    overlay_bg.alpha = 0.9
     overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
+
+    var obm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    obm_data.ctx.beginPath()
+    obm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    obm_data.ctx.fillStyle = '#111111'
+    obm_data.ctx.fill()
+    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
+    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
+    var overlay = new Phaser.Sprite(this.game, x_offset, y_offset, obm_data)
+    overlay.fixedToCamera = true
+    this.overlay.add(overlay)
     this.game.world.bringToTop(this.overlay)
   }
 
   hideOverlay() {
-    this.overlay.removeAll()
+    this.overlay.removeAll(true)
   }
 
   createEnemyObjectTriggers() {
@@ -155,24 +152,6 @@ export default class extends Phaser.State {
         tilemap: this.tilemap
       })
       this.enemy_spawns_triggers.push(trigger)
-    }
-  }
-
-  createEnemyTriggers() {
-    var tiles = this.slime_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
-    for (var t in tiles) {
-      var tile = tiles[t]
-      if (tile.index !== -1) {
-        var trigger = new EnemyTrigger({
-          game: this.game,
-          x: tile.x * tile.width,
-          y: tile.y * tile.height,
-          player: this.player,
-          enemy_group: this.enemies,
-          tilemap: this.tilemap
-        })
-        this.enemy_spawns_triggers.add(trigger)
-      }
     }
   }
 
@@ -223,13 +202,12 @@ export default class extends Phaser.State {
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
 
-
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
-
+      var tier = enemy.pickItemPowerTier()
 
       var fontStyle = {
         font: 'bold 32px Arial',
@@ -237,13 +215,13 @@ export default class extends Phaser.State {
         boundsAlignH: 'center',
         boundsAlignV: 'center'
       }
+
       var text = new Phaser.Text(this.game, 0, 0, 'Choose your Object!', fontStyle)
       text.setTextBounds(0, 100, this.game.width, this.game.height)
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
       text.fixedToCamera = true
 
       this.overlay.add(text)
-
 
       var itemGroup = this.game.add.group()
       itemGroup.fixedToCamera = true
@@ -257,7 +235,7 @@ export default class extends Phaser.State {
           game: this.game, x: i * 130 + 200, y: centerY - 100, id: id_
         })
         new_item.sprites[0].scale.setTo(1.5)
-        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_)}), this)
+        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_, tier)}), this)
         item_width = new_item.sprites[0].width
         item_height = new_item.sprites[0].height
         new_item.sprites[0].x = i * new_item.width
@@ -267,7 +245,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_id, enemy_item_id) {
+  triggerCatwalkIntro (player_item_id, enemy_item_tier) {
     if (this.state == STATES.choosingItem) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
@@ -299,8 +277,8 @@ export default class extends Phaser.State {
 
       this.overlay.add(player_item)
 
-      var enemy_item = Item.makeFromGlobalID({
-        game: this.game, x: 50, y: 550, id: player_item_id
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 50, y: 550, powerTier: enemy_item_tier
       })
 
       enemy_item.sprites[0].scale.setTo(2)
@@ -318,12 +296,12 @@ export default class extends Phaser.State {
 
       this.game.time.events.add(500, (function() {this.camera.shake()}), this)
 
-      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_id)}), this)
+      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_tier)}), this)
 
     }
   }
 
-  triggerCatwalk (player_item_id, enemy_item_id) {
+  triggerCatwalk (player_item_id, enemy_item_tier) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -337,6 +315,14 @@ export default class extends Phaser.State {
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
+      var player_board = new Phaser.Sprite(this.game, 0, this.game.height - 300, 'catwalk-bits', 0)
+      player_board.fixedToCamera = true
+      this.overlay.add(player_board)
+
+      var enemy_board = new Phaser.Sprite(this.game, this.game.width - 601,  this.game.height - 300, 'catwalk-bits', 1)
+      enemy_board.fixedToCamera = true
+      this.overlay.add(enemy_board)
+
       var player_item = Item.makeFromGlobalID({
         game: this.game, x: 400, y: 400, id: player_item_id
       })
@@ -345,8 +331,8 @@ export default class extends Phaser.State {
 
       this.overlay.add(player_item)
 
-      var enemy_item = Item.makeFromGlobalID({
-        game: this.game, x: 1250, y: 550, id: player_item_id
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 1250, y: 550, powerTier: enemy_item_tier
       })
 
       enemy_item.sprites[0].scale.setTo(2)
@@ -356,10 +342,10 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkStart() {
+  triggerCatwalkStart(player, enemy) {
     if (this.state == STATES.main) {
       this.state = STATES.initCatwalk
-      this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this)
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this, player, enemy)
     }
   }
 
