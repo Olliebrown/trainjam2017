@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import Item from './Item'
+import { Item } from './Item'
 import { XButton, StartButton } from './Buttons'
 
 const MIN_MICROWAVE = 2;
@@ -72,12 +72,24 @@ export class MicrowaveCrafting extends Phaser.Group {
         for(let j=0; j<items[i].indices.length; j++){
           indices.push(items[i].indices[j]);
         }
-        items[i].onBtnClose(items[i].closeBtn);
+
+        let removeIndex = items[i].invIndex
+        for(let i=0; i<this.game.ui.inventory.length - 1; i++) {
+          if(i >= removeIndex) {
+            this.game.ui.inventory[i] = game.ui.inventory[i+1]
+          }
+        }
+
+        game.ui.inventory.pop();
+        game.ui.inventoryNeedsUpdate = true
+        game.ui.inventoryCascade = removeIndex
       }
 
-      this.game.ui.inventory.push(new Item({game:this.game, x:-1, y:-1,
-        indices:indices, name:'', description: '', invIndex:this.game.ui.inventoryLayer.length}));
-      this.game.add.existing(this.state.ui.inventory[this.game.ui.inventoryLayer.length - 1]);
+      let newItem = new Item({game:this.game,
+        indices:indices, name:'', description: '',
+        invIndex:this.game.ui.inventoryLayer.length - 1});
+      // newItem.inMicrowave = true;
+      this.game.add.existing(newItem);
       console.info('Microwaving....');
     }
     else{
