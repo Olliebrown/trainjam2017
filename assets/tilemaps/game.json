@@ -54,8 +54,495 @@
          "width":60,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":60,
+         "name":"object_spawns",
+         "objects":[
+                {
+                 "height":192,
+                 "id":1,
+                 "name":"SpawnPool1-1",
+                 "properties":
+                    {
+                     "level":1
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level1SpawnPool",
+                 "visible":false,
+                 "width":456,
+                 "x":1884,
+                 "y":7008
+                }, 
+                {
+                 "height":134,
+                 "id":2,
+                 "name":"SpawnPool1-1",
+                 "properties":
+                    {
+                     "level":1
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level1SpawnPool",
+                 "visible":false,
+                 "width":338,
+                 "x":1884,
+                 "y":7202
+                }, 
+                {
+                 "height":218,
+                 "id":3,
+                 "name":"SpawnPool1-1",
+                 "properties":
+                    {
+                     "level":1
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level1SpawnPool",
+                 "visible":false,
+                 "width":132,
+                 "x":1752,
+                 "y":7118
+                }, 
+                {
+                 "height":116.666666666667,
+                 "id":4,
+                 "name":"SpawnPool1-1",
+                 "properties":
+                    {
+                     "level":1
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level1SpawnPool",
+                 "visible":false,
+                 "width":224,
+                 "x":1872,
+                 "y":7337.33333333333
+                }, 
+                {
+                 "height":132,
+                 "id":5,
+                 "name":"SpawnPool1-1",
+                 "properties":
+                    {
+                     "level":1
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level1SpawnPool",
+                 "visible":false,
+                 "width":86,
+                 "x":2254,
+                 "y":6876
+                }, 
+                {
+                 "height":96,
+                 "id":7,
+                 "name":"SpawnPool2-1",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":184,
+                 "x":2518,
+                 "y":5078
+                }, 
+                {
+                 "height":94,
+                 "id":8,
+                 "name":"SpawnPool2-2",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":212,
+                 "x":2392,
+                 "y":5196
+                }, 
+                {
+                 "height":20.666666666667,
+                 "id":9,
+                 "name":"SpawnPool2-3",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":132,
+                 "x":2492.66666666667,
+                 "y":5174
+                }, 
+                {
+                 "height":89.333333333333,
+                 "id":10,
+                 "name":"SpawnPool2-4",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":333.333333333333,
+                 "x":3160,
+                 "y":5329.33333333333
+                }, 
+                {
+                 "height":92,
+                 "id":11,
+                 "name":"SpawnPool2-5",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":328,
+                 "x":3294.66666666667,
+                 "y":5458.66666666667
+                }, 
+                {
+                 "height":37.3333333333339,
+                 "id":12,
+                 "name":"SpawnPool2-6",
+                 "properties":
+                    {
+                     "level":2
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level2SpawnPool",
+                 "visible":false,
+                 "width":248,
+                 "x":3266.66666666667,
+                 "y":5420
+                }, 
+                {
+                 "height":92,
+                 "id":13,
+                 "name":"SpawnPool3-1",
+                 "properties":
+                    {
+                     "level":3
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level3SpawnPool",
+                 "visible":false,
+                 "width":460,
+                 "x":2517.33333333333,
+                 "y":3662.66666666667
+                }, 
+                {
+                 "height":126.666666666667,
+                 "id":14,
+                 "name":"SpawnPool3-2",
+                 "properties":
+                    {
+                     "level":3
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level3SpawnPool",
+                 "visible":false,
+                 "width":208,
+                 "x":2641.33333333333,
+                 "y":3536
+                }, 
+                {
+                 "height":97.333333333333,
+                 "id":16,
+                 "name":"SpawnPool4-1",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":720,
+                 "x":4820,
+                 "y":2768
+                }, 
+                {
+                 "height":128,
+                 "id":17,
+                 "name":"SpawnPool4-2",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":190.666666666666,
+                 "x":5348,
+                 "y":2865.33333333333
+                }, 
+                {
+                 "height":97.333333333333,
+                 "id":18,
+                 "name":"SpawnPool4-3",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":454.666666666666,
+                 "x":4693.33333333333,
+                 "y":3148
+                }, 
+                {
+                 "height":126.666666666667,
+                 "id":19,
+                 "name":"SpawnPool4-4",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":329.333333333334,
+                 "x":4828,
+                 "y":3248
+                }, 
+                {
+                 "height":126.666666666667,
+                 "id":20,
+                 "name":"SpawnPool4-5",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":201.333333333334,
+                 "x":5086.66666666667,
+                 "y":3377.33333333333
+                }, 
+                {
+                 "height":94.6666666666665,
+                 "id":21,
+                 "name":"SpawnPool4-6",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":208,
+                 "x":5332,
+                 "y":3150.66666666667
+                }, 
+                {
+                 "height":152,
+                 "id":22,
+                 "name":"SpawnPool4-7",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":92,
+                 "x":5446.66666666667,
+                 "y":2996
+                }, 
+                {
+                 "height":278.666666666667,
+                 "id":23,
+                 "name":"SpawnPool4-8",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":221.333333333333,
+                 "x":4821.33333333333,
+                 "y":2868
+                }, 
+                {
+                 "height":101.333333333333,
+                 "id":24,
+                 "name":"SpawnPool4-9",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":260,
+                 "x":5160,
+                 "y":3273.33333333333
+                }, 
+                {
+                 "height":25.3333333333335,
+                 "id":25,
+                 "name":"SpawnPool4-10",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":117.333333333333,
+                 "x":5317.33333333333,
+                 "y":3246.66666666667
+                }, 
+                {
+                 "height":121.333333333333,
+                 "id":26,
+                 "name":"SpawnPool4-11",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":88,
+                 "x":5326.66666666667,
+                 "y":2644
+                }, 
+                {
+                 "height":125.333333333333,
+                 "id":27,
+                 "name":"SpawnPool4-12",
+                 "properties":
+                    {
+                     "level":4
+                    },
+                 "propertytypes":
+                    {
+                     "level":"int"
+                    },
+                 "rotation":0,
+                 "type":"Level4SpawnPool",
+                 "visible":false,
+                 "width":210.666666666666,
+                 "x":4944,
+                 "y":2641.33333333333
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":60,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":128,
@@ -98,14 +585,14 @@
                  "description":"An old empty can with sharp edges and a sticky residue.",
                  "isItem":true,
                  "name":"Empty Tin Can",
-                 "powerTier":0
+                 "powerTier":1
                 },
              "10":
                 {
                  "description":"For some reason it get's really hot and burns your cheek when you try to use it.",
                  "isItem":true,
                  "name":"Cell Phone",
-                 "powerTier":0
+                 "powerTier":7
                 },
              "11":
                 {
@@ -118,28 +605,28 @@
                  "description":"",
                  "isItem":true,
                  "name":"Band-Aid",
-                 "powerTier":0
+                 "powerTier":14
                 },
              "13":
                 {
                  "description":"At least someone got to enjoy it's sweet nector.",
                  "isItem":true,
                  "name":"Empty Soda Can",
-                 "powerTier":0
+                 "powerTier":13
                 },
              "14":
                 {
                  "description":"It says 'J + D' on the inside ...",
                  "isItem":true,
                  "name":"Someone's Wedding Ring",
-                 "powerTier":0
+                 "powerTier":4
                 },
              "15":
                 {
                  "description":"If you blow on the cartridge, a tiny elf will jump out and grab your nose!  At least, that's what my dad told me.",
                  "isItem":true,
                  "name":"NES",
-                 "powerTier":0
+                 "powerTier":6
                 },
              "16":
                 {
@@ -164,7 +651,7 @@
                  "description":"Keep away from small children and zombies.",
                  "isItem":true,
                  "name":"Plastic Bag",
-                 "powerTier":0
+                 "powerTier":10
                 },
              "20":
                 {
@@ -187,49 +674,49 @@
                  "description":"",
                  "isItem":true,
                  "name":"Used K-Cup",
-                 "powerTier":0
+                 "powerTier":11
                 },
              "4":
                 {
                  "description":"Almost as deadly as the ninja star (when used to store archival data).",
                  "isItem":true,
                  "name":"5.25in Floppy Disk",
-                 "powerTier":0
+                 "powerTier":5
                 },
              "5":
                 {
                  "description":"Why would someone ever throw this away?!",
                  "isItem":true,
                  "name":"Table Lamp",
-                 "powerTier":0
+                 "powerTier":8
                 },
              "6":
                 {
                  "description":"I have an idea!",
                  "isItem":true,
                  "name":"Lightbulb",
-                 "powerTier":0
+                 "powerTier":2
                 },
              "7":
                 {
                  "description":"Tony Hawk ain't got nothing on you!",
                  "isItem":true,
                  "name":"Skateboard",
-                 "powerTier":0
+                 "powerTier":9
                 },
              "8":
                 {
                  "description":"I tried planting an egg once ...",
                  "isItem":true,
                  "name":"Eggplant",
-                 "powerTier":0
+                 "powerTier":3
                 },
              "9":
                 {
                  "description":"It tingles when you lick the ends.",
                  "isItem":true,
                  "name":"Dead Battery",
-                 "powerTier":0
+                 "powerTier":12
                 }
             },
          "tilepropertytypes":

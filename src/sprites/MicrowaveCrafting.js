@@ -13,7 +13,7 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.background.anchor.set(0.5);
     this.add(this.background);
 
-    this.turnTheMicrowave = new LaunchMicrowave(this.game, this.background.x + this.background.width/2,
+    this.turnTheMicrowave = new StartButton(this.game, this.background.x + this.background.width/2,
       this.background.y + this.background.height/2 - 30, this.microwave);
     this.turnTheMicrowave.anchor.set(1);
 
