@@ -32,12 +32,14 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
+    this.tilemap.addTilesetImage('item-tiles')
+
+    // this.itemIndexList = this.makeItemList();
 
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
-    this.enemy_spawns_layer = this.tilemap.createLayer('enemy_spawns')
-    this.enemy_spawns_layer.visible = false
+    this.slime_layer = this.tilemap.createLayer('slime')
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
@@ -46,6 +48,9 @@ export default class extends Phaser.State {
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
 
     // Load and build music loop
+    // this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
+    // this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
+
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
     this.musicLoop.loop = true
@@ -82,6 +87,11 @@ export default class extends Phaser.State {
 
     // this.makeTestInventory()
     // this.overlay.fixedToCamera = true
+    this.overlay = this.game.add.group()
+
+    // camera
+    this.game.camera.follow(this.player)
+
     // this.triggerCatwalkIntro()
   }
 
@@ -118,16 +128,17 @@ export default class extends Phaser.State {
   }
 
   createEnemyTriggers() {
-    var tiles = this.enemy_spawns_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
+    var tiles = this.slime_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
     for (var t in tiles) {
       var tile = tiles[t]
-      if (tile.canCollide) {
+      if (tile.index !== -1) {
         var trigger = new EnemyTrigger({
           game: this.game,
           x: tile.x * tile.width,
           y: tile.y * tile.height,
           player: this.player,
-          enemy_group: this.enemies
+          enemy_group: this.enemies,
+          tilemap: this.tilemap
         })
         this.enemy_spawns_triggers.add(trigger)
       }
@@ -189,9 +200,10 @@ export default class extends Phaser.State {
       this.showOverlay()
       var itemGroup = this.game.add.group()
       var item_width = 0
-      for (let i in this.ui.inventory) {
-        let item = this.ui.inventory[i]
-        let new_item = item.copy(0, 0)
+      for (var i in this.game.ui.inventory) {
+        var item = this.game.ui.inventory[i]
+        var new_item = item.copy(0, 0)
+
         new_item.scale.setTo(1.5)
         item_width = new_item.width
         itemGroup.add(new_item)
@@ -205,9 +217,8 @@ export default class extends Phaser.State {
         console.info('doing the thing')
         let item = itemGroup.children[i]
         item.x = i * item.width
+        itemGroup.children[i] = item
       }
-
-      console.info(itemGroup.children)
       itemGroup.x = x_offset
       itemGroup.y = y_offset
       this.overlay.add(itemGroup)
@@ -247,7 +258,7 @@ export default class extends Phaser.State {
 
   update () {
     this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkIntro, null, this)
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
 
     let pointer = this.game.input.activePointer;
     if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&

@@ -19,19 +19,27 @@ export class Enemy extends Phaser.Sprite {
 
 export class EnemyTrigger extends Phaser.Sprite {
 
-  constructor ({ game, x, y, player, enemy_group}) {
+  constructor ({ game, x, y, player, enemy_group, tilemap}) {
     super(game, x, y, 'trigger', 10)
     this.game = game
     this.x = this.x + this.width / 2
     this.y = this.y + this.height / 2
     this.player = player
     this.anchor.setTo(0.5)
-    this.active = false
+    this.visible = false
     this.enemy_group = enemy_group
+    this.tilemap = tilemap
+    this.triggered = false
+    this.points = [
+      new Phaser.Point(this.x + (this.width / 2), this.y - this.height / 2),
+      new Phaser.Point(this.x + (this.width / 2), this.y + this.height * 1.5),
+      new Phaser.Point(this.x - this.width / 2, this.y - this.height / 2),
+      new Phaser.Point(this.x + this.width * 1.5, this.y - this.height / 2)
+    ]
   }
 
-  checkOverlap(player, trigger) {
-    var distance = this.game.physics.arcade.distanceBetween(player, trigger)
+  overlaps() {
+    var distance = Phaser.Math.distance(this.player.x, this.player.y, this.x, this.y)
     if (distance < 10) {
       return true
     } else {
@@ -40,25 +48,46 @@ export class EnemyTrigger extends Phaser.Sprite {
   }
 
   update () {
-    if (this.game.physics.arcade.overlap(this.player, this, null, this.checkOverlap, this)) {
-      if (!this.active) {
-        if (Math.random() > 0.5) {
+    if (this.overlaps()) {
+      if (!this.triggered) {
+        this.triggered = true
+        if (Math.random() > 0.75) {
           this.spawnEnemy()
         }
-        this.active = true
       }
     } else {
-      this.active = false
+      this.triggered = false
     }
   }
 
   spawnEnemy () {
-    var enemy = new Enemy({
-      game: this.game,
-      x: this.x,
-      y: this.y
-    })
-    enemy.y = enemy.y - enemy.height
-    this.enemy_group.add(enemy)
+    var spawn_point = null;
+    for (var i in this.points) {
+      var p = this.points[i]
+      var tile_x = Math.floor(p.x / this.tilemap.tileWidth)
+      var tile_y = Math.floor(p.y / this.tilemap.tileHeight)
+
+      if (this.tilemap.hasTile(tile_x, tile_y, 'sewer') === false) {
+        if (this.game.physics.arcade.getObjectsAtLocation(p.x, p.y, this.enemy_group).length == 0) {
+          if (Phaser.Math.distance(this.player.x, this.player.y, p.x, p.y) > 128) {
+            console.log(this.tilemap.hasTile(tile_x, tile_y, 'sewer'))
+            spawn_point = p
+          }
+        } else {
+        }
+      } else {
+        console.log(tile_x, tile_y)
+        console.log(this.tilemap.hasTile(tile_x, tile_y, 'sewer'))
+      }
+    }
+    if (spawn_point !== null) {
+      var enemy = new Enemy({
+        game: this.game,
+        x: spawn_point.x,
+        y: spawn_point.y
+      })
+      this.player.listOfTargets = []
+      this.enemy_group.add(enemy)
+    }
   }
 }
