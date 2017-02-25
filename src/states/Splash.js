@@ -36,6 +36,7 @@ export default class extends Phaser.State {
     this.game.load.image('catwalk-intro-strip', 'assets/images/catwalk-intro-stripe.png')
     this.game.load.image('catwalk-intro-gradient', 'assets/images/catwalk-intro-grad.png')
     this.game.load.image('catwalk-gradient', 'assets/images/catwalk-grad.png')
+    this.game.load.image('eyes', 'assets/images/eyes.png')
 
     this.game.load.audioSprite('sounds', [
       'assets/sounds/soundsprite.ogg', 'assets/sounds/soundsprite.mp3',
