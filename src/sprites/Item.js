@@ -123,8 +123,7 @@ function onBtnClose(itmButton) {
 
   for(let i=0; i<inventory.length - 1; i++) {
     if(i >= removeIndex) {
-      inventory[i].destroy()
-      inventory[i] = inventory[i+1].copyDecriment()
+      inventory[i] = inventory[i+1];
     }
   }
 
@@ -133,7 +132,7 @@ function onBtnClose(itmButton) {
 
 // Static class members
 Item.INVENTORY_SLOTS = []
-Item.MAX_SLOTS = 8
+Item.INVENTORY_MAX = 8
 
 // Initialize static properties
 Item.init = (itemTileset) => {
