@@ -35,7 +35,16 @@ export class Item extends Phaser.Group {
     this.indices = indices
 
     // Make sprite(s)
-    if(invIndex === undefined) {
+
+      // Make sprite (should only ever be one)
+      if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
+        x = Item.INVENTORY_START.x
+        y = Item.INVENTORY_START.y
+      } else if(animate == Item.DROP_CASCADE) {
+        x = Item.INVENTORY_SLOTS[invIndex + 1].x
+        y = Item.INVENTORY_SLOTS[invIndex + 1].y
+      }
+
       for(let i=0; i<indices.length; i++) {
         let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
         sprite.anchor.set(0.5, 0.5)
@@ -46,23 +55,6 @@ export class Item extends Phaser.Group {
         this.sprites.push(sprite)
         this.addChild(sprite)
       }
-    } else {
-      // Make sprite (should only ever be one)
-      if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
-        x = Item.INVENTORY_START.x
-        y = Item.INVENTORY_START.y
-      } else if(animate == Item.DROP_CASCADE) {
-        x = Item.INVENTORY_SLOTS[invIndex + 1].x
-        y = Item.INVENTORY_SLOTS[invIndex + 1].y
-      }
-
-      let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[0])
-      sprite.anchor.set(0.5, 0.5)
-      sprite.scale.setTo(0.45, 0.45)
-      this.game.physics.arcade.enable(sprite)
-      sprite.fixedToCamera = true
-      this.sprites.push(sprite)
-      this.addChild(sprite)
 
       // Make close button
       this.closeBtn = this.game.add.button(this.baseX + 20, this.baseY - 40, 'close-btn-sheet',
@@ -79,7 +71,6 @@ export class Item extends Phaser.Group {
       this.addChild(this.number)
 
       if(animate !== undefined) { this.makeDrop() }
-    }
 
     // this.filters = [ new Glow(game) ]
   }
