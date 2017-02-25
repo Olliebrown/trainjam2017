@@ -38,13 +38,18 @@ export class MicrowaveCrafting extends Phaser.Group {
     return result;
   }
 
-  getInventoryIndex(object){
+  getInMicrowave(){
     let items = [];
     for(let i=0; i<this.game.ui.inventory.length; i++){
       if(this.game.ui.inventory[i].inMicrowave){
         items.push(this.game.ui.inventory[i]);
       }
     }
+    return items;
+  }
+
+  getInventoryIndex(object){
+    let items = this.getInMicrowave();
 
     for(let i=0; i<items.length; i++){
       if(object == items[i]){
@@ -56,18 +61,17 @@ export class MicrowaveCrafting extends Phaser.Group {
   microwave(){
     if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
       this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE){
+      let items = this.game.ui.microwave.getInMicrowave();
       let indeces = [];
-      for(let i=0; i<this.game.ui.inventory.length; i++){
-        if(this.game.items[i].inMicrowave){
-          this.game.ui.inventory[i].destroy();
-          indeces.push(state.items[i].index);
-          this.game.ui.inventory.splice(i, 1);
-          i--;
+      for(let i=0; i<items.length; i++){
+        for(let j=0; j<items[i].indeces.length; j++){
+          indeces.push(items[i].indeces[j]);
         }
+        items[i].onBtnClose(items[i].closeBtn);
       }
-      this.state.ui.inventory.push(new Item({game:state.game, x:-1, y:-1,
-        indeces:indeces, name:"", description: ""}));
-      this.game.add.existing(this.state.ui.inventory[state.items.length - 1]);
+      this.game.ui.inventory.push(new Item({game:this.game, x:-1, y:-1,
+        indeces:indeces, name:"", description: "", invIndex:this.game.ui.inventory.length}));
+      this.game.add.existing(this.state.ui.inventory[this.game.ui.inventory.length - 1]);
       console.log("Microwaving....");
     }
     else{
