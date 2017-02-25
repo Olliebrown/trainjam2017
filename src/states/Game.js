@@ -66,7 +66,9 @@ export default class extends Phaser.State {
 
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
+    this.musicIntro.volume = 0.5
     this.musicLoop = this.game.add.audio('BGM-loop')
+    this.musicLoop.volume = 0.5
     this.musicLoop.loop = true
 
     this.musicIntro.onStop.addOnce(() => {
@@ -77,6 +79,7 @@ export default class extends Phaser.State {
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
+    this.game.lastItem = new Phaser.Point(-1, -1)
 
     // player setup
     this.player = new Player({
@@ -155,12 +158,16 @@ export default class extends Phaser.State {
 
   itemTrigger (player, item) {
     if(this.game.ui.inventory.length >= Item.INVENTORY_MAX) {
+      if(this.game.lastItem.x != item.x && this.game.lastItem.y) {
+        this.game.lastItem = item
+        this.game.sounds.play('inventory_full', 4)
+      }
       return;
     }
 
     this.tilemap.removeTile(item.x, item.y, 'interact')
     this.game.ui.inventory.push(item.index)
-    this.game.sounds.play('reverb_pose_sound_1', 1)
+    this.game.sounds.play('item_pickup', 1)
     this.updateInventory()
   }
 
@@ -264,24 +271,44 @@ export default class extends Phaser.State {
     this.game.ui.inventoryLayer.destroy();
     this.game.ui.inventoryLayer = this.game.add.group()
 
-    for(let i in this.game.ui.inventory) {
-      let newItem = {}
-      if (i == this.game.ui.inventory.length - 1) {
-        newItem = Item.makeFromGlobalID({
-          game: this.game, id: this.game.ui.inventory[i],
-          invIndex: i, animate: Item.DROP_FROM_TOP
-        })
-      } else {
-        newItem = Item.makeFromGlobalID({
-          game: this.game, id: this.game.ui.inventory[i], invIndex: i
-        })
-      }
+    if(this.game.ui.inventoryCascade >= 0) {
+      for(let i in this.game.ui.inventory) {
+        let newItem = {}
+        if (i >= this.game.ui.inventoryCascade) {
+          newItem = Item.makeFromGlobalID({
+            game: this.game, id: this.game.ui.inventory[i],
+            invIndex: i, animate: Item.DROP_CASCADE
+          })
+        } else {
+          newItem = Item.makeFromGlobalID({
+            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          })
+        }
 
-      this.game.add.existing(newItem)
-      this.game.ui.inventoryLayer.add(newItem)
+        this.game.add.existing(newItem)
+        this.game.ui.inventoryLayer.add(newItem)
+      }
+    } else {
+      for(let i in this.game.ui.inventory) {
+        let newItem = {}
+        if (i == this.game.ui.inventory.length - 1) {
+          newItem = Item.makeFromGlobalID({
+            game: this.game, id: this.game.ui.inventory[i],
+            invIndex: i, animate: Item.DROP_FROM_TOP
+          })
+        } else {
+          newItem = Item.makeFromGlobalID({
+            game: this.game, id: this.game.ui.inventory[i], invIndex: i
+          })
+        }
+
+        this.game.add.existing(newItem)
+        this.game.ui.inventoryLayer.add(newItem)
+      }
     }
 
     this.game.ui.inventoryNeedsUpdate = false
+    this.game.ui.inventoryCascade = -1
   }
 
   update () {

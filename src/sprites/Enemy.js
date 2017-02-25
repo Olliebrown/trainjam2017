@@ -46,7 +46,7 @@ export class EnemyTrigger extends Phaser.Sprite {
       if (!this.triggered) {
         this.triggered = true
         if (Math.random() > 0.75) {
-          this.spawnEnemy()
+//          this.spawnEnemy()
         }
       }
     } else {
