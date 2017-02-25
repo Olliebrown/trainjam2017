@@ -6,7 +6,11 @@ export default class extends Phaser.State {
   init () {}
 
   preload () {
-    this.splash = this.add.group()
+    this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')
+    this.background.scale.set(Math.max(this.game.width / this.background.width, this.game.height / this.background.height))
+    this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
+    this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
+    centerGameObjects([this.background, this.loaderBg, this.loaderBar])
 
     this.background = new Phaser.Sprite(this.game,
       this.game.world.centerX, this.game.world.centerY, 'title-splash')

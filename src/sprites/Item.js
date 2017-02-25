@@ -50,7 +50,13 @@ export class Item extends Phaser.Group {
 
     // Build sprites
     shuffleArray(indices, this.game.rnd);
-    while(indices.length > 4){
+    for(let i = 1; i<indices.length; i++){
+      if(this.game.rnd.realInRange(0, 1) < 0.1){
+        let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
+        indices.splice(i1, 1);
+      }
+    }
+    while(indices.length > 5){
       let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
       indices.splice(i1, 1);
     }
@@ -170,9 +176,7 @@ export class Item extends Phaser.Group {
   setSelectionHandler(gameScene, power_tier) {
     for (var i in this.sprites) {
       this.sprites[i].events.onInputDown.add(function() {
-        console.log(gameScene)
-        console.log(this.indices)
-        gameScene.triggerCatwalkIntro(this.indices, power_tier)
+        gameScene.triggerCatwalkIntro(this.indices, this.invIndexRef, power_tier)
       }, this)
     }
   }
@@ -227,6 +231,10 @@ export class Item extends Phaser.Group {
 
 function onBtnClose(itmButton) {
   let removeIndex = itmButton.parent.invIndex
+  removeFromInventory(removeIndex)
+}
+
+export const removeFromInventory = (removeIndex) => {
   for(let i=0; i<game.ui.inventory.length - 1; i++) {
     if(i >= removeIndex) {
       game.ui.inventory[i] = game.ui.inventory[i+1]
@@ -260,7 +268,10 @@ Item.init = (itemTileset) => {
     [new Phaser.Point(0, 0)],
     [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
     [new Phaser.Point(0, -10), new Phaser.Point(10, 10), new Phaser.Point(-10, 10)],
-    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10)]];
+    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10)],
+    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10), new Phaser.Point(0, 0)],
+    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10), new Phaser.Point(0, 0)]
+  ];
 
   // Start at the top of the inventory
   Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
