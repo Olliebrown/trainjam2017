@@ -64,7 +64,8 @@ export default class extends Phaser.State {
 
     // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
-    this.game.input.onDown.add(this.doPathfinding, this)
+    this.bg_layer.inputEnabled = true
+    this.bg_layer.events.onInputDown.add(this.doPathfinding, this)
 
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
@@ -266,8 +267,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_id, enemy_item) {
-    console.log(player_item_id)
+  triggerCatwalkIntro (player_item_id, enemy_item_id) {
     if (this.state == STATES.choosingItem) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
@@ -286,11 +286,72 @@ export default class extends Phaser.State {
       strip.fixedToCamera = true
       this.overlay.add(strip)
 
+      var player_item = Item.makeFromGlobalID({
+        game: this.game, x: 50, y: 400, id: player_item_id
+      })
+
+      player_item.sprites[0].scale.setTo(2)
+      player_item.sprites[0].cameraOffset.x = -100
+
+      var player_tween = this.game.add.tween(player_item.sprites[0].cameraOffset).to(
+        { x: 400},
+        1500, Phaser.Easing.Bounce.Out, true)
+
+      this.overlay.add(player_item)
+
+      var enemy_item = Item.makeFromGlobalID({
+        game: this.game, x: 50, y: 550, id: player_item_id
+      })
+
+      enemy_item.sprites[0].scale.setTo(2)
+      enemy_item.sprites[0].cameraOffset.x = -100
+
+      var enemy_tween = this.game.add.tween(enemy_item.sprites[0].cameraOffset).to(
+        { x: 1250},
+        1500, Phaser.Easing.Bounce.Out, true)
+
+      this.overlay.add(enemy_item)
+
       var strip_tween = this.game.add.tween(strip.cameraOffset).to(
         { x: this.game.width / 2 },
         2000, Phaser.Easing.Bounce.Out, true)
 
-      strip_tween.onComplete.add((function() {this.camera.shake()}), this)
+      this.game.time.events.add(500, (function() {this.camera.shake()}), this)
+
+      strip_tween.onComplete.add((function() {this.triggerCatwalk(player_item_id, enemy_item_id)}), this)
+
+    }
+  }
+
+  triggerCatwalk (player_item_id, enemy_item_id) {
+    if (this.state == STATES.catwalkIntro) {
+      this.state = STATES.catwalk
+      this.hideOverlay()
+      this.showOverlay()
+
+      var centerX = this.game.width / 2
+      var centerY = this.game.height / 2
+
+      var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-gradient')
+      grad.anchor.setTo(0.5)
+      grad.fixedToCamera = true
+      this.overlay.add(grad)
+
+      var player_item = Item.makeFromGlobalID({
+        game: this.game, x: 400, y: 400, id: player_item_id
+      })
+
+      player_item.sprites[0].scale.setTo(2)
+
+      this.overlay.add(player_item)
+
+      var enemy_item = Item.makeFromGlobalID({
+        game: this.game, x: 1250, y: 550, id: player_item_id
+      })
+
+      enemy_item.sprites[0].scale.setTo(2)
+
+      this.overlay.add(enemy_item)
 
     }
   }
@@ -349,11 +410,10 @@ export default class extends Phaser.State {
     this.game.ui.inventoryCascade = -1
   }
 
-  doPathfinding(pointer) {
+  doPathfinding(obj, pointer) {
     if(!this.game.ui.microwave.alive &&
        !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
-       (pointer.isMouse && pointer.leftButton.isDown) ||
-       (!pointer.isMouse && pointer.isDown)) {
+       this.state == STATES.main) {
 
       let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
                                         Math.floor(pointer.worldY / this.tilemap.tileHeight))
