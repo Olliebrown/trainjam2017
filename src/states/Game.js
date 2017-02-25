@@ -412,9 +412,7 @@ export default class extends Phaser.State {
   doPathfinding(obj, pointer) {
     if(!this.game.ui.microwave.alive &&
        !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
-       this.state == STATES.main &&
-       (pointer.isMouse && pointer.leftButton.isDown) ||
-       (!pointer.isMouse && pointer.isDown)) {
+       this.state == STATES.main {
 
       let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
                                         Math.floor(pointer.worldY / this.tilemap.tileHeight))
