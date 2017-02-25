@@ -63,6 +63,7 @@ export default class extends Phaser.State {
 
     // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
+    this.game.input.onDown.add(this.doPathfinding, this)
 
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
@@ -213,12 +214,12 @@ export default class extends Phaser.State {
 
 
       var fontStyle = {
-        font: "bold 32px Arial",
-        fill: "#fff",
-        boundsAlignH: "center",
-        boundsAlignV: "center"
+        font: 'bold 32px Arial',
+        fill: '#fff',
+        boundsAlignH: 'center',
+        boundsAlignV: 'center'
       }
-      var text = new Phaser.Text(this.game, 0, 0, "Choose your Object!", fontStyle)
+      var text = new Phaser.Text(this.game, 0, 0, 'Choose your Object!', fontStyle)
       text.setTextBounds(0, 100, this.game.width, this.game.height)
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
       text.fixedToCamera = true
@@ -391,6 +392,28 @@ export default class extends Phaser.State {
     this.game.ui.inventoryCascade = -1
   }
 
+  doPathfinding(pointer) {
+    if(!this.game.ui.microwave.alive &&
+       !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
+       (pointer.isMouse && pointer.leftButton.isDown) ||
+       (!pointer.isMouse && pointer.isDown)) {
+
+      let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
+                                        Math.floor(pointer.worldY / this.tilemap.tileHeight))
+
+      if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
+        let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth)
+        let targets = this.pathfinder.getTheNextLocation(
+          playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+          this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels,
+          this.tilemap.heightInPixels, true));
+        this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
+      }
+
+      pointer.reset();
+    }
+  }
+
   update () {
     if (this.state == STATES.main) {
       if(this.game.ui.inventoryNeedsUpdate) {
@@ -400,21 +423,6 @@ export default class extends Phaser.State {
       this.game.physics.arcade.collide(this.player, this.interact_layer)
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 
-      let pointer = this.game.input.activePointer;
-      if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
-         (pointer.isMouse && pointer.leftButton.isDown) || (!pointer.isMouse && pointer.isDown)) {
-        let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
-                                          Math.floor(pointer.worldY / this.tilemap.tileHeight));
-
-        if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
-          let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
-          let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
-                                                           this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
-          this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
-        }
-
-        pointer.reset();
-      }
       if(this.keys.space.justPressed()){
         this.game.ui.microwave.alive = true;
         this.game.ui.microwave.visible = true;
