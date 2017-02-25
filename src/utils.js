@@ -23,3 +23,13 @@ export const getRandomIntInclusive = (min, max)  => {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
+
+export const shuffleArray = (array, rnd) => {
+  for(let i=0; i<2 * array.length; i++){
+    let i1 = rnd.integerInRange(0, array.length - 1);
+    let i2 = rnd.integerInRange(0, array.length - 1);
+    let temp = array[i1]
+    array[i1] = array[i2]
+    array[i2] = temp
+  }
+}

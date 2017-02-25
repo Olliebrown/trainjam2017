@@ -67,12 +67,12 @@ export class EnemyTrigger extends Phaser.Rectangle {
   }
 
   spawnEnemy () {
+    this.player.listOfTargets = []
     var enemy = new Enemy({
       game: this.game,
-      x: this.player.x + this.width / 2,
+      x: this.player.x + 20,
       y: this.player.y, level: this.level
     })
-    this.player.listOfTargets = []
     this.enemy_group.add(enemy)
   }
 }

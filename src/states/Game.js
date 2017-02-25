@@ -261,8 +261,7 @@ export default class extends Phaser.State {
           game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
         })
 
-        new_item.setMouseDown((function() {
-          this.triggerCatwalkIntro(id_, tier)}), this)
+        new_item.setSelectionHandler(this, tier)
 
         this.overlay.add(new_item)
 
@@ -275,7 +274,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_id, enemy_item_tier) {
+  triggerCatwalkIntro (player_item_indices, enemy_item_tier) {
     if (this.state == STATES.choosingItem) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
@@ -302,16 +301,20 @@ export default class extends Phaser.State {
       strip_tween.onComplete.add((function() {
         this.game.time.events.add(500, (function() {
           this.camera.shake()
-          this.triggerCatwalk(player_item_id, enemy_item_tier)
+          this.triggerCatwalk(player_item_indices, enemy_item_tier)
         }), this)
       }), this)
 
       // Build and add Player item
-      var player_item = Item.makeFromGlobalIDs({
-        game: this.game, x: 50, y: 400, idArray: player_item_id, scale: 2
+      var player_item = new Item({
+        game: this.game,
+        x: 50,
+        y: 400,
+        scale: 2,
+        indices: player_item_indices
       })
 
-      player_item.makeTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
+      player_item.makeLocationTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
         easing: Phaser.Easing.Bounce.Out, autostart: true })
 
       this.overlay.add(player_item)
@@ -321,7 +324,7 @@ export default class extends Phaser.State {
         game: this.game, x: 50, y: 550, powerTier: enemy_item_tier, scale: 2
       })
 
-      enemy_item.makeTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
+      enemy_item.makeLocationTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
         easing: Phaser.Easing.Bounce.Out, autostart: true })
 
       this.overlay.add(enemy_item)
@@ -329,7 +332,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalk (player_item_id, enemy_item_tier) {
+  triggerCatwalk (player_item_indices, enemy_item_tier) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -351,9 +354,14 @@ export default class extends Phaser.State {
       enemy_board.fixedToCamera = true
       this.overlay.add(enemy_board)
 
-      var player_item = Item.makeFromGlobalIDs({
-        game: this.game, x: 400, y: 400, idArray: player_item_id
+      var player_item = new Item({
+        game: this.game,
+        x: 400,
+        y: 400,
+        scale: 2,
+        indices: player_item_indices
       })
+
 
       player_item.sprites[0].scale.setTo(2)
 
@@ -366,7 +374,54 @@ export default class extends Phaser.State {
       enemy_item.sprites[0].scale.setTo(2)
 
       this.overlay.add(enemy_item)
+
+      var player_swell_tween = this.game.add.tween(player_item.sprites[0].scale).to(
+        {x: 5, y: 5},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+      player_item.makeRotationTween({
+        rotation: {rotation: 90},
+        time: 100000,
+        easing: Phaser.Easing.Sinusoidal.InOut,
+        autostart: true,
+        delay: 0,
+        repeat: -1,
+        yoyo: true
+      })
+
+      var enemy_swell_tween = this.game.add.tween(enemy_item.sprites[0].scale).to(
+        {x: 5, y: 5},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+      var enemy_rot_tween = this.game.add.tween(enemy_item.sprites[0]).to(
+        {rotation: -90},
+        100000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true
+      )
+
+      var tierDiff = player_item.powerTier - enemy_item_tier
+      var outcome
+
+      if (tierDiff > 0) {
+        outcome = 'win'
+      } else if (tierDiff >= -1) {
+        if (Math.random() > 0.6) {
+          outcome = 'win'
+        } else {
+          outcome = 'lose'
+        }
+      } else {
+        outcome = 'lose'
+      }
+
+      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome)}), this)
+
     }
+  }
+
+  endCatwalk(outcome) {
+    this.hideOverlay()
+    this.state = STATES.main
+    console.log("You " + outcome)
   }
 
   triggerCatwalkStart(player, enemy) {
