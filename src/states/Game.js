@@ -549,10 +549,6 @@ export default class extends Phaser.State {
   }
 
   render () {
-    // this.game.ui.inventory.forEach((item) => {
-    //   this.game.debug.geom(new Phaser.Rectangle(
-    //     item.x - 45, item.y - 35, 90, 70), '#ffffff', false)
-    // })
   }
 
 }
