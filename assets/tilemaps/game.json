@@ -86,22 +86,303 @@
          "tileheight":128,
          "tileproperties":
             {
+             "0":
+                {
+                 "description":"It's razor sharp! What could possibly go wrong ...",
+                 "isItem":true,
+                 "name":"Ninja Star",
+                 "powerTier":0
+                },
              "1":
                 {
-                 "name":""
+                 "description":"An old empty can with sharp edges and a sticky residue.",
+                 "isItem":true,
+                 "name":"Empty Tin Can",
+                 "powerTier":0
+                },
+             "10":
+                {
+                 "description":"For some reason it get's really hot and burns your cheek when you try to use it.",
+                 "isItem":true,
+                 "name":"Cell Phone",
+                 "powerTier":0
+                },
+             "11":
+                {
+                 "description":"WARNING! Do not place metal inside! (seriously)",
+                 "isItem":false,
+                 "name":"Microwave"
+                },
+             "12":
+                {
+                 "description":"",
+                 "isItem":true,
+                 "name":"Band-Aid",
+                 "powerTier":0
+                },
+             "13":
+                {
+                 "description":"At least someone got to enjoy it's sweet nector.",
+                 "isItem":true,
+                 "name":"Empty Soda Can",
+                 "powerTier":0
+                },
+             "14":
+                {
+                 "description":"It says 'J + D' on the inside ...",
+                 "isItem":true,
+                 "name":"Someone's Wedding Ring",
+                 "powerTier":0
+                },
+             "15":
+                {
+                 "description":"If you blow on the cartridge, a tiny elf will jump out and grab your nose!  At least, that's what my dad told me.",
+                 "isItem":true,
+                 "name":"NES",
+                 "powerTier":0
+                },
+             "16":
+                {
+                 "description":"An icon for indicating something is disabled",
+                 "isItem":false,
+                 "name":"X Icon"
+                },
+             "17":
+                {
+                 "isItem":false
+                },
+             "18":
+                {
+                 "isItem":false
+                },
+             "19":
+                {
+                 "isItem":false
+                },
+             "2":
+                {
+                 "description":"Keep away from small children and zombies.",
+                 "isItem":true,
+                 "name":"Plastic Bag",
+                 "powerTier":0
+                },
+             "20":
+                {
+                 "isItem":false
+                },
+             "21":
+                {
+                 "isItem":false
+                },
+             "22":
+                {
+                 "isItem":false
+                },
+             "23":
+                {
+                 "isItem":false
+                },
+             "3":
+                {
+                 "description":"",
+                 "isItem":true,
+                 "name":"Used K-Cup",
+                 "powerTier":0
+                },
+             "4":
+                {
+                 "description":"Almost as deadly as the ninja star (when used to store archival data).",
+                 "isItem":true,
+                 "name":"5.25in Floppy Disk",
+                 "powerTier":0
+                },
+             "5":
+                {
+                 "description":"Why would someone ever throw this away?!",
+                 "isItem":true,
+                 "name":"Table Lamp",
+                 "powerTier":0
+                },
+             "6":
+                {
+                 "description":"I have an idea!",
+                 "isItem":true,
+                 "name":"Lightbulb",
+                 "powerTier":0
+                },
+             "7":
+                {
+                 "description":"Tony Hawk ain't got nothing on you!",
+                 "isItem":true,
+                 "name":"Skateboard",
+                 "powerTier":0
+                },
+             "8":
+                {
+                 "description":"I tried planting an egg once ...",
+                 "isItem":true,
+                 "name":"Eggplant",
+                 "powerTier":0
+                },
+             "9":
+                {
+                 "description":"It tingles when you lick the ends.",
+                 "isItem":true,
+                 "name":"Dead Battery",
+                 "powerTier":0
                 }
             },
          "tilepropertytypes":
             {
+             "0":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
              "1":
                 {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "10":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "11":
+                {
+                 "description":"string",
+                 "isItem":"bool",
                  "name":"string"
+                },
+             "12":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "13":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "14":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "15":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "16":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string"
+                },
+             "17":
+                {
+                 "isItem":"bool"
+                },
+             "18":
+                {
+                 "isItem":"bool"
+                },
+             "19":
+                {
+                 "isItem":"bool"
+                },
+             "2":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "20":
+                {
+                 "isItem":"bool"
+                },
+             "21":
+                {
+                 "isItem":"bool"
+                },
+             "22":
+                {
+                 "isItem":"bool"
+                },
+             "23":
+                {
+                 "isItem":"bool"
+                },
+             "3":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "4":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "5":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "6":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "7":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "8":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
+                },
+             "9":
+                {
+                 "description":"string",
+                 "isItem":"bool",
+                 "name":"string",
+                 "powerTier":"int"
                 }
             },
          "tilewidth":128
         }],
  "tilewidth":128,
- "type":"map",
  "version":1,
  "width":60
 }

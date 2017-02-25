@@ -1,9 +1,9 @@
 {
   "resources": [
-    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.ogg",
-    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.m4a",
-    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.mp3",
-    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.ac3"
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/sourceSounds/../soundsprite.ogg",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/sourceSounds/../soundsprite.m4a",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/sourceSounds/../soundsprite.mp3",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/sourceSounds/../soundsprite.ac3"
   ],
   "spritemap": {
     "microwave_hum": {
