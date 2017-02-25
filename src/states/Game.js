@@ -27,7 +27,7 @@ export default class extends Phaser.State {
   preload () {}
 
   create () {
-    let state = this
+    let thisState = this
 
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -86,16 +86,38 @@ export default class extends Phaser.State {
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicIntro.volume = 0.5
+    this.musicIntro.onFadeComplete.add(() => {
+      this.musicIntro.pause()
+    }, this)
+
     this.musicLoop = this.game.add.audio('BGM-loop')
     this.musicLoop.volume = 0.5
     this.musicLoop.loop = true
+    this.musicLoop.onFadeComplete.add(pauseAfterFade, this)
 
     this.musicIntro.onStop.addOnce(() => {
-      state.musicLoop.play()
+      thisState.musicLoop.play()
+      thisState.currentBGM = thisState.musicLoop
     });
 
-    // TODO: Re-enable this awesome music!!
+    // Load catwalk music and build loop
+    this.catwalkIntro = this.game.add.audio('BGM-catwalk-intro')
+    this.catwalkIntro.volume = 0.5
+    this.catwalkIntro.onFadeComplete.add(pauseAfterFade, this)
+
+    this.catwalkLoop = this.game.add.audio('BGM-catwalk-loop')
+    this.catwalkLoop.volume = 0.5
+    this.catwalkLoop.loop = true
+    this.catwalkLoop.onFadeComplete.add(pauseAfterFade, this)
+
+    this.catwalkIntro.onStop.add(() => {
+      thisState.catwalkLoop.play()
+      thisState.currentBGM = thisState.catwalkLoop
+    });
+
+    // Start main BGM
     this.musicIntro.play()
+    this.currentBGM = this.musicIntro
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
@@ -427,12 +449,14 @@ export default class extends Phaser.State {
       removeFromInventory(invIndex)
     }
     enemy.destroy()
+    this.fadeToMainBGM()
   }
 
   triggerCatwalkStart(player, enemy) {
     if (this.state == STATES.main) {
       this.state = STATES.initCatwalk
       this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this, player, enemy)
+      this.fadeToCatwalkBGM()
     }
   }
 
@@ -519,12 +543,12 @@ export default class extends Phaser.State {
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 
       this.game.physics.arcade.overlap(this.player, this.microwaveGroup,
-        (player, microwave) => {
-          if(microwave.name != this.lastMicrowave) {
+        (player, mwave) => {
+          if(mwave.name != this.lastMicrowave) {
             this.game.ui.microwave.alive = true
             this.game.ui.microwave.visible = true
-            this.lastMicrowave = microwave.name
-            microwave.triggered = true
+            this.lastMicrowave = mwave.name
+            mwave.triggered = true
           }
         }, null, this)
 
@@ -539,7 +563,7 @@ export default class extends Phaser.State {
           if(mwave.triggered) {
             if(!mwave.isOverlapping()) {
               this.lastMicrowave = ''
-              this.triggered = false
+              mwave.triggered = false
             }
           }
         }
@@ -548,7 +572,26 @@ export default class extends Phaser.State {
     }
   }
 
+  fadeToCatwalkBGM() {
+    this.currentBGM.fadeOut(500);
+    this.catwalkIntro.fadeIn(500);
+    this.catwalkIntro.play();
+    this.currentBGM = this.catwalkIntro
+  }
+
+  fadeToMainBGM() {
+    this.currentBGM.fadeOut(500);
+    this.musicLoop.fadeIn(500);
+    if(this.musicLoop.paused) this.musicLoop.resume();
+    else this.musicLoop.play();
+    this.currentBGM = this.musicLoop
+  }
+
   render () {
   }
 
+}
+
+function pauseAfterFade(sound, volume) {
+  if(volume == 0) sound.pause()
 }
