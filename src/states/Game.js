@@ -310,7 +310,7 @@ export default class extends Phaser.State {
         game: this.game, x: 50, y: 400, idArray: player_item_id, scale: 2
       })
 
-      player_item.makeTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
+      player_item.makeLocationTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
         easing: Phaser.Easing.Bounce.Out, autostart: true })
 
       this.overlay.add(player_item)
@@ -320,7 +320,7 @@ export default class extends Phaser.State {
         game: this.game, x: 50, y: 550, powerTier: enemy_item_tier, scale: 2
       })
 
-      enemy_item.makeTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
+      enemy_item.makeLocationTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
         easing: Phaser.Easing.Bounce.Out, autostart: true })
 
       this.overlay.add(enemy_item)

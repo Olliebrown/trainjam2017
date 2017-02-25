@@ -135,7 +135,7 @@ export class Item extends Phaser.Group {
     }
   }
 
-  makeTween({ startX, startY, finalLoc, time, easing, autostart }) {
+  makeLocationTween({ startX, startY, finalLoc, time, easing, autostart }) {
     for(let i=0; i<this.sprites.length; i++) {
       if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
       if(startY !== undefined) this.sprites[i].cameraOffset.y = startY
