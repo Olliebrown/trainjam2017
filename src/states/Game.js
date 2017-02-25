@@ -106,7 +106,9 @@ export default class extends Phaser.State {
     this.overlay = this.game.add.group()
 
     // this.makeTestInventory()
-    // this.triggerCatwalkIntro()
+
+    // this.state = STATES.choosingItem
+    // this.triggerCatwalkIntro(37, 37)
   }
 
   makeTestInventory() {
