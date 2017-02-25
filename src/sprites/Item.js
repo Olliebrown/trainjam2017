@@ -45,16 +45,16 @@ export class Item extends Phaser.Group {
       y = Item.INVENTORY_SLOTS[invIndex + 1].y
     }
 
-    for(let i=0; i<indices.length; i++) {
-      let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
-      sprite.anchor.set(0.5, 0.5)
-      sprite.scale.setTo(0.45, 0.45)
-      sprite.inputEnabled = true
-      this.game.physics.arcade.enable(sprite)
-      sprite.fixedToCamera = true
-      this.sprites.push(sprite)
-      this.addChild(sprite)
-    }
+      for(let i=0; i<indices.length; i++) {
+        let sprite = new Phaser.Sprite(game, x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x, y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y, 'item-sprites', indices[i])
+        sprite.anchor.set(0.5, 0.5)
+        sprite.scale.setTo(0.45, 0.45)
+        sprite.inputEnabled = true
+        this.game.physics.arcade.enable(sprite)
+        sprite.fixedToCamera = true
+        this.sprites.push(sprite)
+        this.addChild(sprite)
+      }
 
     if(invIndex !== undefined) {
       // Make close button
@@ -84,7 +84,8 @@ export class Item extends Phaser.Group {
 
     for(let i=0; i<this.sprites.length; i++){
       var itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
-        { x: this.baseX, y: this.baseY }, 500, Phaser.Easing.Bounce.Out, true)
+        { x: this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x,
+          y: this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y}, 500, Phaser.Easing.Bounce.Out, true)
 
       if(i == 0){
         itemDropTween.onComplete.add(() => {
@@ -100,12 +101,12 @@ export class Item extends Phaser.Group {
       if(this.inMicrowave){
         this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
           (this.game.ui.microwave.getInventoryIndex(this) -
-          this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width;
-        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20;
+          this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
       else{
-        this.sprites[i].cameraOffset.x = this.baseX;
-        this.sprites[i].cameraOffset.y = this.baseY;
+        this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+        this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
 
     }
@@ -160,6 +161,10 @@ Item.init = (itemTileset) => {
       new Phaser.Point(game.width - 50, game.height / 2 + 75*(i-4) - 35)
     )
   }
+
+  Item.COMBINED_LOCATIONS = [[new Phaser.Point(0, 0)], [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
+    [new Phaser.Point(0, -10), new Phaser.Point(10, 10), new Phaser.Point(-10, 10)],
+    [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10)]];
 
   // Start at the top of the inventory
   Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
