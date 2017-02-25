@@ -16,12 +16,16 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.turnTheMicrowave = new StartButton(this.game, this.background.x + this.background.width/2,
       this.background.y + this.background.height/2 - 30, this.microwave);
     this.turnTheMicrowave.anchor.set(1);
+    let style = {fontSize:"24px", fill:"#ffffff"};
+    this.microwaveText = new Phaser.Text(game, this.turnTheMicrowave.x - 38, this.turnTheMicrowave.y - 38, "Microwave", style);
+    this.microwaveText.anchor.set(1);
 
     this.goBack = new XButton(this.game, this.background.x - this.background.width/2 + 10,
       this.background.y - this.background.height/2 + 10, this.getBack);
     this.goBack.anchor.set(0);
     this.add(this.goBack);
     this.add(this.turnTheMicrowave);
+    this.add(this.microwaveText);
     this.fixedToCamera = true;
     this.game.camera.setPosition(0, 0);
 
