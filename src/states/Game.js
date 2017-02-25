@@ -131,6 +131,7 @@ export default class extends Phaser.State {
     var overlay_bg = new Phaser.Sprite(this.game, x_offset, y_offset, bm_data)
     overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
+    this.game.world.bringToTop(this.overlay)
   }
 
   hideOverlay() {
@@ -205,40 +206,59 @@ export default class extends Phaser.State {
   triggerItemChoice (player, enemy) {
 
     if (this.state == STATES.initCatwalk) {
-      console.info('triggering item choice')
       this.state = STATES.choosingItem
       this.showOverlay()
+
+      var centerX = this.game.width / 2
+      var centerY = this.game.height / 2
+
+
+      var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
+      grad.anchor.setTo(0.5)
+      grad.fixedToCamera = true
+      this.overlay.add(grad)
+
+
+
+      var fontStyle = {
+        font: "bold 32px Arial",
+        fill: "#fff",
+        boundsAlignH: "center",
+        boundsAlignV: "center"
+      }
+      var text = new Phaser.Text(this.game, 0, 0, "Choose your Object!", fontStyle)
+      text.setTextBounds(0, 100, this.game.width, this.game.height)
+      text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
+      text.fixedToCamera = true
+
+      this.overlay.add(text)
+
+
       var itemGroup = this.game.add.group()
+      itemGroup.fixedToCamera = true
       var item_width = 0
+      var item_height = 0
 
       var items = []
       for (var i in this.game.ui.inventory) {
+        var id_ = this.game.ui.inventory[i]
         var new_item = Item.makeFromGlobalID({
-          game: this.game, x: 0, y: 0, id: this.game.ui.inventory[i]
+          game: this.game, x: i * 130 + 100, y: centerY - 100, id: id_
         })
         new_item.scale.setTo(1.5)
+        new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_)}), this)
         item_width = new_item.width
-        items.push(new_item)
+        item_height = new_item.height
+        new_item.x = i * new_item.width
+        this.overlay.add(new_item)
       }
 
-      var selection_width = item_width * items.length
-      var x_offset = (this.game.width - selection_width) / 2
-      var y_offset = (this.game.height - itemGroup.height) / 2
-
-      for (let i in items) {
-        let item = items[i]
-        item.x = i * item.width
-        itemGroup.add(item)
-      }
-
-      itemGroup.x = x_offset
-      itemGroup.y = y_offset
-      this.overlay.add(itemGroup)
     }
   }
 
-  triggerCatwalkIntro (player_item, enemy_item) {
-    if (this.state == STATES.main) {
+  triggerCatwalkIntro (player_item_id, enemy_item) {
+    console.log(player_item_id)
+    if (this.state == STATES.choosingItem) {
       this.state = STATES.catwalkIntro
       this.hideOverlay()
       this.showOverlay()

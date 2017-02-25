@@ -18,6 +18,7 @@ export class Item extends Phaser.Group {
     // Initialize base properties
     this.game = game
     this.inMicrowave = false
+    this.fixedToCamera = true
 
     this.name = name
     this.description = description
@@ -34,8 +35,8 @@ export class Item extends Phaser.Group {
       let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
       sprite.anchor.set(0.5, 0.5)
       sprite.scale.setTo(0.45, 0.45)
+      sprite.inputEnabled = true
       this.game.physics.arcade.enable(sprite)
-      sprite.fixedToCamera = true
       this.sprites.push(sprite)
       this.addChild(sprite)
     }
@@ -85,8 +86,8 @@ export class Item extends Phaser.Group {
         this.sprites[i].y = this.game.ui.microwave.background.y - 20;
       }
       else{
-        this.sprites[i].x = this.mainX;
-        this.sprites[i].y = this.mainY;
+        this.sprites[i].x = this.baseX;
+        this.sprites[i].y = this.baseY;
       }
 
     }
