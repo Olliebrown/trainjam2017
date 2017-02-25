@@ -66,48 +66,58 @@ export class MicrowaveCrafting extends Phaser.Group {
   microwave() {
     if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
        this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE) {
-      let items = this.game.ui.microwave.getInMicrowave();
-      let indices = [], removeIDs = []
 
-      // Make new list of indices for combined item
-      for(let i=0; i<items.length; i++){
-        for(let j=0; j<items[i].indices.length; j++){
-          indices.push(items[i].indices[j]);
-        }
-        removeIDs.push(items[i].invIndex)
-      }
-
-
-      // Remove items that are in the microwave from inventory
-      let offset = 0, cascade = []
-      for(let i=0; i < this.game.ui.inventory.length - offset; i++) {
-        if(removeIDs.find((rID) => { return rID == i }) !== undefined) {
-          offset++
-          cascade.push(i)
-        }
-
-        if(offset > 0) {
-          this.game.ui.inventory[i] = this.game.ui.inventory[i + offset]
-        }
-      }
-
-      for(let i = 0; i<cascade.length; i++) {
-        this.game.ui.inventory.pop();
-      }
-
-      this.game.ui.inventory.push(Item.convertFrameToGlobal(indices))
-      this.game.ui.inventoryNeedsUpdate = true
-      this.game.ui.inventoryCascade = cascade
-
-      console.info('Microwaving....');
-    }
-    else{
+      this.game.sounds.get('microwave_start').onStop.add(() => {
+        this.game.sounds.play('microwave_done', 1)
+        this.game.ui.microwave.microwavePhase2()
+      })
+      this.game.sounds.play('microwave_start', 1)
+    } else {
       console.info('you need at least 2 items');
     }
   }
 
+  microwavePhase2() {
+    let items = this.game.ui.microwave.getInMicrowave();
+    let indices = [], removeIDs = []
+
+    // Make new list of indices for combined item
+    for(let i=0; i<items.length; i++){
+      for(let j=0; j<items[i].indices.length; j++){
+        indices.push(items[i].indices[j]);
+      }
+      removeIDs.push(items[i].invIndex)
+    }
+
+    // Remove items that are in the microwave from inventory
+    let cascade = -1
+    for(let r=0; r < removeIDs.length; r++) {
+      let offset = false
+      for(let i=0; i < this.game.ui.inventory.length - (r+1); i++) {
+
+        let rID = removeIDs[r]
+        if(rID == i) {
+          offset = true
+          cascade = Math.min(cascade, i)
+        }
+
+        if(offset) {
+          this.game.ui.inventory[i] = this.game.ui.inventory[i + 1]
+        }
+      }
+    }
+
+    for(let i = 0; i<removeIDs.length; i++) {
+      this.game.ui.inventory.pop();
+    }
+
+    this.game.ui.inventory.push(Item.convertFrameToGlobal(indices))
+    this.game.ui.inventoryNeedsUpdate = true
+    this.game.ui.inventoryCascade = cascade
+  }
+
   getBack(){
-    for(let i=0; i<this.game.ui.inventoryLayer.length; i++){
+    for(let i=0; i<this.game.ui.inventoryLayer.length; i++) {
       this.game.ui.inventoryLayer.getAt(i).inMicrowave = false;
     }
     this.game.ui.microwave.alive = false;
@@ -125,9 +135,12 @@ export class MicrowaveCrafting extends Phaser.Group {
         if(item.mouseOn(this.game.input.activePointer.x, this.game.input.activePointer.y)){
           if(this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE) {
             item.inMicrowave = !item.inMicrowave;
+            if(item.inMicrowave) {
+              this.game.sounds.play('microwave_button', 4)
+            }
           }
           else {
-            console.info('The Microwave is Full');
+            this.game.sounds.play('inventory_full', 4)
           }
           break;
         }

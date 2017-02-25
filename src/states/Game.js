@@ -56,7 +56,8 @@ export default class extends Phaser.State {
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
     this.slime_layer = this.tilemap.createLayer('slime')
-    this.object_layer = this.tilemap.objects.object_spawns;
+    this.enemy_layer = this.tilemap.objects.object_spawns;
+    this.microwave_layer = this.tilemap.objects.microwaves;
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
@@ -140,7 +141,7 @@ export default class extends Phaser.State {
   }
 
   createEnemyObjectTriggers() {
-    let objects = this.object_layer
+    let objects = this.enemy_layer
     for (let i in objects) {
       let o = objects[i]
       let trigger = new EnemyTrigger({
