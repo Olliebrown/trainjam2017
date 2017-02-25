@@ -50,6 +50,10 @@ export class Item extends Phaser.Group {
 
     // Build sprites
     shuffleArray(indices, this.game.rnd);
+    while(indices.length > 4){
+      let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
+      indices.slice(i1, 1);
+    }
     for(let i=0; i<indices.length; i++) {
       let sprite = new Phaser.Sprite(game,
         x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
