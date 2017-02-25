@@ -96,14 +96,14 @@ export class Item extends Phaser.Group {
   update () {
     for(let i=0; i<this.sprites.length; i++){
       if(this.inMicrowave){
-        this.sprites[i].x = this.game.ui.microwave.background.x +
+        this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
           (this.game.ui.microwave.getInventoryIndex(this) -
           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width;
-        this.sprites[i].y = this.game.ui.microwave.background.y - 20;
+        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20;
       }
       else{
-        this.sprites[i].x = this.baseX;
-        this.sprites[i].y = this.baseY;
+        this.sprites[i].cameraOffset.x = this.baseX;
+        this.sprites[i].cameraOffset.y = this.baseY;
       }
 
     }
@@ -112,7 +112,7 @@ export class Item extends Phaser.Group {
   mouseOn(x, y){
     let hitted = false;
     for(let i=0; i<this.sprites.length; i++){
-      if(this.game.math.distance(x, y, this.baseX, this.baseY) < this.sprites[i].width){
+      if(this.game.math.distance(x, y, this.sprites[i].cameraOffset.x, this.sprites[i].cameraOffset.y) < this.sprites[i].width){
         hitted = true;
       }
     }
