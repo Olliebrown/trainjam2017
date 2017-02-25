@@ -176,9 +176,7 @@ export class Item extends Phaser.Group {
   setSelectionHandler(gameScene, power_tier) {
     for (var i in this.sprites) {
       this.sprites[i].events.onInputDown.add(function() {
-        console.log(gameScene)
-        console.log(this.indices)
-        gameScene.triggerCatwalkIntro(this.indices, power_tier)
+        gameScene.triggerCatwalkIntro(this.indices, this.invIndexRef, power_tier)
       }, this)
     }
   }
@@ -233,6 +231,10 @@ export class Item extends Phaser.Group {
 
 function onBtnClose(itmButton) {
   let removeIndex = itmButton.parent.invIndex
+  removeFromInventory(removeIndex)
+}
+
+export const removeFromInventory = (removeIndex) => {
   for(let i=0; i<game.ui.inventory.length - 1; i++) {
     if(i >= removeIndex) {
       game.ui.inventory[i] = game.ui.inventory[i+1]
