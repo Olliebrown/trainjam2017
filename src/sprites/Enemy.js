@@ -19,17 +19,24 @@ export class Enemy extends Phaser.Sprite {
 
 export class EnemyTrigger extends Phaser.Sprite {
 
-  constructor ({ game, x, y, player, enemy_group, tilemap}) {
-    super(game, x, y, 'trigger', 10)
+  constructor ({ game, x, y, player, enemy_group, tilemap, level, width, height }) {
+    super(game, x, y)
+
     this.game = game
     this.x = this.x + this.width / 2
     this.y = this.y + this.height / 2
+
+    this.width = width
+    this.height = height
+
     this.player = player
     this.anchor.setTo(0.5)
     this.visible = false
+
     this.enemy_group = enemy_group
     this.tilemap = tilemap
     this.triggered = false
+    this.level = level
   }
 
   overlaps() {

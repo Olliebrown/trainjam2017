@@ -56,6 +56,7 @@ export default class extends Phaser.State {
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
     this.slime_layer = this.tilemap.createLayer('slime')
+    this.object_layer = this.tilemap.objects.object_spawns;
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
@@ -139,6 +140,21 @@ export default class extends Phaser.State {
 
   hideOverlay() {
     this.overlay.removeAll()
+  }
+
+  createEnemyObjectTriggers() {
+    let objects = this.object_layer
+    for (let o in objects) {
+      var trigger = new EnemyTrigger({
+        game: this.game, x: o.x, y: o.y,
+        width: o.width, height: o.height,
+        level: o.properties.level,
+        player: this.player,
+        enemy_group: this.enemies,
+        tilemap: this.tilemap
+      })
+      this.enemy_spawns_triggers.add(trigger)
+    }
   }
 
   createEnemyTriggers() {
