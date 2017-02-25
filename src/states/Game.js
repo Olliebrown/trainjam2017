@@ -191,8 +191,8 @@ export default class extends Phaser.State {
     this.game.ui.inventoryLayer = this.game.add.group()
 
     for(let i in this.game.ui.inventory) {
-      let newItem = Item.makeFromID({
-        game: this.game, id: this.game.ui.inventory[i]-1, invIndex: i
+      let newItem = Item.makeFromGlobalID({
+        game: this.game, id: this.game.ui.inventory[i], invIndex: i
       })
       this.game.add.existing(newItem)
       this.game.ui.inventoryLayer.add(newItem)
@@ -208,9 +208,9 @@ export default class extends Phaser.State {
       var itemGroup = this.game.add.group()
       var item_width = 0
       for (var i in this.game.ui.inventory) {
-        var item = this.game.ui.inventory[i]
-        var new_item = item.copy(0, 0)
-
+        var new_item = Item.makeFromGlobalID({
+          game: this.game, x: 0, y: 0, id: this.game.ui.inventory[i]
+        })
         new_item.scale.setTo(1.5)
         item_width = new_item.width
         itemGroup.add(new_item)

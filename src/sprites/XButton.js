@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 export default class extends Phaser.Button {
   constructor(game, x, y, callback){
-    super(game, x, y, "bclose-btn-sheet", callback);
+    super(game, x, y, 'close-btn-sheet', callback);
     this.anchor.set(0.5);
   }
 }

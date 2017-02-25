@@ -7,7 +7,7 @@ export class Item extends Phaser.Group {
   constructor ({ game, x, y, indices, name, description, powerTier, invIndex }) {
 
     // Should this be a button using an inventory slot
-    if((!x || !y) && invIndex !== null) {
+    if((x === undefined || y === undefined) && invIndex !== undefined) {
       x = Item.INVENTORY_SLOTS[invIndex].x
       y = Item.INVENTORY_SLOTS[invIndex].y
     }
@@ -31,7 +31,7 @@ export class Item extends Phaser.Group {
 
     // Make sprite(s)
     for(let i=0; i<indices.length; i++) {
-      let sprite = new Phaser.Sprite(game, x, y, 'sewer-sprites', indices[i])
+      let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
       sprite.anchor.set(0.5, 0.5)
       sprite.scale.setTo(0.45, 0.45)
       this.game.physics.arcade.enable(sprite)
@@ -151,29 +151,29 @@ Item.init = (itemTileset) => {
   Item.TILE_INDEX_LIST = []
   Object.keys(tileProps).forEach((key) => {
     if(tileProps[key].isItem) {
+      let globalID = parseInt(key) + itemTileset.firstgid
       Item.ITEM_ARRAY.push({
-        triggerIndex: parseInt(key) + 1,
-        tileID: parseInt(key),
+        globalID: globalID, frameID: parseInt(key),
         name: tileProps[key].name,
         description: tileProps[key].description,
         powerTier: tileProps[key].powerTier
       })
 
-      Item.TILE_INDEX_LIST.push(parseInt(key) + 1)
+      Item.TILE_INDEX_LIST.push(globalID)
     }
   });
 
   // Build reverse lookup arrays
   Item.ITEM_BY_NAME = {}
-  Item.ITEM_BY_TILE_ID = {}
+  Item.ITEM_BY_GLOBAL_ID = {}
   for(let i in Item.ITEM_ARRAY) {
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
-    Item.ITEM_BY_TILE_ID[Item.ITEM_ARRAY[i].tileID] = Item.ITEM_ARRAY[i]
+    Item.ITEM_BY_GLOBAL_ID[Item.ITEM_ARRAY[i].globalID] = Item.ITEM_ARRAY[i]
   }
 
   console.info(Item.TILE_INDEX_LIST)
   console.info(Item.ITEM_BY_NAME)
-  console.info(Item.ITEM_BY_TILE_ID)
+  console.info(Item.ITEM_BY_GLOBAL_ID)
 };
 
 // Build a new Item from its name (as specified in the Tiled file)
@@ -186,10 +186,10 @@ Item.makeFromName = ({ game, name, x, y, invIndex }) => {
 }
 
 // Build a new Item from its ID (as specified in the Tiled file)
-Item.makeFromID = ({ game, id, x, y, invIndex }) => {
-  let item = Item.ITEM_BY_TILE_ID[id]
+Item.makeFromGlobalID = ({ game, id, x, y, invIndex }) => {
+  let item = Item.ITEM_BY_GLOBAL_ID[id]
   if(!item) { return null }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.tileID ],
+  return new Item({ game, x, y, invIndex, indices: [ item.frameID ],
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
