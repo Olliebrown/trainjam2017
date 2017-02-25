@@ -84,6 +84,20 @@
          "spacing":0,
          "tilecount":24,
          "tileheight":128,
+         "tileproperties":
+            {
+             "1":
+                {
+                 "name":""
+                }
+            },
+         "tilepropertytypes":
+            {
+             "1":
+                {
+                 "name":"string"
+                }
+            },
          "tilewidth":128
         }],
  "tilewidth":128,

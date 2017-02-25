@@ -1,0 +1,85 @@
+{
+  "resources": [
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.ogg",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.m4a",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.mp3",
+    "/Users/berriers/Programming/trainjam2017/assets/sounds/soundsprite.ac3"
+  ],
+  "spritemap": {
+    "microwave_hum": {
+      "start": 0,
+      "end": 6.242403628117914,
+      "loop": false
+    },
+    "microwave_hum_loopable": {
+      "start": 8,
+      "end": 14.242403628117913,
+      "loop": false
+    },
+    "microwave_hum_withAttack": {
+      "start": 16,
+      "end": 22.855691609977324,
+      "loop": false
+    },
+    "noreverb_pose_sound_1": {
+      "start": 24,
+      "end": 26.136281179138322,
+      "loop": false
+    },
+    "noreverb_pose_sound_2": {
+      "start": 28,
+      "end": 30.08249433106576,
+      "loop": false
+    },
+    "noreverb_pose_sound_3": {
+      "start": 32,
+      "end": 35.424943310657596,
+      "loop": false
+    },
+    "noreverb_walk_speed1": {
+      "start": 37,
+      "end": 47.280634920634924,
+      "loop": false
+    },
+    "noreverb_walk_speed2": {
+      "start": 49,
+      "end": 63.48925170068027,
+      "loop": false
+    },
+    "noreverb_walk_speed3": {
+      "start": 65,
+      "end": 82.33369614512472,
+      "loop": false
+    },
+    "reverb_pose_sound_1": {
+      "start": 84,
+      "end": 86.49632653061225,
+      "loop": false
+    },
+    "reverb_pose_sound_2": {
+      "start": 88,
+      "end": 90.79761904761905,
+      "loop": false
+    },
+    "reverb_pose_sound_3": {
+      "start": 92,
+      "end": 95.4249433106576,
+      "loop": false
+    },
+    "reverb_walk_speed1": {
+      "start": 97,
+      "end": 107.28063492063492,
+      "loop": false
+    },
+    "reverb_walk_speed2": {
+      "start": 109,
+      "end": 123.54149659863945,
+      "loop": false
+    },
+    "reverb_walk_speed3": {
+      "start": 125,
+      "end": 142.33950113378685,
+      "loop": false
+    }
+  }
+}

@@ -1,16 +1,10 @@
-/* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { EnemyTrigger } from '../sprites/Enemy'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
-
-const PLAYER_SPEED = 100
-
-const INVENTORY_MAX = 8
-let INVENTORY_SLOTS = []
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -24,20 +18,16 @@ export default class extends Phaser.State {
   init () {
     this.state = STATES.main
   }
+
   preload () {}
 
   create () {
     let state = this
 
-    for(let i=1; i<=8; i++) {
-      INVENTORY_SLOTS.push(
-        new Phaser.Rectangle(this.game.width - 50, this.game.height / 2 + 75*(i-4) - 35, 64, 64)
-      )
-    }
-
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
     this.tilemap = this.game.add.tilemap('game')
+    Item.init(this.tilemap.tilesets[0])
 
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
@@ -69,11 +59,13 @@ export default class extends Phaser.State {
 
     this.musicIntro.play()
 
+    // Get sounds
+    this.game.sounds = this.game.add.audioSprite('sounds')
+
     // player setup
     this.player = new Player({
       game: this.game,
-      x: 512,
-      y: this.tilemap.heightInPixels - 256
+      x: 128 + 64, y: this.tilemap.heightInPixels - 256 + 64
     })
 
     this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
@@ -94,6 +86,22 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
 
     // this.triggerCatwalkIntro()
+  }
+
+  makeTestInventory() {
+    for(let i = 0; i<8; i++) {
+      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i]-1, invIndex: i })
+      this.game.ui.inventory.push(newItem)
+      this.game.ui.uiLayer.add(newItem)
+    }
+  }
+
+  makeTestInventory2() {
+    for(let i = 0; i<8; i++) {
+      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i+7]-1, invIndex: i })
+      this.game.ui.inventory.push(newItem)
+      this.game.ui.uiLayer.add(newItem)
+    }
   }
 
   showOverlay() {
@@ -132,31 +140,20 @@ export default class extends Phaser.State {
   }
 
   itemTrigger (player, item) {
-    if(this.game.ui.inventory.length >= INVENTORY_MAX) {
+    if(this.game.ui.inventory.length >= Item.INVENTORY_MAX) {
       return;
     }
 
     let invIndex = this.game.ui.inventory.length
-    this.game.ui.inventory.push(new Item({
-      game: this.game, indeces: [item.index], invIndex: invIndex,
-      name: item.properties.name, description: item.properties.description,
-      x: INVENTORY_SLOTS[invIndex].x, y: INVENTORY_SLOTS[invIndex].y
-    }))
+    let newItem = new Item({
+      game: this.game, indices: [item.index], invIndex: invIndex,
+      name: item.properties.name, description: item.properties.description
+    })
 
-    let newItem = this.game.ui.inventory[invIndex]
-    this.game.ui.drawer.add(newItem)
+    this.game.ui.inventory.push(newItem)
+    this.game.ui.uiLayer.add(newItem)
     this.tilemap.removeTile(item.x, item.y, 'interact')
-  }
-
-  makeItemList() {
-    let tileProps = this.tilemap.tilesets[1].tileProperties;
-    let itemList = []
-    Object.keys(tileProps).forEach((key) => {
-      if(tileProps[key].isItem) {
-        itemList.push(parseInt(key) + 1)
-      }
-    });
-    return itemList
+    this.game.sounds.play('reverb_pose_sound_1', 1)
   }
 
   makeUI() {
@@ -171,7 +168,7 @@ export default class extends Phaser.State {
     drawer.fixedToCamera = true
 
     return {
-      drawer: ui_group,
+      uiLayer: ui_group,
       inventory: [],
       microwave: microwave
     }
@@ -179,7 +176,7 @@ export default class extends Phaser.State {
 
   triggerItemChoice (player, enemy) {
     if (this.state == STATES.main) {
-      console.log("triggering item choice")
+      console.info('triggering item choice')
       this.state = STATES.choosingItem
       this.showOverlay()
       var itemGroup = this.game.add.group()
@@ -187,6 +184,7 @@ export default class extends Phaser.State {
       for (var i in this.game.ui.inventory) {
         var item = this.game.ui.inventory[i]
         var new_item = item.copy(0, 0)
+
         new_item.scale.setTo(1.5)
         item_width = new_item.width
         itemGroup.add(new_item)
@@ -195,8 +193,9 @@ export default class extends Phaser.State {
       var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
 
-      for (var i in itemGroup.children) {
-        var item = itemGroup.children[i]
+      for (let i in itemGroup.children) {
+        console.info('doing the thing')
+        let item = itemGroup.children[i]
         item.x = i * item.width
         itemGroup.children[i] = item
       }
@@ -265,10 +264,8 @@ export default class extends Phaser.State {
 
   render () {
     this.game.ui.inventory.forEach((item) => {
-      this.game.debug.rectangle(new Phaser.Rectangle(
-        item.x, item.y, 64, 64), '#ffffff', false)
+      this.game.debug.geom(new Phaser.Rectangle(
+        item.x - 45, item.y - 35, 90, 70), '#ffffff', false)
     })
-    if (__DEV__) {
-    }
   }
 }
