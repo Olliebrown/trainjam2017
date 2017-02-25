@@ -86,14 +86,12 @@ export default class extends Phaser.State {
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicIntro.volume = 0.5
-    this.musicIntro.onFadeComplete.add(() => {
-      this.musicIntro.pause()
-    }, this)
+    this.musicIntro.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.musicLoop = this.game.add.audio('BGM-loop')
     this.musicLoop.volume = 0.5
     this.musicLoop.loop = true
-    this.musicLoop.onFadeComplete.add(pauseAfterFade, this)
+    this.musicLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.musicIntro.onStop.addOnce(() => {
       thisState.musicLoop.play()
@@ -103,12 +101,12 @@ export default class extends Phaser.State {
     // Load catwalk music and build loop
     this.catwalkIntro = this.game.add.audio('BGM-catwalk-intro')
     this.catwalkIntro.volume = 0.5
-    this.catwalkIntro.onFadeComplete.add(pauseAfterFade, this)
+    this.catwalkIntro.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.catwalkLoop = this.game.add.audio('BGM-catwalk-loop')
     this.catwalkLoop.volume = 0.5
     this.catwalkLoop.loop = true
-    this.catwalkLoop.onFadeComplete.add(pauseAfterFade, this)
+    this.catwalkLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.catwalkIntro.onStop.add(() => {
       thisState.catwalkLoop.play()
@@ -574,24 +572,24 @@ export default class extends Phaser.State {
 
   fadeToCatwalkBGM() {
     this.currentBGM.fadeOut(500);
-    this.catwalkIntro.fadeIn(500);
-    this.catwalkIntro.play();
+    this.catwalkIntro.restart();
     this.currentBGM = this.catwalkIntro
   }
 
   fadeToMainBGM() {
-    this.currentBGM.fadeOut(500);
+    if(this.catwalkIntro.isPlaying) this.catwalkIntro.fadeOut(500);
+    if(this.catwalkLoop.isPlaying) this.catwalkLoop.fadeOut(500);
     this.musicLoop.fadeIn(500);
     if(this.musicLoop.paused) this.musicLoop.resume();
-    else this.musicLoop.play();
+    else this.musicLoop.restart();
     this.currentBGM = this.musicLoop
   }
 
   render () {
   }
 
-}
-
-function pauseAfterFade(sound, volume) {
-  if(volume == 0) sound.pause()
+  pauseAfterFade(sound, volume) {
+    if(volume == 0) sound.pause()
+    sound.onFadeComplete.add(this.pauseAfterFade, this)
+  }
 }
