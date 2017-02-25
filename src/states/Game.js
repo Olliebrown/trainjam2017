@@ -339,7 +339,48 @@ export default class extends Phaser.State {
 
       this.overlay.add(enemy_item)
 
+      var player_swell_tween = this.game.add.tween(player_item.sprites[0].scale).to(
+        {x: 5, y: 5},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+      var player_rot_tween = this.game.add.tween(player_item.sprites[0]).to(
+        {rotation: 90},
+        100000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true
+      )
+
+      var enemy_swell_tween = this.game.add.tween(enemy_item.sprites[0].scale).to(
+        {x: 5, y: 5},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+      var enemy_rot_tween = this.game.add.tween(enemy_item.sprites[0]).to(
+        {rotation: -90},
+        100000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true
+      )
+
+      var tierDiff = player_item.powerTier - enemy_item_tier
+      var outcome
+
+      if (tierDiff > 0) {
+        outcome = 'win'
+      } else if (tierDiff >= -1) {
+        if (Math.random() > 0.6) {
+          outcome = 'win'
+        } else {
+          outcome = 'lose'
+        }
+      } else {
+        outcome = 'lose'
+      }
+
+      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome)}), this)
+
     }
+  }
+
+  endCatwalk(outcome) {
+    this.hideOverlay()
+    this.state = STATES.main
+    console.log("You " + outcome)
   }
 
   triggerCatwalkStart(player, enemy) {
