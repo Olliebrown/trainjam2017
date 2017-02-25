@@ -6,12 +6,26 @@ export default class extends Phaser.State {
   init () {}
 
   preload () {
-    this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')
-    this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
-    this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
-    centerGameObjects([this.background, this.loaderBg, this.loaderBar])
+    this.splash = this.add.group()
+
+    this.background = new Phaser.Sprite(this.game,
+      this.game.world.centerX, this.game.world.centerY, 'title-splash')
+    this.loaderBg = new Phaser.Sprite(this.game,
+      this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
+    this.loaderBar = new Phaser.Sprite(this.game,
+      this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
+
+    centerGameObjects([this.background, this.loaderBar, this.loaderBg])
+
+    this.splash.add(this.background)
+    this.splash.add(this.loaderBg)
+    this.splash.add(this.loaderBar)
+    this.splash.scale.set(0.75)
+    this.splash.x += 200
+    this.splash.y += 100
 
     this.load.setPreloadSprite(this.loaderBar)
+
     //
     // load your assets
     //
@@ -64,8 +78,8 @@ export default class extends Phaser.State {
     let startText = new Phaser.Text(this.game, startButton.x, startButton.y - 5,'Start', style);
     startText.anchor.set(0.5);
 
-    this.add.existing(startButton)
-    this.add.existing(startText)
+    this.splash.add(startButton)
+    this.splash.add(startText)
   }
 
   moveOn() {
