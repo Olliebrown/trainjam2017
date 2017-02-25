@@ -30,6 +30,7 @@ export default class extends Phaser.State {
     this.game.load.spritesheet('enemies', 'assets/images/enemies.png', 128, 128)
     this.game.load.spritesheet('player', 'assets/images/char.png', 128, 128)
     this.game.load.spritesheet('microwave', 'assets/images/microwave.png', 512, 256)
+    this.game.load.spritesheet('catwalk-bits', 'assets/images/catwalk-bits.png', 601, 250)
 
     this.game.load.image('background', 'assets/images/overlay-background.png')
     this.game.load.image('bang', 'assets/images/bang.png')

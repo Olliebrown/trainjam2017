@@ -125,21 +125,31 @@ export default class extends Phaser.State {
   }
 
   showOverlay() {
-    var bm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    var bm_data = this.game.add.bitmapData(this.game.width, this.game.height)
     bm_data.ctx.beginPath()
-    bm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    bm_data.ctx.rect(0, 0, this.game.width, this.game.height)
     bm_data.ctx.fillStyle = '#111111'
     bm_data.ctx.fill()
-    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
-    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
-    var overlay_bg = new Phaser.Sprite(this.game, x_offset, y_offset, bm_data)
+    var overlay_bg = new Phaser.Sprite(this.game, 0, 0, bm_data)
+    overlay_bg.alpha = 0.9
     overlay_bg.fixedToCamera = true
     this.overlay.add(overlay_bg)
+
+    var obm_data = this.game.add.bitmapData(OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    obm_data.ctx.beginPath()
+    obm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
+    obm_data.ctx.fillStyle = '#111111'
+    obm_data.ctx.fill()
+    var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
+    var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
+    var overlay = new Phaser.Sprite(this.game, x_offset, y_offset, obm_data)
+    overlay.fixedToCamera = true
+    this.overlay.add(overlay)
     this.game.world.bringToTop(this.overlay)
   }
 
   hideOverlay() {
-    this.overlay.removeAll()
+    this.overlay.removeAll(true)
   }
 
   createEnemyObjectTriggers() {
@@ -335,6 +345,14 @@ export default class extends Phaser.State {
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
+
+      var player_board = new Phaser.Sprite(this.game, 0, this.game.height - 300, 'catwalk-bits', 0)
+      player_board.fixedToCamera = true
+      this.overlay.add(player_board)
+
+      var enemy_board = new Phaser.Sprite(this.game, this.game.width - 601,  this.game.height - 300, 'catwalk-bits', 1)
+      enemy_board.fixedToCamera = true
+      this.overlay.add(enemy_board)
 
       var player_item = Item.makeFromGlobalID({
         game: this.game, x: 400, y: 400, id: player_item_id
