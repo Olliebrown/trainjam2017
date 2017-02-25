@@ -11,7 +11,10 @@ const OVERLAY_HEIGHT = 900
 
 const STATES = {
   main: 1,
-  choosingItem: 2
+  initCatwalk: 2,
+  choosingItem: 3,
+  catwalkIntro: 4,
+  catwalk: 5,
 }
 
 export default class extends Phaser.State {
@@ -201,31 +204,33 @@ export default class extends Phaser.State {
 
   triggerItemChoice (player, enemy) {
 
-    if (this.state == STATES.main) {
+    if (this.state == STATES.initCatwalk) {
       console.info('triggering item choice')
       this.state = STATES.choosingItem
       this.showOverlay()
       var itemGroup = this.game.add.group()
       var item_width = 0
+
+      var items = []
       for (var i in this.game.ui.inventory) {
         var new_item = Item.makeFromGlobalID({
           game: this.game, x: 0, y: 0, id: this.game.ui.inventory[i]
         })
         new_item.scale.setTo(1.5)
         item_width = new_item.width
-        itemGroup.add(new_item)
+        items.push(new_item)
       }
 
-      var selection_width = item_width * itemGroup.children.length
+      var selection_width = item_width * items.length
       var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
 
-      for (let i in itemGroup.children) {
-        console.info('doing the thing')
-        let item = itemGroup.children[i]
+      for (let i in items) {
+        let item = items[i]
         item.x = i * item.width
-        itemGroup.children[i] = item
+        itemGroup.add(item)
       }
+
       itemGroup.x = x_offset
       itemGroup.y = y_offset
       this.overlay.add(itemGroup)
@@ -260,33 +265,42 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalkStart() {
+    if (this.state == STATES.main) {
+      this.state = STATES.initCatwalk
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this)
+    }
+  }
+
   endCatwalkIntro () {
   }
 
   update () {
-    this.game.physics.arcade.collide(this.player, this.interact_layer)
-    this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerItemChoice, null, this)
+    if (this.state == STATES.main) {
+      this.game.physics.arcade.collide(this.player, this.interact_layer)
+      this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 
-    let pointer = this.game.input.activePointer;
-    if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
-      (pointer.isMouse && pointer.leftButton.isDown) || (!pointer.isMouse && pointer.isDown)) {
-      let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
-        Math.floor(pointer.worldY / this.tilemap.tileHeight));
+      let pointer = this.game.input.activePointer;
+      if(pointer && !this.game.ui.microwave.alive && !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
+         (pointer.isMouse && pointer.leftButton.isDown) || (!pointer.isMouse && pointer.isDown)) {
+        let mousePoint = new Phaser.Point(Math.floor(pointer.worldX / this.tilemap.tileWidth),
+                                          Math.floor(pointer.worldY / this.tilemap.tileHeight));
 
-      if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
-        let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
-        let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
-          this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
-        this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
+        if(this.tilemap.hasTile(mousePoint.x, mousePoint.y, 'bg') !== null) {
+          let playerPoint = this.player.getTileLocation(this.tilemap.tileWidth);
+          let targets = this.pathfinder.getTheNextLocation(playerPoint.x, playerPoint.y, mousePoint.x, mousePoint.y,
+                                                           this.sewer_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels, true));
+          this.player.setListOfTargets(targets, this.tilemap.tileWidth, pointer.worldX, pointer.worldY);
+        }
+
+        pointer.reset();
+      }
+      if(this.keys.space.justPressed()){
+        this.game.ui.microwave.alive = true;
+        this.game.ui.microwave.visible = true;
       }
 
-      pointer.reset();
     }
-    if(this.keys.space.justPressed()){
-      this.game.ui.microwave.alive = true;
-      this.game.ui.microwave.visible = true;
-    }
-
   }
 
   render () {
@@ -295,4 +309,5 @@ export default class extends Phaser.State {
     //     item.x - 45, item.y - 35, 90, 70), '#ffffff', false)
     // })
   }
+
 }
