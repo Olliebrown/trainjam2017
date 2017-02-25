@@ -3,7 +3,7 @@ import { Item } from './Item'
 import { XButton, StartButton } from './Buttons'
 
 const MIN_MICROWAVE = 2;
-const MAX_MICROWAVE = 4;
+const MAX_MICROWAVE = 5;
 
 export class MicrowaveCrafting extends Phaser.Group {
   constructor (game) {
