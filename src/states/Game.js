@@ -235,13 +235,13 @@ export default class extends Phaser.State {
       for (var i in this.game.ui.inventory) {
         var id_ = this.game.ui.inventory[i]
         var new_item = Item.makeFromGlobalID({
-          game: this.game, x: i * 130 + 100, y: centerY - 100, id: id_
+          game: this.game, x: i * 130 + 200, y: centerY - 100, id: id_
         })
-        new_item.scale.setTo(1.5)
+        new_item.sprites[0].scale.setTo(1.5)
         new_item.sprites[0].events.onInputDown.add((function() {this.triggerCatwalkIntro(id_)}), this)
-        item_width = new_item.width
-        item_height = new_item.height
-        new_item.x = i * new_item.width
+        item_width = new_item.sprites[0].width
+        item_height = new_item.sprites[0].height
+        new_item.sprites[0].x = i * new_item.width
         this.overlay.add(new_item)
       }
 
