@@ -72,10 +72,10 @@ export class Item extends Phaser.Group {
 
       // Make index number
       this.invIndex = invIndex
-      this.number = this.game.add.text(this.baseX - 40, this.baseY - 15, invIndex,
-        { font: 'Courier', fontSize: 24 })
-      this.number.fixedToCamera = true
-      this.addChild(this.number)
+      // this.number = this.game.add.text(this.baseX - 40, this.baseY - 15, invIndex,
+      //   { font: 'Courier', fontSize: 24 })
+      // this.number.fixedToCamera = true
+      // this.addChild(this.number)
 
       if(animate !== undefined) { this.makeDrop() }
     }
@@ -86,7 +86,7 @@ export class Item extends Phaser.Group {
   makeDrop() {
     // Animate falling item
     this.closeBtn.visible = false
-    this.number.visible = false
+    //this.number.visible = false
 
     for(let i=0; i<this.sprites.length; i++){
       var itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
@@ -96,7 +96,7 @@ export class Item extends Phaser.Group {
       if(i == 0){
         itemDropTween.onComplete.add(() => {
           this.closeBtn.visible = true
-          this.number.visible = true
+          //this.number.visible = true
         }, this)
       }
     }
@@ -114,7 +114,7 @@ export class Item extends Phaser.Group {
 
       if(this.invIndex !== undefined) {
         this.closeBtn.visible = false
-        this.number.visible = false
+        //this.number.visible = false
       }
     } else {
       for(let i=0; i<this.sprites.length; i++) {
@@ -124,7 +124,7 @@ export class Item extends Phaser.Group {
 
       if(this.invIndex !== undefined) {
         this.closeBtn.visible = true
-        this.number.visible = true
+        //this.number.visible = true
       }
     }
   }

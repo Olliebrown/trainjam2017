@@ -60,13 +60,23 @@ export default class extends Phaser.State {
     this.slime_layer = this.tilemap.createLayer('slime')
     this.enemy_layer = this.tilemap.objects.object_spawns;
     this.microwave_layer = this.tilemap.objects.microwaves;
+    this.microwaveGroup = this.game.add.group()
 
     this.tilemap.setCollisionByExclusion([0], true, 'sewer')
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
     this.tilemap.setTileIndexCallback(Item.TILE_INDEX_LIST, this.itemTrigger, this, 'interact')
 
+    // player setup
+    this.player = new Player({
+      game: this.game,
+      x: 128 + 64, y: this.tilemap.heightInPixels - 640 + 64
+    })
+
     // Make the microwave sprites
     this.createMicrowaves()
+    this.lastMicrowave = ''
+
+    this.game.world.bringToTop(this.player)
 
     // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
@@ -84,17 +94,13 @@ export default class extends Phaser.State {
       state.musicLoop.play()
     });
 
+    // TODO: Re-enable this awesome music!!
     // this.musicIntro.play()
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
     this.game.lastItem = new Phaser.Point(-1, -1)
 
-    // player setup
-    this.player = new Player({
-      game: this.game,
-      x: 128 + 64, y: this.tilemap.heightInPixels - 640 + 64
-    })
     this.game.add.existing(this.player)
     this.game.camera.follow(this.player)
 
@@ -168,16 +174,12 @@ export default class extends Phaser.State {
       let newMicrowave = new Microwave({
         game: this.game,
         x: m.x + m.width/2,
-        y: m.y + m.height/2
+        y: m.y + m.height/2,
+        name: m.name,
+        player: this.player
       })
 
-      newMicrowave.events.onInputDown.add(() => {
-        this.game.ui.microwave.alive = true
-        this.game.ui.microwave.visible = true
-        this.state = STATES.microwaving
-      }, this)
-
-      this.game.add.existing(newMicrowave)
+      this.microwaveGroup.add(newMicrowave)
     }
   }
 
@@ -270,7 +272,6 @@ export default class extends Phaser.State {
           xOffset = 200
         }
       }
-
     }
   }
 
@@ -365,7 +366,6 @@ export default class extends Phaser.State {
       enemy_item.sprites[0].scale.setTo(2)
 
       this.overlay.add(enemy_item)
-
     }
   }
 
@@ -453,13 +453,31 @@ export default class extends Phaser.State {
       this.game.physics.arcade.collide(this.player, this.interact_layer)
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 
+      this.game.physics.arcade.overlap(this.player, this.microwaveGroup,
+        (player, microwave) => {
+          if(microwave.name != this.lastMicrowave) {
+            this.game.ui.microwave.alive = true
+            this.game.ui.microwave.visible = true
+            this.lastMicrowave = microwave.name
+            microwave.triggered = true
+          }
+        }, null, this)
+
       for(let i in this.enemy_spawns_triggers) {
         this.enemy_spawns_triggers[i].checkOverlap()
       }
 
-      if(this.keys.space.justPressed()){
-        this.game.ui.microwave.alive = true;
-        this.game.ui.microwave.visible = true;
+      // Clear microwave collision
+      if(this.lastMicrowave != '') {
+        for(let i=0; i<this.microwaveGroup.length; i++) {
+          let mwave = this.microwaveGroup.getChildAt(i)
+          if(mwave.triggered) {
+            if(!mwave.isOverlapping()) {
+              this.lastMicrowave = ''
+              this.triggered = false
+            }
+          }
+        }
       }
 
     }
