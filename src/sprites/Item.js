@@ -370,12 +370,17 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, sca
   }
 
   if(index === undefined) index = 0
-  let item = Item.ITEM_BY_POWER_TIER[powerTier][index]
-  if(item === undefined) {
-    console.error(`Unknown item power tier index (${powerTier}[${index}])`)
-    return null
+  let indeces = [];
+  for(let i=0; i<powerTier.length; i++){
+    let item = Item.ITEM_BY_POWER_TIER[powerTier[i]][index]
+    indeces.push(item.frameID);
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate, scale,
-    name: item.name, description: item.description, powerTier: item.powerTier })
+  // if(item === undefined) {
+  //   console.error(`Unknown item power tier index (${powerTier}[${index}])`)
+  //   return null
+  // }
+
+  return new Item({ game, x, y, invIndex, indices: indeces, animate, scale,
+    name: "", description: "", powerTier: powerTier[powerTier.length - 1] })
 }
