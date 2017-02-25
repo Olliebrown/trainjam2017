@@ -102,7 +102,7 @@ export class MicrowaveCrafting extends Phaser.Group {
       for(let i=0; i<this.game.ui.inventoryLayer.length; i++){
         let item = this.game.ui.inventoryLayer.getAt(i)
         if(item.mouseOn(this.game.input.activePointer.x, this.game.input.activePointer.y)){
-          if(item.inMicrowave || this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE) {
+          if(this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE) {
             item.inMicrowave = !item.inMicrowave;
           }
           else {

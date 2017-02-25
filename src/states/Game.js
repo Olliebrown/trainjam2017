@@ -93,9 +93,9 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
 
     // Setup enemy spawn triggers
-    this.enemy_spawns_triggers = new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.enemy_spawns_triggers = [] //new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
     this.enemies = new Phaser.Group(this.game)
-    this.createEnemyTriggers()
+    this.createEnemyObjectTriggers()
 
     // Setup keyboard input
     this.keys = this.game.input.keyboard.createCursorKeys()
@@ -109,21 +109,6 @@ export default class extends Phaser.State {
 
     // this.state = STATES.choosingItem
     // this.triggerCatwalkIntro(37, 37)
-  }
-
-  makeTestInventory() {
-    for(let i = 0; i<8; i++) {
-      this.game.ui.inventory.push(Item.TILE_INDEX_LIST[i])
-    }
-    this.updateInventory()
-  }
-
-  makeTestInventory2() {
-    for(let i = 0; i<8; i++) {
-      let newItem = Item.makeFromID({ game: this.game, id: Item.TILE_INDEX_LIST[i+7]-1, invIndex: i })
-      this.game.ui.inventory.push(newItem)
-      this.game.ui.inventoryLayer.add(newItem)
-    }
   }
 
   showOverlay() {
@@ -156,8 +141,9 @@ export default class extends Phaser.State {
 
   createEnemyObjectTriggers() {
     let objects = this.object_layer
-    for (let o in objects) {
-      var trigger = new EnemyTrigger({
+    for (let i in objects) {
+      let o = objects[i]
+      let trigger = new EnemyTrigger({
         game: this.game, x: o.x, y: o.y,
         width: o.width, height: o.height,
         level: o.properties.level,
@@ -165,25 +151,7 @@ export default class extends Phaser.State {
         enemy_group: this.enemies,
         tilemap: this.tilemap
       })
-      this.enemy_spawns_triggers.add(trigger)
-    }
-  }
-
-  createEnemyTriggers() {
-    var tiles = this.slime_layer.getTiles(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
-    for (var t in tiles) {
-      var tile = tiles[t]
-      if (tile.index !== -1) {
-        var trigger = new EnemyTrigger({
-          game: this.game,
-          x: tile.x * tile.width,
-          y: tile.y * tile.height,
-          player: this.player,
-          enemy_group: this.enemies,
-          tilemap: this.tilemap
-        })
-        this.enemy_spawns_triggers.add(trigger)
-      }
+      this.enemy_spawns_triggers.push(trigger)
     }
   }
 
@@ -458,6 +426,10 @@ export default class extends Phaser.State {
 
       this.game.physics.arcade.collide(this.player, this.interact_layer)
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
+
+      for(let i in this.enemy_spawns_triggers) {
+        this.enemy_spawns_triggers[i].checkOverlap()
+      }
 
       if(this.keys.space.justPressed()){
         this.game.ui.microwave.alive = true;
