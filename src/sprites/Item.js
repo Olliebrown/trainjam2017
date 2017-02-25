@@ -1,5 +1,6 @@
 /* globals game */
 import Phaser from 'phaser'
+import {shuffleArray} from '../utils'
 //import Glow from '../filters/Glow'
 
 export class Item extends Phaser.Group {
@@ -48,6 +49,7 @@ export class Item extends Phaser.Group {
     }
 
     // Build sprites
+    shuffleArray(indices, this.game.rnd);
     for(let i=0; i<indices.length; i++) {
       let sprite = new Phaser.Sprite(game,
         x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
