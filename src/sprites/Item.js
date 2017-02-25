@@ -71,7 +71,7 @@ export class Item extends Phaser.Group {
     if(indices.length > 1){
       let image = new Phaser.Image(game, x, y, 'eyes', game.rnd.integerInRange(0, 3));
       image.anchor.set(0.5)
-      image.scale.setTo(2 * scale);
+      image.scale.setTo(0.5 * scale);
       image.fixedToCamera = true;
       this.eyes = image;
       this.addChild(image);

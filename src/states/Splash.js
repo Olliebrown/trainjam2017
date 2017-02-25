@@ -30,6 +30,8 @@ export default class extends Phaser.State {
     this.game.load.spritesheet('enemies', 'assets/images/enemies.png', 128, 128)
     this.game.load.spritesheet('player', 'assets/images/char.png', 128, 128)
     this.game.load.spritesheet('microwave', 'assets/images/microwave.png', 512, 256)
+    this.game.load.spritesheet('eyes', 'assets/images/eyes.png', 256, 256)
+    this.game.load.spritesheet('catwalk-bits', 'assets/images/catwalk-bits.png', 601, 250)
 
     this.game.load.image('background', 'assets/images/overlay-background.png')
     this.game.load.image('bang', 'assets/images/bang.png')
@@ -38,7 +40,6 @@ export default class extends Phaser.State {
     this.game.load.image('catwalk-floor', 'assets/images/catwalk-floor.png')
     this.game.load.image('catwalk-lights-front', 'assets/images/catwalk-lights-front.png')
     this.game.load.image('catwalk-lights-back', 'assets/images/catwalk-lights-back.png')
-    this.game.load.spritesheet('catwalk-bits', 'assets/images/catwalk-bits.png', 601, 250)
 
     this.game.load.image('catwalk-intro-strip', 'assets/images/catwalk-intro-stripe.png')
     this.game.load.image('catwalk-intro-gradient', 'assets/images/catwalk-intro-grad.png')
