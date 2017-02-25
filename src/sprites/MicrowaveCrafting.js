@@ -21,6 +21,12 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.background.scale.set(1.5)
     this.add(this.background);
 
+    this.door = new Phaser.Image(this.game, this.background.x - 10, this.background.y + 20, 'door');
+    this.door.anchor.set(0.5)
+    this.door.scale.set(1.5);
+    this.door.visible = false;
+    this.add(this.door)
+
     this.turnTheMicrowave = new StartButton(this.game,
       this.background.x + this.background.width/2 - 114,
       this.background.y + this.background.height/2 - 59,
@@ -82,7 +88,7 @@ export class MicrowaveCrafting extends Phaser.Group {
   microwave() {
     if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
        this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE) {
-
+         this.game.ui.microwave.door.visible = true;
       this.game.sounds.get('microwave_start').onStop.add(() => {
         this.game.sounds.play('microwave_done', 1)
         this.game.ui.microwave.microwavePhase2()
@@ -95,6 +101,7 @@ export class MicrowaveCrafting extends Phaser.Group {
 
   microwavePhase2() {
     let items = this.game.ui.microwave.getInMicrowave();
+    this.game.ui.microwave.door.visible = false;
     let indices = [], removeIDs = []
 
     // Make new list of indices for combined item

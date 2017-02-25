@@ -36,6 +36,7 @@ export default class extends Phaser.State {
 
     this.game.load.image('background', 'assets/images/overlay-background.png')
     this.game.load.image('bang', 'assets/images/bang.png')
+    this.game.load.image('door', 'assets/images/MicroDoor.png')
 
     this.game.load.image('catwalk-gradient', 'assets/images/catwalk-grad.png')
     this.game.load.image('catwalk-floor', 'assets/images/catwalk-floor.png')
