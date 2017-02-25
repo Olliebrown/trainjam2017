@@ -35,16 +35,15 @@ export class Item extends Phaser.Group {
         let random = this.game.rnd.integerInRange(0, this.indeces.length - 1);
         this.indeces.splice(random, 1);
       }
-    for(let i=0; i<indeces.length; i++) {
+    for(let i=0; i<this.indeces.length; i++) {
       if(this.game.rnd.realInRange(0, 1) < 0.1 && this.indeces.length > 1){
         continue;
       }
-      let sprite = new Phaser.Sprite(game, x, y, 'sewer-sprites', indeces[i] - 1)
+      let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', this.indeces[i] - 1)
     // Make sprite(s)
       sprite.anchor.set(0.5, 0.5)
         sprite.scale.setTo(0.45, 0.45)
         this.game.physics.arcade.enable(sprite)
-        sprite.fixedToCamera = true
         this.sprites.push(sprite)
         this.addChild(sprite)
       }
