@@ -137,6 +137,7 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.game.ui.inventory.push(Item.convertFrameToGlobal(indices))
     this.game.ui.inventoryNeedsUpdate = true
     this.game.ui.inventoryCascade = cascade
+    this.game.ui.inventoryShuffle = this.game.ui.inventory.length - 1
 
     this.game.ui.microwave.alive = false;
     this.game.ui.microwave.visible = false;

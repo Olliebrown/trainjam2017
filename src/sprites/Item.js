@@ -5,7 +5,8 @@ import {shuffleArray} from '../utils'
 
 export class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, scale, indices, name, description, powerTier, invIndex, animate }) {
+  constructor ({ game, x, y, scale, indices, name, description,
+    powerTier, invIndex, animate, shuffle }) {
 
     // Clean invIndex
     if(invIndex !== undefined) {
@@ -49,7 +50,10 @@ export class Item extends Phaser.Group {
     }
 
     // Build sprites
-    shuffleArray(indices, this.game.rnd);
+    if(shuffle !== undefined && shuffle) {
+      shuffleArray(indices, this.game.rnd);
+    }
+
     for(let i = 1; i<indices.length; i++){
       if(this.game.rnd.realInRange(0, 1) < 0.1){
         let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
@@ -299,11 +303,13 @@ Item.init = (itemTileset) => {
   Item.ITEM_BY_NAME = {}
   Item.ITEM_BY_GLOBAL_ID = {}
   Item.ITEM_BY_POWER_TIER = {}
+  Item.POWER_TIER_FROM_FRAME_ID = {}
 
   for(let i in Item.ITEM_ARRAY) {
     Item.FRAME_2_GLOBAL[Item.ITEM_ARRAY[i].frameID] = Item.ITEM_ARRAY[i].globalID
     Item.ITEM_BY_NAME[Item.ITEM_ARRAY[i].name] = Item.ITEM_ARRAY[i]
     Item.ITEM_BY_GLOBAL_ID[Item.ITEM_ARRAY[i].globalID] = Item.ITEM_ARRAY[i]
+    Item.POWER_TIER_FROM_FRAME_ID[Item.ITEM_ARRAY[i].frameID] = Item.ITEM_ARRAY[i].powerTier
 
     if(Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].powerTier] === undefined) {
       Item.ITEM_BY_POWER_TIER[Item.ITEM_ARRAY[i].powerTier] = new Array()
@@ -330,6 +336,14 @@ Item.convertFrameToGlobal = (frameIDs) => {
     globalIDs.push(Item.FRAME_2_GLOBAL[frameIDs[i]])
   }
   return globalIDs
+}
+
+Item.convertFrameToPowerTier = (frameIDs) => {
+  let powerTiers = []
+  for(let i in frameIDs) {
+    powerTiers.push(Item.POWER_TIER_FROM_FRAME_ID[frameIDs[i]])
+  }
+  return powerTiers
 }
 
 // Build a new Item from its ID (as specified in the Tiled file)

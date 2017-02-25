@@ -95,7 +95,7 @@ export default class extends Phaser.State {
     });
 
     // TODO: Re-enable this awesome music!!
-    // this.musicIntro.play()
+    this.musicIntro.play()
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
@@ -216,8 +216,8 @@ export default class extends Phaser.State {
     ui_group.add(this.microwave);
 
     return {
-      uiLayer: ui_group, inventoryLayer: inventory_group,
-      inventory: [], inventoryNeedsUpdate: false, microwave: this.microwave
+      uiLayer: ui_group, inventoryLayer: inventory_group, inventoryCascade: -1,
+      inventoryShuffle: -1, inventory: [], inventoryNeedsUpdate: false, microwave: this.microwave
     }
   }
 
@@ -449,7 +449,7 @@ export default class extends Phaser.State {
         if (i >= this.game.ui.inventoryCascade) {
           newItem = Item.makeFromGlobalIDs({
             game: this.game, idArray: this.game.ui.inventory[i],
-            invIndex: i, animate: Item.DROP_CASCADE
+            invIndex: i, animate: Item.DROP_CASCADE,
           })
         } else {
           newItem = Item.makeFromGlobalIDs({
