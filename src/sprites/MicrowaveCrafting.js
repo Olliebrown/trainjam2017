@@ -99,11 +99,6 @@ export class MicrowaveCrafting extends Phaser.Group {
       this.game.ui.inventoryNeedsUpdate = true
       this.game.ui.inventoryCascade = cascade
 
-      // let newItem = new Item({game:this.game,
-      //   indices:indices, name:'', description: '',
-      //   invIndex:this.game.ui.inventory.length});
-      //
-      // this.game.add.existing(newItem);
       console.info('Microwaving....');
     }
     else{
