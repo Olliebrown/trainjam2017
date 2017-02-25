@@ -199,6 +199,21 @@ export class Item extends Phaser.Group {
     }
   }
 
+  makeScaleTween({scale, time, easing, autostart, delay, repeat, yoyo}) {
+    for (var i in this.sprites) {
+      this.game.add.tween(this.sprites[i].scale).to(
+        {x: scale, y: scale},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+    }
+    if (this.eyes !== null) {
+      this.game.add.tween(this.eyes.scale).to(
+        {x: scale, y: scale},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+    }
+  }
+
   makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
     for (var i in this.sprites) {
       this.game.add.tween(this.sprites[i]).to(

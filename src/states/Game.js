@@ -373,7 +373,10 @@ export default class extends Phaser.State {
         game: this.game, x: 1250, y: 550, powerTier: enemy_item_tier
       })
 
-      enemy_item.sprites[0].scale.setTo(2)
+      for(let i=0; i<enemy_item.sprites.length; i++){
+          enemy_item.sprites[i].scale.setTo(2)
+      }
+
 
       this.overlay.add(enemy_item)
 
@@ -381,6 +384,15 @@ export default class extends Phaser.State {
         {x: 5, y: 5},
         2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
       )
+      player_item.makeScaleTween({
+        scale: 5,
+        time: 100000,
+        easing: Phaser.Easing.Sinusoidal.InOut,
+        autostart: true,
+        delay: 0,
+        repeat: -1,
+        yoyo: true
+      })
       player_item.makeRotationTween({
         rotation: {rotation: 90},
         time: 100000,
@@ -391,14 +403,25 @@ export default class extends Phaser.State {
         yoyo: true
       })
 
-      var enemy_swell_tween = this.game.add.tween(enemy_item.sprites[0].scale).to(
-        {x: 5, y: 5},
-        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
-      )
-      var enemy_rot_tween = this.game.add.tween(enemy_item.sprites[0]).to(
-        {rotation: -90},
-        100000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true
-      )
+      enemy_item.makeRotationTween({
+        rotation: {rotation: -90},
+        time: 100000,
+        easing: Phaser.Easing.Sinusoidal.InOut,
+        autostart: true,
+        delay: 0,
+        repeat: -1,
+        yoyo: true
+      })
+
+      enemy_item.makeScaleTween({
+        scale: 5,
+        time: 100000,
+        easing: Phaser.Easing.Sinusoidal.InOut,
+        autostart: true,
+        delay: 0,
+        repeat: -1,
+        yoyo: true
+      })
 
       var tierDiff = player_item.powerTier - enemy_item_tier
       var outcome
