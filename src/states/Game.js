@@ -450,10 +450,12 @@ export default class extends Phaser.State {
           newItem = Item.makeFromGlobalIDs({
             game: this.game, idArray: this.game.ui.inventory[i],
             invIndex: i, animate: Item.DROP_CASCADE,
+            shuffle: (i == this.game.ui.inventoryShuffle)
           })
         } else {
           newItem = Item.makeFromGlobalIDs({
-            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i,
+            shuffle: (i == this.game.ui.inventoryShuffle)
           })
         }
 
@@ -466,16 +468,19 @@ export default class extends Phaser.State {
         if (i == this.game.ui.inventory.length - 1) {
           newItem = Item.makeFromGlobalIDs({
             game: this.game, idArray: this.game.ui.inventory[i],
-            invIndex: i, animate: Item.DROP_FROM_TOP
+            invIndex: i, animate: Item.DROP_FROM_TOP,
+            shuffle: (i == this.game.ui.inventoryShuffle)
           })
         } else {
           newItem = Item.makeFromGlobalIDs({
-            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i
+            game: this.game, idArray: this.game.ui.inventory[i], invIndex: i,
+            shuffle: (i == this.game.ui.inventoryShuffle)
           })
         }
 
         this.game.add.existing(newItem)
         this.game.ui.inventoryLayer.add(newItem)
+        this.game.ui.inventoryShuffle = -1
       }
     }
 

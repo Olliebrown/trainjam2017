@@ -14,7 +14,7 @@ export const loadAudio = (game, key, file) => {
   if (game.device.iOS || game.device.safari) {
     game.load.audio(key, [file + '.m4a'])
   } else {
-    game.load.audio(key, [file + '.ogg', file + '.mp3'])
+    game.load.audio(key, [file + '.ogg', file + '.mp3', file + '.ac3'])
   }
 }
 
