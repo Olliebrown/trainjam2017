@@ -7,9 +7,9 @@ export default class extends Phaser.Sprite {
   constructor ({ game, x, y }) {
     super(game, x, y, 'player', 0)
 
-    this.animations.add('idle', [0, 1, 2], 5, true)
-    this.animations.add('stopped', [5], 5, true)
-    this.animations.add('walk', [3, 5, 4, 5], 5, true)
+    this.animations.add('idle', [0, 1, 2], 7, true)
+    this.animations.add('stopped', [5], 7, true)
+    this.animations.add('walk', [3, 5, 4, 5], 7, true)
 
     this.listOfTargets = [];
     this.speed = 10;

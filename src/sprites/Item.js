@@ -11,7 +11,14 @@ export class Item extends Phaser.Group {
 
     this.sprites = []
     this.indeces = indeces
+    while(this.indeces.length > 4){
+      let random = this.game.rnd.integerInRange(0, this.indeces.length - 1);
+      this.indeces.splice(random, 1);
+    }
     for(let i=0; i<indeces.length; i++) {
+      if(this.game.rnd.realInRange(0, 1) < 0.1 && this.indeces.length > 1){
+        continue;
+      }
       let sprite = new Phaser.Sprite(game, x, y, 'sewer-sprites', indeces[i] - 1)
       sprite.anchor.set(0.5, 0.5)
       sprite.scale.setTo(0.45, 0.45)
@@ -20,9 +27,10 @@ export class Item extends Phaser.Group {
       this.add(sprite)
     }
 
+
     // Make close button
     this.closeBtn = this.game.add.button(x + 20, y - 40, 'close-btn-sheet',
-          onBtnClose, this, 2, 0, 1, 0, this)
+          this.onBtnClose, this, 2, 0, 1, 0, this)
     this.closeBtn.scale.set(0.333)
     this.add(this.closeBtn)
 
@@ -85,20 +93,20 @@ export class Item extends Phaser.Group {
       description: this.description, invIndex: this.invIndex
     })
   }
-}
 
-function onBtnClose(itmButton) {
-  let reducedInventory = itmButton.game.ui.inventory.filter((item, index) => {
-    if(index == itmButton.parent.invIndex) {
-      return false
-    } else if(index > itmButton.parent.invIndex) {
-      item.shiftUp()
-      return true
-    } else {
-      return true
-    }
-  });
+  onBtnClose(itmButton) {
+    let reducedInventory = itmButton.game.ui.inventory.filter((item, index) => {
+      if(index == itmButton.parent.invIndex) {
+        return false
+      } else if(index > itmButton.parent.invIndex) {
+        item.shiftUp()
+        return true
+      } else {
+        return true
+      }
+    });
 
-  itmButton.game.ui.inventory = reducedInventory
-  itmButton.parent.destroy()
+    itmButton.game.ui.inventory = reducedInventory
+    itmButton.parent.destroy()
+  }
 }
