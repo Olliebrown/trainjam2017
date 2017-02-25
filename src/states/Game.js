@@ -211,7 +211,7 @@ export default class extends Phaser.State {
       var itemGroup = this.game.add.group()
       var item_width = 0
 
-      vars items = []
+      var items = []
       for (var i in this.game.ui.inventory) {
         var item = this.game.ui.inventory[i]
         var new_item = item.copy(0, 0)
@@ -225,11 +225,10 @@ export default class extends Phaser.State {
       var x_offset = (this.game.width - selection_width) / 2
       var y_offset = (this.game.height - itemGroup.height) / 2
 
-      for (let i in itemGroup.children) {
-        console.info('doing the thing')
-        let item = itemGroup.children[i]
+      for (let i in items) {
+        let item = items[i]
         item.x = i * item.width
-        itemGroup.children[i] = item
+        itemGroup.add(item)
       }
 
       itemGroup.x = x_offset
