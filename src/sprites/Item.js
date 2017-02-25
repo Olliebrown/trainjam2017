@@ -128,6 +128,7 @@ function onBtnClose(itmButton) {
   }
 
   inventory.pop();
+
 }
 
 // Static class members

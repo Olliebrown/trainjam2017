@@ -27,15 +27,28 @@ export default class extends Phaser.State {
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
     this.tilemap = this.game.add.tilemap('game')
-    Item.init(this.tilemap.tilesets[0])
 
     this.game.world.setBounds(0, 0, this.tilemap.widthInPixels, this.tilemap.heightInPixels)
 
     this.tilemap.addTilesetImage('sewer-tiles')
     this.tilemap.addTilesetImage('item-tiles')
 
-    // this.itemIndexList = this.makeItemList();
+    // Serch for the item tilemap to initialize the item class
+    let itemTilemapIndex = -1
+    for(let i in this.tilemap.tilesets) {
+      if(this.tilemap.tilesets[i].name === 'item-tiles') {
+        itemTilemapIndex = i
+        break
+      }
+    }
 
+    if(itemTilemapIndex < 0) {
+      console.error('ERROR: Could not find the item tilemap')
+    } else {
+      Item.init(this.tilemap.tilesets[itemTilemapIndex])
+    }
+
+    // Initialize tilemap layers
     this.bg_layer = this.tilemap.createLayer('bg')
     this.sewer_layer = this.tilemap.createLayer('sewer')
     this.interact_layer = this.tilemap.createLayer('interact')
@@ -67,7 +80,7 @@ export default class extends Phaser.State {
     // player setup
     this.player = new Player({
       game: this.game,
-      x: 128 + 64, y: this.tilemap.heightInPixels - 256 + 64
+      x: 128 + 64, y: this.tilemap.heightInPixels - 512 + 64
     })
     this.game.add.existing(this.player)
     this.game.camera.follow(this.player)
@@ -86,12 +99,6 @@ export default class extends Phaser.State {
     this.overlay = this.game.add.group()
 
     // this.makeTestInventory()
-    // this.overlay.fixedToCamera = true
-    this.overlay = this.game.add.group()
-
-    // camera
-    this.game.camera.follow(this.player)
-
     // this.triggerCatwalkIntro()
   }
 
