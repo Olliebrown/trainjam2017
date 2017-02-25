@@ -184,11 +184,21 @@ export class Item extends Phaser.Group {
       this.game.add.tween(this.sprites[i].cameraOffset).to(
         finalLoc, time, easing, autostart)
     }
+    if (this.eyes !== null) {
+      this.game.add.tween(this.eyes.cameraOffset).to(
+        finalLoc, time, easing, autostart)
+    }
   }
 
   makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
     for (var i in this.sprites) {
       this.game.add.tween(this.sprites[i]).to(
+        {rotation: rotation},
+        time, easing, autostart, delay, repeat, yoyo
+      )
+    }
+    if (this.eyes !== null) {
+      this.game.add.tween(this.eyes.cameraOffset).to(
         {rotation: rotation},
         time, easing, autostart, delay, repeat, yoyo
       )
