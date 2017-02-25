@@ -364,10 +364,10 @@ Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => 
 
 // Build a new Item from its power-tier plus an index
 Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, scale }) => {
-  if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
-    console.error(`Unknown item power tier (${powerTier})`)
-    return null
-  }
+  // if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
+  //   console.error(`Unknown item power tier (${powerTier})`)
+  //   return null
+  // }
 
   if(index === undefined) index = 0
   let indeces = [];
