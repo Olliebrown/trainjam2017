@@ -61,12 +61,10 @@ export default class extends Phaser.State {
     this.tilemap.setCollisionByExclusion([0], true, 'enemy_spawns')
     this.tilemap.setTileIndexCallback(Item.TILE_INDEX_LIST, this.itemTrigger, this, 'interact')
 
+    // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
 
     // Load and build music loop
-    // this.tilemap.setTileIndexCallback([65], this.itemTrigger, this, 'interact')
-    // this.tilemap.setTileIndexCallback(this.itemIndexList, this.itemTrigger, this, 'interact')
-
     this.musicIntro = this.game.add.audio('BGM-intro')
     this.musicLoop = this.game.add.audio('BGM-loop')
     this.musicLoop.loop = true
@@ -83,7 +81,7 @@ export default class extends Phaser.State {
     // player setup
     this.player = new Player({
       game: this.game,
-      x: 128 + 64, y: this.tilemap.heightInPixels - 512 + 64
+      x: 128 + 64, y: this.tilemap.heightInPixels - 640 + 64
     })
     this.game.add.existing(this.player)
     this.game.camera.follow(this.player)
@@ -185,20 +183,7 @@ export default class extends Phaser.State {
 
     return {
       uiLayer: ui_group, inventoryLayer: inventory_group,
-      inventory: [], microwave: this.microwave
-    }
-  }
-
-  updateInventory() {
-    this.game.ui.inventoryLayer.destroy();
-    this.game.ui.inventoryLayer = this.game.add.group()
-
-    for(let i in this.game.ui.inventory) {
-      let newItem = Item.makeFromGlobalID({
-        game: this.game, id: this.game.ui.inventory[i], invIndex: i
-      })
-      this.game.add.existing(newItem)
-      this.game.ui.inventoryLayer.add(newItem)
+      inventory: [], inventoryNeedsUpdate: false, microwave: this.microwave
     }
   }
 
@@ -275,8 +260,36 @@ export default class extends Phaser.State {
   endCatwalkIntro () {
   }
 
+  updateInventory() {
+    this.game.ui.inventoryLayer.destroy();
+    this.game.ui.inventoryLayer = this.game.add.group()
+
+    for(let i in this.game.ui.inventory) {
+      let newItem = {}
+      if (i == this.game.ui.inventory.length - 1) {
+        newItem = Item.makeFromGlobalID({
+          game: this.game, id: this.game.ui.inventory[i],
+          invIndex: i, animate: Item.DROP_FROM_TOP
+        })
+      } else {
+        newItem = Item.makeFromGlobalID({
+          game: this.game, id: this.game.ui.inventory[i], invIndex: i
+        })
+      }
+
+      this.game.add.existing(newItem)
+      this.game.ui.inventoryLayer.add(newItem)
+    }
+
+    this.game.ui.inventoryNeedsUpdate = false
+  }
+
   update () {
     if (this.state == STATES.main) {
+      if(this.game.ui.inventoryNeedsUpdate) {
+        this.updateInventory()
+      }
+
       this.game.physics.arcade.collide(this.player, this.interact_layer)
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 

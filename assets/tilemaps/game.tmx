@@ -18,7 +18,7 @@
     <property name="description" value="An old empty can with sharp edges and a sticky residue."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Empty Tin Can"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="1"/>
    </properties>
   </tile>
   <tile id="2">
@@ -26,7 +26,7 @@
     <property name="description" value="Keep away from small children and zombies."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Plastic Bag"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="10"/>
    </properties>
   </tile>
   <tile id="3">
@@ -34,7 +34,7 @@
     <property name="description" value=""/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Used K-Cup"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="11"/>
    </properties>
   </tile>
   <tile id="4">
@@ -42,7 +42,7 @@
     <property name="description" value="Almost as deadly as the ninja star (when used to store archival data)."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="5.25in Floppy Disk"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="5"/>
    </properties>
   </tile>
   <tile id="5">
@@ -50,7 +50,7 @@
     <property name="description" value="Why would someone ever throw this away?!"/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Table Lamp"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="8"/>
    </properties>
   </tile>
   <tile id="6">
@@ -58,7 +58,7 @@
     <property name="description" value="I have an idea!"/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Lightbulb"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="2"/>
    </properties>
   </tile>
   <tile id="7">
@@ -66,7 +66,7 @@
     <property name="description" value="Tony Hawk ain't got nothing on you!"/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Skateboard"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="9"/>
    </properties>
   </tile>
   <tile id="8">
@@ -74,7 +74,7 @@
     <property name="description" value="I tried planting an egg once ..."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Eggplant"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="3"/>
    </properties>
   </tile>
   <tile id="9">
@@ -82,7 +82,7 @@
     <property name="description" value="It tingles when you lick the ends."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Dead Battery"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="12"/>
    </properties>
   </tile>
   <tile id="10">
@@ -90,7 +90,7 @@
     <property name="description" value="For some reason it get's really hot and burns your cheek when you try to use it."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Cell Phone"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="7"/>
    </properties>
   </tile>
   <tile id="11">
@@ -105,7 +105,7 @@
     <property name="description" value=""/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Band-Aid"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="14"/>
    </properties>
   </tile>
   <tile id="13">
@@ -113,7 +113,7 @@
     <property name="description" value="At least someone got to enjoy it's sweet nector."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Empty Soda Can"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="13"/>
    </properties>
   </tile>
   <tile id="14">
@@ -121,7 +121,7 @@
     <property name="description" value="It says 'J + D' on the inside ..."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="Someone's Wedding Ring"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="4"/>
    </properties>
   </tile>
   <tile id="15">
@@ -129,7 +129,7 @@
     <property name="description" value="If you blow on the cartridge, a tiny elf will jump out and grab your nose!  At least, that's what my dad told me."/>
     <property name="isItem" type="bool" value="true"/>
     <property name="name" value="NES"/>
-    <property name="powerTier" type="int" value="0"/>
+    <property name="powerTier" type="int" value="6"/>
    </properties>
   </tile>
   <tile id="16">
