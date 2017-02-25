@@ -3,7 +3,7 @@ import Player from '../sprites/Player'
 import { EnemyTrigger } from '../sprites/Enemy'
 import { Microwave } from '../sprites/Microwave'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
-import { Item } from '../sprites/Item'
+import { Item, removeFromInventory } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects } from '../utils'
 
@@ -242,7 +242,7 @@ export default class extends Phaser.State {
         boundsAlignV: 'center'
       }
 
-      var text = new Phaser.Text(this.game, 0, 0, 'Choose your Object!', fontStyle)
+      var text = new Phaser.Text(this.game, 0, 0, 'Who will vogue?', fontStyle)
       text.setTextBounds(0, 100, this.game.width, this.game.height)
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
       text.fixedToCamera = true
@@ -259,6 +259,8 @@ export default class extends Phaser.State {
           game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
         })
 
+        new_item.invIndexRef = i
+
         new_item.setSelectionHandler(this, enemy)
 
         this.overlay.add(new_item)
@@ -272,7 +274,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalkIntro (player_item_indices, enemy) {
+  triggerCatwalkIntro (player_item_indices, invIndex, enemy) {
     if (this.state == STATES.choosingItem) {
       var enemy_item_tier = enemy.pickItemPowerTier()
       this.state = STATES.catwalkIntro
@@ -300,7 +302,7 @@ export default class extends Phaser.State {
       strip_tween.onComplete.add((function() {
         this.game.time.events.add(500, (function() {
           this.camera.shake()
-          this.triggerCatwalk(player_item_indices, enemy_item_tier, enemy)
+          this.triggerCatwalk(player_item_indices, invIndex, enemy_item_tier, enemy)
         }), this)
       }), this)
 
@@ -312,6 +314,7 @@ export default class extends Phaser.State {
         scale: 2,
         indices: player_item_indices
       })
+
 
       player_item.makeLocationTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
         easing: Phaser.Easing.Bounce.Out, autostart: true })
@@ -331,7 +334,7 @@ export default class extends Phaser.State {
     }
   }
 
-  triggerCatwalk (player_item_indices, enemy_item_tier, enemy) {
+  triggerCatwalk (player_item_indices, invIndex, enemy_item_tier, enemy) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -412,15 +415,17 @@ export default class extends Phaser.State {
         outcome = 'lose'
       }
 
-      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, enemy)}), this)
+      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, invIndex, enemy)}), this)
 
     }
   }
 
-  endCatwalk(outcome, enemy) {
+  endCatwalk(outcome, invIndex, enemy) {
     this.hideOverlay()
     this.state = STATES.main
-    console.log("You " + outcome)
+    if (outcome == 'lose') {
+      removeFromInventory(invIndex)
+    }
     enemy.destroy()
   }
 
