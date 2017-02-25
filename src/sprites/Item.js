@@ -40,6 +40,7 @@ export class Item extends Phaser.Group {
         let sprite = new Phaser.Sprite(game, x, y, 'item-sprites', indices[i])
         sprite.anchor.set(0.5, 0.5)
         sprite.scale.setTo(0.45, 0.45)
+        sprite.inputEnabled = true
         this.game.physics.arcade.enable(sprite)
         sprite.fixedToCamera = true
         this.sprites.push(sprite)
