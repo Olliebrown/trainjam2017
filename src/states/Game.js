@@ -63,7 +63,8 @@ export default class extends Phaser.State {
 
     // Initialize A* pathfinding
     this.pathfinder = new Pathfinder(this.tilemap.width, this.tilemap.height)
-    this.game.input.onDown.add(this.doPathfinding, this)
+    this.bg_layer.inputEnabled = true
+    this.bg_layer.events.onInputDown.add(this.doPathfinding, this)
 
     // Load and build music loop
     this.musicIntro = this.game.add.audio('BGM-intro')
@@ -392,9 +393,10 @@ export default class extends Phaser.State {
     this.game.ui.inventoryCascade = -1
   }
 
-  doPathfinding(pointer) {
+  doPathfinding(obj, pointer) {
     if(!this.game.ui.microwave.alive &&
        !this.HUD.body.hitTest(pointer.worldX, pointer.worldY) &&
+       this.state == STATES.main &&
        (pointer.isMouse && pointer.leftButton.isDown) ||
        (!pointer.isMouse && pointer.isDown)) {
 
