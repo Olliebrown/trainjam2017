@@ -1,9 +1,12 @@
 import Phaser from 'phaser'
+import { getRandomIntInclusive } from '../utils'
 
 export class Enemy extends Phaser.Sprite {
 
   constructor ({ game, x, y}) {
-    super(game, x, y, 'sewer-sprites', 10)
+    var frame_count = game.cache.getFrameCount('enemies')
+    var rand_frame = getRandomIntInclusive(0, frame_count - 1)
+    super(game, x, y, 'enemies', rand_frame)
 
     this.game = game
     this.anchor.setTo(0.5)
@@ -16,20 +19,22 @@ export class Enemy extends Phaser.Sprite {
 
 export class EnemyTrigger extends Phaser.Sprite {
 
-  constructor ({ game, x, y, player, enemy_group}) {
+  constructor ({ game, x, y, player, enemy_group, tilemap}) {
     super(game, x, y, 'trigger', 10)
     this.game = game
     this.x = this.x + this.width / 2
     this.y = this.y + this.height / 2
     this.player = player
     this.anchor.setTo(0.5)
-    this.active = false
+    this.visible = false
     this.enemy_group = enemy_group
+    this.tilemap = tilemap
+    this.triggered = false
   }
 
-  checkOverlap(player, trigger) {
-    var distance = this.game.physics.arcade.distanceBetween(player, trigger)
-    if (distance < 10) {
+  overlaps() {
+    var distance = Phaser.Math.distance(this.player.x, this.player.y, this.x, this.y)
+    if (distance < 128) {
       return true
     } else {
       return false
@@ -37,25 +42,25 @@ export class EnemyTrigger extends Phaser.Sprite {
   }
 
   update () {
-    if (this.game.physics.arcade.overlap(this.player, this, null, this.checkOverlap, this)) {
-      if (!this.active) {
-        if (Math.random() > 0.5) {
+    if (this.overlaps()) {
+      if (!this.triggered) {
+        this.triggered = true
+        if (Math.random() > 0.75) {
           this.spawnEnemy()
         }
-        this.active = true
       }
     } else {
-      this.active = false
+      this.triggered = false
     }
   }
 
   spawnEnemy () {
     var enemy = new Enemy({
       game: this.game,
-      x: this.x,
-      y: this.y
+      x: this.player.x + this.width / 2,
+      y: this.player.y
     })
-    enemy.y = enemy.y - enemy.height
+    this.player.listOfTargets = []
     this.enemy_group.add(enemy)
   }
 }
