@@ -93,7 +93,7 @@ export default class extends Phaser.State {
     this.game.camera.follow(this.player)
 
     // Setup enemy spawn triggers
-    this.enemy_spawns_triggers = [] //new Phaser.Group(this.game, this.game.world, 'enemy_triggers', false, true)
+    this.enemy_spawns_triggers = []
     this.enemies = new Phaser.Group(this.game)
     this.createEnemyObjectTriggers()
 
