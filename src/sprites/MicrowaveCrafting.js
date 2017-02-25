@@ -9,20 +9,36 @@ export class MicrowaveCrafting extends Phaser.Group {
   constructor (game) {
     super(game);
 
-    this.background = new Phaser.Image(this.game, this.game.width/2, this.game.height/2 - 50, 'background');
+    this.underlayer = new Phaser.Image(this.game,
+      this.game.width/2 - 35, this.game.height/2 - 50, 'background', 1);
+    this.underlayer.anchor.set(0.5);
+    this.underlayer.scale.set(1.3)
+    this.add(this.underlayer);
+
+    this.background = new Phaser.Image(this.game,
+      this.game.width/2, this.game.height/2 - 50, 'microwave', 1);
     this.background.anchor.set(0.5);
+    this.background.scale.set(1.5)
     this.add(this.background);
 
-    this.turnTheMicrowave = new StartButton(this.game, this.background.x + this.background.width/2,
-      this.background.y + this.background.height/2 - 30, this.microwave);
+    this.turnTheMicrowave = new StartButton(this.game,
+      this.background.x + this.background.width/2 - 114,
+      this.background.y + this.background.height/2 - 59,
+      this.microwave);
+    this.turnTheMicrowave.scale.set(0.48)
     this.turnTheMicrowave.anchor.set(1);
-    let style = {fontSize:'24px', fill:'#ffffff'};
-    this.microwaveText = new Phaser.Text(game, this.turnTheMicrowave.x - 38, this.turnTheMicrowave.y - 38, 'Microwave', style);
+
+    let style = {fontSize:'16px', fill:'#ffffff'};
+    this.microwaveText = new Phaser.Text(this.game,
+      this.turnTheMicrowave.x - 30, this.turnTheMicrowave.y - 12,
+      'Start', style);
     this.microwaveText.anchor.set(1);
 
-    this.goBack = new XButton(this.game, this.background.x - this.background.width/2 + 10,
-      this.background.y - this.background.height/2 + 10, this.getBack);
+    this.goBack = new XButton(this.game,
+      this.background.x - this.background.width/2 + 20,
+      this.background.y - this.background.height/2, this.getBack);
     this.goBack.anchor.set(0);
+
     this.add(this.goBack);
     this.add(this.turnTheMicrowave);
     this.add(this.microwaveText);
@@ -114,6 +130,9 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.game.ui.inventory.push(Item.convertFrameToGlobal(indices))
     this.game.ui.inventoryNeedsUpdate = true
     this.game.ui.inventoryCascade = cascade
+
+    this.game.ui.microwave.alive = false;
+    this.game.ui.microwave.visible = false;
   }
 
   getBack(){

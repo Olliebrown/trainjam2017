@@ -4,11 +4,15 @@ import Phaser from 'phaser'
 
 export class Item extends Phaser.Group {
 
-  constructor ({ game, x, y, indices, name, description, powerTier, invIndex, animate }) {
+  constructor ({ game, x, y, scale, indices, name, description, powerTier, invIndex, animate }) {
 
     // Clean invIndex
     if(invIndex !== undefined) {
       invIndex = parseInt(invIndex)
+    }
+
+    if(scale === undefined) {
+      scale = 0.45
     }
 
     // Should this be a button using an inventory slot
@@ -49,8 +53,8 @@ export class Item extends Phaser.Group {
         x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
         y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y,
         'item-sprites', indices[i])
-      sprite.anchor.set(0.5, 0.5)
-      sprite.scale.setTo(0.45, 0.45)
+      sprite.anchor.set(0.5)
+      sprite.scale.setTo(scale)
       sprite.inputEnabled = true
       this.game.physics.arcade.enable(sprite)
       sprite.fixedToCamera = true
@@ -99,23 +103,45 @@ export class Item extends Phaser.Group {
   }
 
   update () {
-    for(let i=0; i<this.sprites.length; i++){
-      if(this.inMicrowave) {
+    if(this.inMicrowave) {
+      for(let i=0; i<this.sprites.length; i++) {
         this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
           (this.game.ui.microwave.getInventoryIndex(this) -
            this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
 
         this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
+      }
 
+      if(this.invIndex !== undefined) {
         this.closeBtn.visible = false
         this.number.visible = false
-      } else {
+      }
+    } else {
+      for(let i=0; i<this.sprites.length; i++) {
         this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
         this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
+      }
 
+      if(this.invIndex !== undefined) {
         this.closeBtn.visible = true
         this.number.visible = true
       }
+    }
+  }
+
+  setMouseDown(onDown, context) {
+    for(let i in this.sprites) {
+      this.sprites[i].events.onInputDown.add(onDown, context)
+    }
+  }
+
+  makeTween({ startX, startY, finalLoc, time, easing, autostart }) {
+    for(let i=0; i<this.sprites.length; i++) {
+      if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
+      if(startY !== undefined) this.sprites[i].cameraOffset.y = startY
+
+      this.game.add.tween(this.sprites[i].cameraOffset).to(
+        finalLoc, time, easing, autostart)
     }
   }
 
@@ -215,14 +241,14 @@ Item.init = (itemTileset) => {
 }
 
 // Build a new Item from its name (as specified in the Tiled file)
-Item.makeFromName = ({ game, name, x, y, invIndex, animate }) => {
+Item.makeFromName = ({ game, name, x, y, invIndex, animate, scale }) => {
   let item = Item.ITEM_BY_NAME[name]
   if(item === undefined) {
     console.error(`Unknown item name (${name})`)
     return null
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.tileID ], animate,
+  return new Item({ game, x, y, invIndex, indices: [ item.tileID ], animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
@@ -235,7 +261,7 @@ Item.convertFrameToGlobal = (frameIDs) => {
 }
 
 // Build a new Item from its ID (as specified in the Tiled file)
-Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate }) => {
+Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => {
   let item, indices = []
   for(let i in idArray) {
     item = Item.ITEM_BY_GLOBAL_ID[idArray[i]]
@@ -246,12 +272,12 @@ Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate }) => {
     indices.push(item.frameID)
   }
 
-  return new Item({ game, x, y, invIndex, indices, animate,
+  return new Item({ game, x, y, invIndex, indices, animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
 // Build a new Item from its power-tier plus an index
-Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate }) => {
+Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, scale }) => {
   if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
     console.error(`Unknown item power tier (${powerTier})`)
     return null
@@ -264,6 +290,6 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate }) =
     return null
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate,
+  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate, scale,
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
