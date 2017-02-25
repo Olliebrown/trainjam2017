@@ -1,5 +1,6 @@
 /* globals game */
 import Phaser from 'phaser'
+import {shuffleArray} from '../utils'
 //import Glow from '../filters/Glow'
 
 export class Item extends Phaser.Group {
@@ -48,6 +49,11 @@ export class Item extends Phaser.Group {
     }
 
     // Build sprites
+    shuffleArray(indices, this.game.rnd);
+    while(indices.length > 4){
+      let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
+      indices.splice(i1, 1);
+    }
     for(let i=0; i<indices.length; i++) {
       let sprite = new Phaser.Sprite(game,
         x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
@@ -60,6 +66,15 @@ export class Item extends Phaser.Group {
       sprite.fixedToCamera = true
       this.sprites.push(sprite)
       this.addChild(sprite)
+    }
+    this.eyes = null;
+    if(indices.length > 1){
+      let image = new Phaser.Image(game, x, y, 'eyes', game.rnd.integerInRange(0, 3));
+      image.anchor.set(0.5)
+      image.scale.setTo(2 * scale);
+      image.fixedToCamera = true;
+      this.eyes = image;
+      this.addChild(image);
     }
 
     if(invIndex !== undefined) {
@@ -100,6 +115,10 @@ export class Item extends Phaser.Group {
         }, this)
       }
     }
+    if(this.eyes != null){
+      var itemDropTween = this.game.add.tween(this.eyes.cameraOffset).to(
+        { x: this.baseX,y: this.baseY}, 500, Phaser.Easing.Bounce.Out, true)
+    }
   }
 
   update () {
@@ -112,6 +131,14 @@ export class Item extends Phaser.Group {
         this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
       }
 
+      if(this.eyes != null){
+        this.eyes.cameraOffset.x = this.game.ui.microwave.background.x +
+          (this.game.ui.microwave.getInventoryIndex(this) -
+           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.eyes.width;
+        this.eyes.cameraOffset.y = this.game.ui.microwave.background.y - 20;
+      }
+
+
       if(this.invIndex !== undefined) {
         this.closeBtn.visible = false
         this.number.visible = false
@@ -120,6 +147,10 @@ export class Item extends Phaser.Group {
       for(let i=0; i<this.sprites.length; i++) {
         this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
         this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
+      }
+      if(this.eyes != null){
+        this.eyes.cameraOffset.x = this.baseX;
+        this.eyes.cameraOffset.y = this.baseY;
       }
 
       if(this.invIndex !== undefined) {
