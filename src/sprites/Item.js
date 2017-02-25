@@ -135,6 +135,16 @@ export class Item extends Phaser.Group {
     }
   }
 
+  setSelectionHandler(gameScene, power_tier) {
+    for (var i in this.sprites) {
+      this.sprites[i].events.onInputDown.add(function() {
+        console.log(gameScene)
+        console.log(this.indices)
+        gameScene.triggerCatwalkIntro(this.indices, power_tier)
+      }, this)
+    }
+  }
+
   makeLocationTween({ startX, startY, finalLoc, time, easing, autostart }) {
     for(let i=0; i<this.sprites.length; i++) {
       if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
@@ -142,6 +152,15 @@ export class Item extends Phaser.Group {
 
       this.game.add.tween(this.sprites[i].cameraOffset).to(
         finalLoc, time, easing, autostart)
+    }
+  }
+
+  makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
+    for (var i in this.sprites) {
+      this.game.add.tween(this.sprites[i]).to(
+        {rotation: rotation},
+        time, easing, autostart, delay, repeat, yoyo
+      )
     }
   }
 
