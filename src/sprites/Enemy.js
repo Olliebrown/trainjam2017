@@ -20,10 +20,10 @@ export class Enemy extends Phaser.Sprite {
     let options = []
     let random
     switch(this.level) {
-    case 1: options = [ 1,  2,  3]; random = getRandomIntInclusive(0, 2); break;
-    case 2: options = [ 4,  5,  6,  7]; random = getRandomIntInclusive(0, 3); break;
-    case 3: options = [ 8,  9, 10, 11]; random = getRandomIntInclusive(0, 3); break;
-    case 4: options = [12, 13, 14, 15]; random = getRandomIntInclusive(0, 3); break;
+    case 1: options = [ [1, 2],  [2, 3],  [3, 4], [4, 5], [5, 6]]; random = getRandomIntInclusive(0, options.length - 1); break;
+    case 2: options = [ [4, 5],  [5, 6],  [6, 7],  [7, 8], [8, 9]]; random = getRandomIntInclusive(0, options.length - 1); break;
+    case 3: options = [ [8,9,10] ,  [9, 10, 11], [10, 11, 12], [11, 12, 13]]; random = getRandomIntInclusive(0, options.length - 1); break;
+    case 4: options = [[1, 2, 12, 13], [5, 6, 14, 15]]; random = getRandomIntInclusive(0, options.length - 1); break;
     }
 
     return options[random]

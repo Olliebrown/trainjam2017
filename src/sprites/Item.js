@@ -199,6 +199,21 @@ export class Item extends Phaser.Group {
     }
   }
 
+  makeScaleTween({scale, time, easing, autostart, delay, repeat, yoyo}) {
+    for (var i in this.sprites) {
+      this.game.add.tween(this.sprites[i].scale).to(
+        {x: scale, y: scale},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+    }
+    if (this.eyes !== null) {
+      this.game.add.tween(this.eyes.scale).to(
+        {x: scale, y: scale},
+        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      )
+    }
+  }
+
   makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
     for (var i in this.sprites) {
       this.game.add.tween(this.sprites[i]).to(
@@ -364,18 +379,23 @@ Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => 
 
 // Build a new Item from its power-tier plus an index
 Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, scale }) => {
-  if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
-    console.error(`Unknown item power tier (${powerTier})`)
-    return null
-  }
+  // if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
+  //   console.error(`Unknown item power tier (${powerTier})`)
+  //   return null
+  // }
 
   if(index === undefined) index = 0
-  let item = Item.ITEM_BY_POWER_TIER[powerTier][index]
-  if(item === undefined) {
-    console.error(`Unknown item power tier index (${powerTier}[${index}])`)
-    return null
+  let indeces = [];
+  for(let i=0; i<powerTier.length; i++){
+    let item = Item.ITEM_BY_POWER_TIER[powerTier[i]][index]
+    indeces.push(item.frameID);
   }
 
-  return new Item({ game, x, y, invIndex, indices: [ item.frameID ], animate, scale,
-    name: item.name, description: item.description, powerTier: item.powerTier })
+  // if(item === undefined) {
+  //   console.error(`Unknown item power tier index (${powerTier}[${index}])`)
+  //   return null
+  // }
+
+  return new Item({ game, x, y, invIndex, indices: indeces, animate, scale,
+    name: "", description: "", powerTier: powerTier[powerTier.length - 1] })
 }
