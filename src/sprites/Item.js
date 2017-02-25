@@ -18,7 +18,7 @@ export class Item extends Phaser.Group {
     }
 
     // Initialize empty Group as container
-    super(game, null, 'ItemBtnGroup', false);
+    super(game, null, 'ItemBtnGroup', false)
 
     // Initialize base properties
     this.game = game
