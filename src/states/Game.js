@@ -233,6 +233,11 @@ export default class extends Phaser.State {
     }
   }
 
+  triggerCatwalkStart() {
+    console.log("catwalk triggered")
+    this.game.time.events.add(1200, this.triggerItemChoice, this)
+  }
+
   endCatwalkIntro () {
   }
 
