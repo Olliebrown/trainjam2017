@@ -94,9 +94,7 @@ export default class extends Phaser.State {
     this.musicLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.musicIntro.onStop.addOnce(() => {
-//      console.info(thisState.musicIntro.key + ' stopped')
       thisState.musicLoop.play()
-//      console.info(thisState.musicLoop.key + ' playing')
       thisState.currentBGM = thisState.musicLoop
     });
 
@@ -111,16 +109,13 @@ export default class extends Phaser.State {
     this.catwalkLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.catwalkIntro.onStop.add(() => {
-//      console.info(thisState.catwalkIntro.key + ' stopped')
       thisState.catwalkLoop.play()
-//      console.info(thisState.catwalkLoop.key + ' playing')
       thisState.currentBGM = thisState.catwalkLoop
     });
 
     // Start main BGM
     this.musicIntro.play()
     this.currentBGM = this.musicIntro
-//    console.info(this.musicIntro.key + ' playing')
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
@@ -246,6 +241,7 @@ export default class extends Phaser.State {
     }
   }
 
+  // CATWALK: 2 -> Player chooses item to use in catwalk or is shown defeat
   triggerItemChoice (player, enemy) {
 
     if (this.state == STATES.initCatwalk) {
@@ -267,38 +263,49 @@ export default class extends Phaser.State {
         boundsAlignV: 'center'
       }
 
-      var text = new Phaser.Text(this.game, 0, 0, 'Who will vogue?', fontStyle)
+      let textString = 'Who will vogue?'
+      if(this.game.ui.inventory.length == 0) {
+        textString = 'You need an item to vogue!'
+      }
+
+      var text = new Phaser.Text(this.game, 0, 0, textString, fontStyle)
       text.setTextBounds(0, 100, this.game.width, this.game.height)
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
       text.fixedToCamera = true
 
       this.overlay.add(text)
 
-      var itemGroup = this.game.add.group()
-      itemGroup.fixedToCamera = true
+      if(this.game.ui.inventory.length == 0) {
+        this.game.time.events.add(Phaser.Timer.SECOND * 2,
+          () => { this.endCatwalk('noitems', -1, enemy) }, this);
+      } else {
+        var itemGroup = this.game.add.group()
+        itemGroup.fixedToCamera = true
 
-      var yOffset = centerY - 100, xOffset = 200
-      for (var i in this.game.ui.inventory) {
-        var id_ = this.game.ui.inventory[i]
-        var new_item = Item.makeFromGlobalIDs({
-          game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
-        })
+        var yOffset = centerY - 100, xOffset = 200
+        for (var i in this.game.ui.inventory) {
+          var id_ = this.game.ui.inventory[i]
+          var new_item = Item.makeFromGlobalIDs({
+            game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
+          })
 
-        new_item.invIndexRef = i
+          new_item.invIndexRef = i
 
-        new_item.setSelectionHandler(this, enemy)
+          new_item.setSelectionHandler(this, enemy)
 
-        this.overlay.add(new_item)
+          this.overlay.add(new_item)
 
-        xOffset += new_item.sprites[0].width + 10
-        if(i == 3) {
-          yOffset += 200
-          xOffset = 200
+          xOffset += new_item.sprites[0].width + 10
+          if(i == 3) {
+            yOffset += 200
+            xOffset = 200
+          }
         }
       }
     }
   }
 
+  // CATWALK: 3 -> Animate the catwalk intro
   triggerCatwalkIntro (player_item_indices, invIndex, enemy) {
     if (this.state == STATES.choosingItem) {
       var enemy_item_tier = enemy.pickItemPowerTier()
@@ -359,6 +366,7 @@ export default class extends Phaser.State {
     }
   }
 
+  // CATWALK: 4 -> Animate the catwalk
   triggerCatwalk (player_item_indices, invIndex, enemy_item_tier, enemy) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
@@ -468,6 +476,7 @@ export default class extends Phaser.State {
     }
   }
 
+  // CATWALK: 5 -> Finish the catwalk sequence
   endCatwalk(outcome, invIndex, enemy) {
     this.hideOverlay()
     this.state = STATES.main
@@ -478,6 +487,7 @@ export default class extends Phaser.State {
     this.fadeToMainBGM()
   }
 
+  // CATWALK: 1 -> First funtion called to begin catwalk sequence
   triggerCatwalkStart(player, enemy) {
     if (this.state == STATES.main) {
       this.state = STATES.initCatwalk
@@ -566,6 +576,8 @@ export default class extends Phaser.State {
       }
 
       this.game.physics.arcade.collide(this.player, this.interact_layer)
+
+      // CATWALK: 0 -> sequence starts here
       this.game.physics.arcade.overlap(this.player, this.enemies, this.triggerCatwalkStart, null, this)
 
       this.game.physics.arcade.overlap(this.player, this.microwaveGroup,
@@ -603,23 +615,17 @@ export default class extends Phaser.State {
 
     let thisState = this
     this.catwalkIntro.onStop.add(() => {
-//      console.info(thisState.catwalkIntro.key + ' stopped')
       thisState.catwalkLoop.play()
-//      console.info(thisState.catwalkLoop.key + ' playing')
       thisState.currentBGM = thisState.catwalkLoop
     });
 
     this.catwalkIntro.restart()
-//    console.info(this.catwalkIntro.key + ' restarting')
-
     this.currentBGM = this.catwalkIntro
   }
 
   fadeToMainBGM() {
     this.currentBGM.fadeOut(500)
-
     this.musicLoop.fadeIn(500);
-//    console.info(this.musicLoop.key + ' fading in')
     this.currentBGM = this.musicLoop
   }
 
@@ -630,7 +636,6 @@ export default class extends Phaser.State {
     if(volume < 0.01) {
       sound.onStop.removeAll()
       sound.stop()
-//      console.info(sound.key + ' stopped after fade')
     }
   }
 }
