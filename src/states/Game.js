@@ -94,7 +94,9 @@ export default class extends Phaser.State {
     this.musicLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.musicIntro.onStop.addOnce(() => {
+//      console.info(thisState.musicIntro.key + ' stopped')
       thisState.musicLoop.play()
+//      console.info(thisState.musicLoop.key + ' playing')
       thisState.currentBGM = thisState.musicLoop
     });
 
@@ -109,13 +111,16 @@ export default class extends Phaser.State {
     this.catwalkLoop.onFadeComplete.add(this.pauseAfterFade, this)
 
     this.catwalkIntro.onStop.add(() => {
+//      console.info(thisState.catwalkIntro.key + ' stopped')
       thisState.catwalkLoop.play()
+//      console.info(thisState.catwalkLoop.key + ' playing')
       thisState.currentBGM = thisState.catwalkLoop
     });
 
     // Start main BGM
     this.musicIntro.play()
     this.currentBGM = this.musicIntro
+//    console.info(this.musicIntro.key + ' playing')
 
     // Get sounds
     this.game.sounds = this.game.add.audioSprite('sounds')
@@ -394,7 +399,7 @@ export default class extends Phaser.State {
       })
 
       for(let i=0; i<enemy_item.sprites.length; i++){
-          enemy_item.sprites[i].scale.setTo(2)
+        enemy_item.sprites[i].scale.setTo(2)
       }
 
 
@@ -594,17 +599,27 @@ export default class extends Phaser.State {
   }
 
   fadeToCatwalkBGM() {
-    this.currentBGM.fadeOut(500);
-    this.catwalkIntro.restart();
+    this.currentBGM.fadeOut(500)
+
+    let thisState = this
+    this.catwalkIntro.onStop.add(() => {
+//      console.info(thisState.catwalkIntro.key + ' stopped')
+      thisState.catwalkLoop.play()
+//      console.info(thisState.catwalkLoop.key + ' playing')
+      thisState.currentBGM = thisState.catwalkLoop
+    });
+
+    this.catwalkIntro.restart()
+//    console.info(this.catwalkIntro.key + ' restarting')
+
     this.currentBGM = this.catwalkIntro
   }
 
   fadeToMainBGM() {
-    if(this.catwalkIntro.isPlaying) this.catwalkIntro.fadeOut(500);
-    if(this.catwalkLoop.isPlaying) this.catwalkLoop.fadeOut(500);
+    this.currentBGM.fadeOut(500)
+
     this.musicLoop.fadeIn(500);
-    if(this.musicLoop.paused) this.musicLoop.resume();
-    else this.musicLoop.restart();
+//    console.info(this.musicLoop.key + ' fading in')
     this.currentBGM = this.musicLoop
   }
 
@@ -612,7 +627,10 @@ export default class extends Phaser.State {
   }
 
   pauseAfterFade(sound, volume) {
-    if(volume == 0) sound.pause()
-    sound.onFadeComplete.add(this.pauseAfterFade, this)
+    if(volume < 0.01) {
+      sound.onStop.removeAll()
+      sound.stop()
+//      console.info(sound.key + ' stopped after fade')
+    }
   }
 }
