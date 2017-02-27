@@ -400,17 +400,12 @@ export default class extends Phaser.State {
         100000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true
       )
 
-      var tierDiff = player_item.powerTier - enemy_item_tier
+      var player_power = player_item.getPowerRoll()
+      var enemy_power = enemy_item.getPowerRoll()
       var outcome
 
-      if (tierDiff > 0) {
+      if (player_power >= enemy_power) {
         outcome = 'win'
-      } else if (tierDiff >= -1) {
-        if (Math.random() > 0.6) {
-          outcome = 'win'
-        } else {
-          outcome = 'lose'
-        }
       } else {
         outcome = 'lose'
       }

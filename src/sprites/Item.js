@@ -108,6 +108,27 @@ export class Item extends Phaser.Group {
     // this.filters = [ new Glow(game) ]
   }
 
+  getLowerPowerBound() {
+    var indices_count = this.indices.length
+    var powers = Item.convertFrameToPowerTier(this.indices)
+    var sum_power = 0
+    powers.forEach(function(i) {
+      sum_power += i
+    })
+    var avg_power = sum_power / powers.length
+
+    var power_nom = avg_power + indices_count
+    var power_denom = Item.getMaxPowerTier() + 4
+
+    var power_bound = Math.floor(7 * power_nom / power_denom)
+    return power_bound
+  }
+
+  getPowerRoll() {
+    var lower = this.getLowerPowerBound()
+    return this.game.rnd.integerInRange(lower, Item.UPPER_POWER_BOUND)
+  }
+
   makeDrop() {
     // Animate falling item
     this.closeBtn.visible = false
@@ -254,6 +275,7 @@ export const removeFromInventory = (removeIndex) => {
 Item.INVENTORY_SLOTS = []
 Item.INVENTORY_MAX = 8
 Item.INVENTORY_START = {}
+Item.UPPER_POWER_BOUND = 8
 
 Item.DROP_FROM_TOP = 0
 Item.DROP_CASCADE = 1
@@ -383,4 +405,15 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, sca
 
   return new Item({ game, x, y, invIndex, indices: indeces, animate, scale,
     name: "", description: "", powerTier: powerTier[powerTier.length - 1] })
+}
+
+Item.getMaxPowerTier = () => {
+  var max = 0
+  for (var f in Item.ITEM_BY_POWER_TIER) {
+    f = parseInt(f)
+    if (f > max) {
+      max = f
+    }
+  }
+  return max
 }
