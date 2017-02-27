@@ -51,9 +51,14 @@
       "end": 44.424943310657596,
       "loop": false
     },
-    "shutter_noise": {
+    "shutter_noise-old1": {
       "start": 46,
       "end": 55.55673469387755,
+      "loop": false
+    },
+    "shutter_noise": {
+      "start": 57,
+      "end": 59.006031746031745,
       "loop": false
     }
   }

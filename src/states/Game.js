@@ -6,6 +6,7 @@ import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item, removeFromInventory } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects, getScreenSizeScale, getRandomIntInclusive } from '../utils'
+import Juicy from '../plugins/Juicy.js'
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -28,6 +29,11 @@ export default class extends Phaser.State {
 
   create () {
     let thisState = this
+
+    // Screenflash effect
+    this.juicy = this.game.plugins.add(Juicy);
+    this.game.screenFlash = this.juicy.createScreenFlash();
+    this.game.add.existing(this.game.screenFlash);
 
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -136,6 +142,8 @@ export default class extends Phaser.State {
     // Finish UI and overlay setup
     this.game.ui = this.makeUI()
     this.overlay = this.game.add.group()
+
+    this.game.world.bringToTop(this.game.screenFlash)
   }
 
   showOverlay() {
@@ -485,6 +493,18 @@ export default class extends Phaser.State {
       stepTweens[i].chain(stepTweens[i+1])
     }
 
+    stepTweens[stepTweens.length-1].onComplete.add(() => {
+      let which = getRandomIntInclusive(1, 3)
+      this.game.sounds.play('pose' + which, 1)
+      this.game.sounds.play('shutter_noise', 1)
+      this.game.time.events.add(getRandomIntInclusive(0, 500), () => { this.game.screenFlash.flash(); })
+      this.game.time.events.add(getRandomIntInclusive(100, 600), () => { this.game.screenFlash.flash(); })
+      this.game.time.events.add(getRandomIntInclusive(200, 700), () => { this.game.screenFlash.flash(); })
+      this.game.time.events.add(getRandomIntInclusive(300, 800), () => { this.game.screenFlash.flash(); })
+      this.game.time.events.add(getRandomIntInclusive(400, 900), () => { this.game.screenFlash.flash(); })
+      this.game.time.events.add(getRandomIntInclusive(500, 1000), () => { this.game.screenFlash.flash(); })
+    })
+
     // Spin Animation (with delay)
     let spinTween = this.game.add.tween(item.scale)
       .to({ x: -1.0 }, 200, Phaser.Easing.Sinusoidal.In, false, 400, 0, true)
@@ -690,7 +710,6 @@ export default class extends Phaser.State {
           }
         }
       }
-
     }
   }
 
