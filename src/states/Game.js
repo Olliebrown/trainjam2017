@@ -1,11 +1,11 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import { EnemyTrigger, Enemy } from '../sprites/Enemy'
+import { EnemyTrigger } from '../sprites/Enemy'
 import { Microwave } from '../sprites/Microwave'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item, removeFromInventory } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
-import { centerGameObjects, getScreenSizeScale } from '../utils'
+import { centerGameObjects, getScreenSizeScale, getRandomIntInclusive } from '../utils'
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -136,13 +136,6 @@ export default class extends Phaser.State {
     // Finish UI and overlay setup
     this.game.ui = this.makeUI()
     this.overlay = this.game.add.group()
-
-    //this.makeTestInventory()
-
-    // TODO: For testing only, remove
-    this.state = STATES.choosingItem
-    let testEnemy = new Enemy({ game: this.game, x: 0, y: 0, level: 1 })
-    this.triggerCatwalkIntro([37], [37], testEnemy)
   }
 
   showOverlay() {
@@ -254,6 +247,8 @@ export default class extends Phaser.State {
       var centerY = this.game.height / 2
 
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
+      let scale = getScreenSizeScale(grad, this.game)
+      grad.scale.set(scale)
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
@@ -281,9 +276,6 @@ export default class extends Phaser.State {
         this.game.time.events.add(Phaser.Timer.SECOND * 2,
           () => { this.endCatwalk('noitems', -1, enemy) }, this);
       } else {
-        var itemGroup = this.game.add.group()
-        itemGroup.fixedToCamera = true
-
         var yOffset = centerY - 100, xOffset = 200
         for (var i in this.game.ui.inventory) {
           var id_ = this.game.ui.inventory[i]
@@ -292,9 +284,7 @@ export default class extends Phaser.State {
           })
 
           new_item.invIndexRef = i
-
-          new_item.setSelectionHandler(this, enemy)
-
+          new_item.setCatwalkSelectionHandler(this, enemy)
           this.overlay.add(new_item)
 
           xOffset += new_item.sprites[0].width + 10
@@ -319,12 +309,15 @@ export default class extends Phaser.State {
       var centerY = this.game.height / 2
 
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
+      let scale = getScreenSizeScale(grad, this.game)
+      grad.scale.set(scale)
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
       // Build and add versus strip
       var strip = new Phaser.Sprite(this.game, this.game.width + 100, - this.game.height/2 - 100, 'catwalk-intro-strip')
+      strip.scale.set(scale)
       strip.anchor.setTo(0.5)
       strip.fixedToCamera = true
       this.overlay.add(strip)
@@ -343,33 +336,27 @@ export default class extends Phaser.State {
 
       // Build and add Player item
       var player_item = new Item({
-        game: this.game,
-        x: -256, y: 200,
+        game: this.game, x: -256, y: 200,
         scale: 2, indices: player_item_indices
       })
 
-
-      player_item.makeLocationTween({
-        tweenData: { x: 300 }, time: 1500,
-        easing: Phaser.Easing.Bounce.Out, autostart: true
-      })
+      player_item.cameraOffset.set(-256, 200)
+      this.game.add.tween(player_item.cameraOffset).to(
+        { x: 300 }, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(player_item)
 
       // Build and add enemy item
       var enemy_item = Item.makeFromPowerTier({
-        game: this.game,
-        x: this.game.width + 256, y: 600,
+        game: this.game, x: this.game.width + 256, y: 600,
         scale: 2, powerTier: enemy_item_tiers
       })
 
-      enemy_item.makeLocationTween({
-        tweenData: { x: this.game.width - 300 }, time: 1500,
-        easing: Phaser.Easing.Bounce.Out, autostart: true
-      })
+      enemy_item.cameraOffset.set(this.game.width + 256, 600)
+      this.game.add.tween(enemy_item.cameraOffset).to(
+        { x: this.game.width - 300 }, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(enemy_item)
-
     }
   }
 
@@ -410,143 +397,177 @@ export default class extends Phaser.State {
       lightsFront.fixedToCamera = true
       this.overlay.add(lightsFront)
 
-      // Create and animate the player
+      // Create the items
       var player_item = new Item({
         game: this.game, scale: 2,
-        x: this.game.width, y: this.game.height - 325,
+        x: this.game.width, y: this.game.height - 335,
         indices: player_item_indices
       })
-
-      // Steps Animation
-      let lastTween = null
-
-      let animX = this.game.width - floor.width/10, animY = this.game.height - 325
-      let locaitons = [ ]
-      for(let i=0; i<8; i++) {
-        locaitons.push({cameraOffset: { x: animX, y: animY }})
-        animX -= floor.width/10
-      }
-
-      lastTween = player_item.makeLocationTween({
-        start: { x: this.game.width, y: this.game.height - 325},
-        easing: Phaser.Easing.Sinusoidal.InOut,
-        tweenData: locaitons, time: 400, autoStart: true
-      })
-
-      // // Freeze (delay) then spin
-      // let spinTween = player_item.makeScaleTween({
-      //   startScaleX: 2.0, finalScale: { x: -2.0 }, time: 200,
-      //   easing: Phaser.Easing.Sinusoidal.In,
-      //   autostart: false, dealy: 400, repeat: 0, yoyo: true
-      // })
-      //
-      // for(let t in lastTween) {
-      //   lastTween[t].chain(spinTween[t])
-      // }
-      // lastTween = spinTween
-
-      // let aboutFace = player_item.makeScaleTween({
-      //   startScaleX: 2.0, finalScale: { x: -2.0 }, time: 200,
-      //   easing: Phaser.Easing.Sinusoidal.Out, autostart: false,
-      // })
-      //
-      // for(let t in lastTween) lastTween[t].chain(aboutFace[t])
-      // lastTween = aboutFace
-      //
-      // // Walk back
-      // for(let i=0; i<9; i++) {
-      //   let newTween = player_item.makeLocationTween({
-      //     startX: animX, startY: animY,
-      //     finalLoc: { x: animX + floor.width/10, y: animY }, time: 400,
-      //     easing: Phaser.Easing.Sinusoidal.InOut, autostart: (i == 0)
-      //   })
-      //
-      //   for(let t in lastTween) lastTween[t].chain(spinTween[t])
-      //   lastTween = newTween
-      //   animX += floor.width/10
-      // }
-
-      this.overlay.add(player_item)
-      this.overlay.bringToTop(lightsFront)
 
       var enemy_item = Item.makeFromPowerTier({
         game: this.game, x: 1250, y: 550, powerTier: enemy_item_tiers, scale: 2.0
       })
 
-      // for(let i=0; i<enemy_item.sprites.length; i++){
-      //   enemy_item.sprites[i].scale.setTo(2)
-      // }
-      //
-      //
-      // this.overlay.add(enemy_item)
-      //
-      // var player_swell_tween = this.game.add.tween(player_item.sprites[0].scale).to(
-      //   {x: 5, y: 5},
-      //   2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
-      // )
-      // player_item.makeScaleTween({
-      //   scale: 5,
-      //   time: 100000,
-      //   easing: Phaser.Easing.Sinusoidal.InOut,
-      //   autostart: true,
-      //   delay: 0,
-      //   repeat: -1,
-      //   yoyo: true
-      // })
-      // player_item.makeRotationTween({
-      //   rotation: {rotation: 90},
-      //   time: 100000,
-      //   easing: Phaser.Easing.Sinusoidal.InOut,
-      //   autostart: true,
-      //   delay: 0,
-      //   repeat: -1,
-      //   yoyo: true
-      // })
-      //
-      // enemy_item.makeRotationTween({
-      //   rotation: {rotation: -90},
-      //   time: 100000,
-      //   easing: Phaser.Easing.Sinusoidal.InOut,
-      //   autostart: true,
-      //   delay: 0,
-      //   repeat: -1,
-      //   yoyo: true
-      // })
-      //
-      // enemy_item.makeScaleTween({
-      //   scale: 5,
-      //   time: 100000,
-      //   easing: Phaser.Easing.Sinusoidal.InOut,
-      //   autostart: true,
-      //   delay: 0,
-      //   repeat: -1,
-      //   yoyo: true
-      // })
+      // Animate them
+      let playerAnim = this.makeItemCatwalkAnimation(player_item, floor.width/10)
+      let enemyAnim = this.makeItemCatwalkAnimation(enemy_item, floor.width/10, playerAnim)
 
-      var player_power = player_item.getPowerRoll()
-      var enemy_power = enemy_item.getPowerRoll()
+      this.overlay.add(player_item)
+      this.overlay.add(enemy_item)
+      this.overlay.bringToTop(lightsFront)
+
+      // Calcualte result
+      let player_item_tiers = Item.convertFrameToPowerTier(player_item.indices)
+      let player_max = Math.max(...player_item_tiers)
+      let player_min = Math.min(player_item_tiers.length, player_max)
+
+      let enemy_max = Math.min(...enemy_item_tiers)
+      let enemy_min = Math.min(enemy_item_tiers.length, enemy_max)
+
+      let tier_diff = player_max - enemy_max
+
       var outcome
+      console.info(`Player: ${player_min}/${player_max}`)
+      console.info(`Enemy:  ${enemy_min}/${enemy_max}`)
+      console.info('Tier difference is ' + tier_diff)
 
-      if (player_power >= enemy_power) {
+      if (tier_diff > 1) {
+        outcome = 'win'
+      } else if (tier_diff < -1) {
         outcome = 'win'
       } else {
-        outcome = 'lose'
+        // Roll the dice
+        let playerRoll = getRandomIntInclusive(player_min, player_max)
+        let enemyRoll = getRandomIntInclusive(enemy_min, enemy_max)
+
+        // Tie goes to the player
+        console.info(`Dice Roll: ${playerRoll} vs ${enemyRoll}`)
+        if (playerRoll >= enemyRoll) {
+          outcome = 'win'
+        } else {
+          outcome = 'lose'
+        }
       }
 
-//      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, invIndex, enemy)}), this)
-
+      enemyAnim.onComplete.add(() => {
+        this.game.time.events.add(1000, () => {
+          this.endCatwalk(outcome, invIndex, enemy)
+        })
+      })
     }
+  }
+
+  makeItemCatwalkAnimation(item, stepWidth, chainFrom) {
+    // Steps Animation
+    item.cameraOffset.set(this.game.width+256, this.game.height - 360)
+    let stepTweens = [
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-0*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, chainFrom === undefined),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-1*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-2*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-3*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-4*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-5*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-6*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-7*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-8*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false)
+    ]
+
+    for(let i=0; i<stepTweens.length-1; i++) {
+      stepTweens[i].chain(stepTweens[i+1])
+    }
+
+    // Spin Animation (with delay)
+    let spinTween = this.game.add.tween(item.scale)
+      .to({ x: -1.0 }, 200, Phaser.Easing.Sinusoidal.In, false, 400, 0, true)
+    stepTweens[stepTweens.length - 1].chain(spinTween)
+
+    let aboutFace = this.game.add.tween(item.scale)
+      .to({ x: -1.0}, 200, Phaser.Easing.Sinusoidal.Out, false)
+    spinTween.chain(aboutFace);
+
+    // Step back
+    let stepBackTweens = [
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-7*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-6*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-5*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-4*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-3*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-2*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width-1*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width+0*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, false),
+      this.game.add.tween(item.cameraOffset)
+        .to({ x: this.game.width+256}, 400, Phaser.Easing.Sinusoidal.InOut, false)
+    ]
+
+    aboutFace.chain(stepBackTweens[0])
+    for(let i=0; i<stepBackTweens.length-1; i++) {
+      stepBackTweens[i].chain(stepBackTweens[i+1])
+    }
+
+    if(chainFrom !== undefined) {
+      chainFrom.onComplete.add(() => { stepTweens[0].start() })
+    }
+
+    return stepBackTweens[0]
   }
 
   // CATWALK: 5 -> Finish the catwalk sequence
   endCatwalk(outcome, invIndex, enemy) {
     this.hideOverlay()
-    this.state = STATES.main
-    if (outcome == 'lose') {
+    this.showOverlay()
+
+    var centerX = this.game.width / 2
+    var centerY = this.game.height / 2
+
+    var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-gradient')
+    let scale = getScreenSizeScale(grad, this.game)
+    grad.scale.set(scale)
+    grad.anchor.setTo(0.5)
+    grad.fixedToCamera = true
+    this.overlay.add(grad)
+
+    var fontStyle = {
+      font: 'bold 128px Arial',
+      fill: '#fff',
+      boundsAlignH: 'center',
+      boundsAlignV: 'center'
+    }
+
+    let textString = 'You WON!'
+    if(outcome == 'lose') {
+      textString = 'You Lost'
       removeFromInventory(invIndex)
     }
-    enemy.destroy()
-    this.fadeToMainBGM()
+
+    var text = new Phaser.Text(this.game, 0, 0, textString, fontStyle)
+    text.setTextBounds(0, centerY - 20, this.game.width, this.game.height)
+    text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
+    text.fixedToCamera = true
+
+    this.overlay.add(text)
+    this.game.time.events.add(2000, () => {
+      this.hideOverlay()
+      this.state = STATES.main
+      this.enemies.removeAll(true)
+      this.fadeToMainBGM()
+    }, this)
   }
 
   // CATWALK: 1 -> First funtion called to begin catwalk sequence
@@ -649,6 +670,7 @@ export default class extends Phaser.State {
             this.game.ui.microwave.visible = true
             this.lastMicrowave = mwave.name
             mwave.triggered = true
+            Item.enableMicrowaveSelection(this.game)
           }
         }, null, this)
 

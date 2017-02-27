@@ -6,7 +6,7 @@ import {shuffleArray} from '../utils'
 export class Item extends Phaser.Group {
 
   constructor ({ game, x, y, scale, indices, name, description,
-    powerTier, invIndex, animate, shuffle }) {
+                 powerTier, invIndex, animate, shuffle }) {
 
     // Clean invIndex
     if(invIndex !== undefined) {
@@ -23,8 +23,23 @@ export class Item extends Phaser.Group {
       y = Item.INVENTORY_SLOTS[invIndex].y
     }
 
+    // Pick starting position
+    if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
+      x = Item.INVENTORY_START.x
+      y = Item.INVENTORY_START.y
+    } else if(animate == Item.DROP_CASCADE) {
+      x = Item.INVENTORY_SLOTS[invIndex + 1].x
+      y = Item.INVENTORY_SLOTS[invIndex + 1].y
+    }
+
     // Initialize empty Group as container
     super(game, null, 'ItemBtnGroup', false)
+    this.fixedToCamera = true
+
+    this.x = x
+    this.y = y
+    this.cameraOffset.x = x
+    this.cameraOffset.y = y
 
     // Initialize base properties
     this.game = game
@@ -39,15 +54,6 @@ export class Item extends Phaser.Group {
 
     this.sprites = []
     this.indices = indices
-
-    // Pick starting positions
-    if(animate == Item.DROP_FROM_TOP || (animate == Item.DROP_CASCADE && invIndex+1 >= Item.INVENTORY_MAX)) {
-      x = Item.INVENTORY_START.x
-      y = Item.INVENTORY_START.y
-    } else if(animate == Item.DROP_CASCADE) {
-      x = Item.INVENTORY_SLOTS[invIndex + 1].x
-      y = Item.INVENTORY_SLOTS[invIndex + 1].y
-    }
 
     // Build sprites
     if(shuffle !== undefined && shuffle) {
@@ -64,39 +70,37 @@ export class Item extends Phaser.Group {
       let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
       indices.splice(i1, 1);
     }
-
     for(let i=0; i<indices.length; i++) {
       let sprite = new Phaser.Sprite(game,
-        x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
-        y + Item.COMBINED_LOCATIONS[indices.length - 1][i].y,
+        Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
+        Item.COMBINED_LOCATIONS[indices.length - 1][i].y,
         'item-sprites', indices[i])
       sprite.anchor.set(0.5)
       sprite.scale.setTo(scale)
       sprite.inputEnabled = true
       this.game.physics.arcade.enable(sprite)
-      sprite.fixedToCamera = true
       this.sprites.push(sprite)
-      this.addChild(sprite)
+      this.add(sprite)
     }
+
+    // Make eyes for combined items
     this.eyes = null;
     if(indices.length > 1){
-      let image = new Phaser.Image(game, x, y, 'eyes', game.rnd.integerInRange(0, 3));
+      let image = new Phaser.Image(game, 0, 0, 'eyes', game.rnd.integerInRange(0, 3));
       image.anchor.set(0.5)
       image.scale.setTo(0.5 * scale);
-      image.fixedToCamera = true;
       this.eyes = image;
-      this.addChild(image);
+      this.add(image);
     }
 
     if(invIndex !== undefined) {
       this.invIndex = invIndex
 
       // Make close button
-      this.closeBtn = this.game.add.button(this.baseX + 20, this.baseY - 40, 'close-btn-sheet',
+      this.closeBtn = this.game.add.button(20, -40, 'close-btn-sheet',
             onBtnClose, this, 2, 0, 1, 0)
       this.closeBtn.scale.set(0.333)
-      this.closeBtn.fixedToCamera = true
-      this.addChild(this.closeBtn)
+      this.add(this.closeBtn)
 
       if(animate !== undefined) { this.makeDrop() }
     }
@@ -128,62 +132,38 @@ export class Item extends Phaser.Group {
   makeDrop() {
     // Animate falling item
     this.closeBtn.visible = false
-    //this.number.visible = false
 
-    for(let i=0; i<this.sprites.length; i++){
-      let itemDropTween = this.game.add.tween(this.sprites[i].cameraOffset).to(
-        { x: this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x,
-          y: this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y}, 500, Phaser.Easing.Bounce.Out, true)
+    this.cameraOffset.set(this.x, this.y)
+    let tween = this.game.add.tween(this.cameraOffset).to(
+      Item.INVENTORY_SLOTS[this.invIndex], 500, Phaser.Easing.Bounce.Out, true)
 
-      if(i == 0){
-        itemDropTween.onComplete.add(() => {
-          this.closeBtn.visible = true
-          //this.number.visible = true
-        }, this)
-      }
-    }
-    if(this.eyes != null){
-      //let itemDropTween =
-      this.game.add.tween(this.eyes.cameraOffset).to(
-        { x: this.baseX,y: this.baseY}, 500, Phaser.Easing.Bounce.Out, true)
-    }
+    tween.onComplete.add(() => { this.closeBtn.visible = true }, this)
+
+    // }
+    // if(this.eyes != null){
+    //   //let itemDropTween =
+    //   this.game.add.tween(this.eyes.cameraOffset).to(
+    //     { x: this.baseX,y: this.baseY}, 500, Phaser.Easing.Bounce.Out, true)
+    // }
   }
 
   update () {
-    if(this.inMicrowave) {
-      for(let i=0; i<this.sprites.length; i++) {
-        this.sprites[i].cameraOffset.x = this.game.ui.microwave.background.x +
-          (this.game.ui.microwave.getInventoryIndex(this) -
-           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.sprites[i].width + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
+    if(this.invIndex !== undefined) {
+      if(this.inMicrowave) {
+        let mwave = this.game.ui.microwave
+        let newX = this.game.ui.microwave.background.x +
+          (mwave.getInventoryIndex(this) - mwave.getNumberOfItemsInMicrowave()/2 + 0.5) * 64
+        let newY = this.game.ui.microwave.background.y - 20
 
-        this.sprites[i].cameraOffset.y = this.game.ui.microwave.background.y - 20 + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
-      }
+        this.cameraOffset.x = newX
+        this.cameraOffset.y = newY
 
-      if(this.eyes != null){
-        this.eyes.cameraOffset.x = this.game.ui.microwave.background.x +
-          (this.game.ui.microwave.getInventoryIndex(this) -
-           this.game.ui.microwave.getNumberOfItemsInMicrowave()/2 + 0.5) * this.eyes.width;
-        this.eyes.cameraOffset.y = this.game.ui.microwave.background.y - 20;
-      }
-
-
-      if(this.invIndex !== undefined) {
         this.closeBtn.visible = false
-        //this.number.visible = false
-      }
-    } else {
-      for(let i=0; i<this.sprites.length; i++) {
-        this.sprites[i].cameraOffset.x = this.baseX + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].x;
-        this.sprites[i].cameraOffset.y = this.baseY + Item.COMBINED_LOCATIONS[this.sprites.length - 1][i].y;
-      }
-      if(this.eyes != null){
-        this.eyes.cameraOffset.x = this.baseX;
-        this.eyes.cameraOffset.y = this.baseY;
-      }
+      } else {
+        this.cameraOffset.x = Item.INVENTORY_SLOTS[this.invIndex].x
+        this.cameraOffset.y = Item.INVENTORY_SLOTS[this.invIndex].y
 
-      if(this.invIndex !== undefined) {
         this.closeBtn.visible = true
-        //this.number.visible = true
       }
     }
   }
@@ -194,72 +174,76 @@ export class Item extends Phaser.Group {
     }
   }
 
-  setSelectionHandler(gameScene, power_tier) {
+  setMicrowaveSelectionHandler() {
+    console.info('Enabling microwave input')
     for (var i in this.sprites) {
-      this.sprites[i].events.onInputDown.add(function() {
-        gameScene.triggerCatwalkIntro(this.indices, this.invIndexRef, power_tier)
+      this.sprites[i].events.onInputDown.add(() => {
+        if(this.game.ui.microwave.getNumberOfItemsInMicrowave() < this.game.ui.microwave.MAX_MICROWAVE) {
+          this.inMicrowave = !this.inMicrowave
+          if(this.inMicrowave) {
+            this.game.sounds.play('microwave_button', 4)
+          }
+        }
+        else {
+          this.game.sounds.play('inventory_full', 4)
+        }
       }, this)
     }
   }
 
-  makeLocationTween({ tweenData, time, easing, autostart, delay, repeat, yoyo }) {
-    let tweens = []
+  removeMicrowaveSelectionHandler() {
+    for (var i in this.sprites) {
+      this.sprites[i].events.onInputDown.removeAll(this)
+    }
+  }
+
+  setCatwalkSelectionHandler(gameScene, enemy) {
+    for (var i in this.sprites) {
+      this.sprites[i].events.onInputDown.add(() => {
+        gameScene.triggerCatwalkIntro(this.indices, this.invIndexRef, enemy)
+      }, this)
+    }
+  }
+
+  makeLocationTween({ startX, startY, finalLoc, time, easing, autostart, delay, repeat, yoyo }) {
     for(let i=0; i<this.sprites.length; i++) {
-      let curTween = this.game.add.tween(this.sprites[i].cameraOffset)
-      curTween.to(tweenData, time, easing, autostart, delay, repeat, yoyo)
-      curTween.onComplete.add(() => {
-        this.game.time.events.add(1500, () => { console.info('done') }, this)
-      })
-      tweens.push(curTween)
-    }
+      if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
+      if(startY !== undefined) this.sprites[i].cameraOffset.y = startY
 
+      this.game.add.tween(this.sprites[i].cameraOffset).to(
+        finalLoc, time, easing, autostart, delay, repeat, yoyo)
+    }
     if (this.eyes !== null) {
-      let curTween = this.game.add.tween(this.eyes.cameraOffset)
-      curTween.to(tweenData, time, easing, autostart, delay, repeat, yoyo)
-      tweens.push(curTween)
+      this.game.add.tween(this.eyes.cameraOffset).to(
+        finalLoc, time, easing, autostart, delay, repeat, yoyo)
     }
-
-    return tweens
   }
 
-  makeScaleTween({ startScaleX, startScaleY, finalScale, time, easing, autostart, delay, repeat, yoyo }) {
-    let tweens = []
+  makeScaleTween({scale, time, easing, autostart, delay, repeat, yoyo}) {
     for (var i in this.sprites) {
-      if(startScaleX !== undefined) { this.sprites[i].scale.x = startScaleX }
-      if(startScaleY !== undefined) { this.sprites[i].scale.y = startScaleY }
-
-      tweens.push(this.game.add.tween(this.sprites[i].scale).to(
-        finalScale, time, easing, autostart, delay, repeat, yoyo))
+      this.game.add.tween(this.sprites[i].scale).to(
+        {x: scale, y: scale}, time, easing, autostart, delay, repeat, yoyo
+      )
     }
 
     if (this.eyes !== null) {
-      if(startScaleX !== undefined) { this.eyes.scale.x = startScaleX }
-      if(startScaleY !== undefined) { this.eyes.scale.y = startScaleY }
-
-      tweens.push(this.game.add.tween(this.eyes.scale).to(
-        finalScale, time, easing, autostart, delay, repeat, yoyo))
+      this.game.add.tween(this.eyes.scale).to(
+        {x: scale, y: scale}, time, easing, autostart, delay, repeat, yoyo
+      )
     }
-
-    return tweens
   }
 
-  makeRotationTween({ startRot, finalRot, time, easing, autostart, delay, repeat, yoyo }) {
-    let tweens = []
+  makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
     for (var i in this.sprites) {
-      if(startRot !== undefined) { this.sprites[i].rotation = startRot }
-
-      tweens.push(this.game.add.tween(this.sprites[i].rotation).to(
-        finalRot, time, easing, autostart, delay, repeat, yoyo))
+      this.game.add.tween(this.sprites[i]).to(
+        {rotation: rotation}, time, easing, autostart, delay, repeat, yoyo
+      )
     }
-
     if (this.eyes !== null) {
-      if(startRot !== undefined) { this.eyes.rotation = startRot }
-
-      tweens.push(this.game.add.tween(this.eyes.rotation).to(
-        finalRot, time, easing, autostart, delay, repeat, yoyo))
+      this.game.add.tween(this.eyes).to(
+        {rotation: rotation}, time, easing, autostart, delay, repeat, yoyo
+      )
     }
-
-    return tweens
   }
 
   mouseOn(x, y) {
@@ -313,10 +297,14 @@ Item.init = (itemTileset) => {
   // Build inventory slot coordinates
   for(let i=8; i>=1; i--) {
     Item.INVENTORY_SLOTS.push(
-      new Phaser.Point(game.width - 50, game.height / 2 + 75*(i-4) - 35)
+      new Phaser.Point(game.width - 50, game.height/2 + 75*(i-4) - 35)
     )
   }
 
+  // Start at the top of the inventory
+  Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
+
+  // Locaitons for combined items
   Item.COMBINED_LOCATIONS = [
     [new Phaser.Point(0, 0)],
     [new Phaser.Point(-10, -10), new Phaser.Point(10, 10)],
@@ -325,9 +313,6 @@ Item.init = (itemTileset) => {
     [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10), new Phaser.Point(0, 0)],
     [new Phaser.Point(-10, 0), new Phaser.Point(10, 0), new Phaser.Point(0, -10), new Phaser.Point(0, 10), new Phaser.Point(0, 0)]
   ];
-
-  // Start at the top of the inventory
-  Item.INVENTORY_START = new Phaser.Point(game.width - 50, game.height / 2 + 75*(-4) - 35)
 
   // Build item list from TILED info
   let tileProps = itemTileset.tileProperties;
@@ -443,4 +428,18 @@ Item.getMaxPowerTier = () => {
     }
   }
   return max
+}
+
+Item.enableMicrowaveSelection = (game) => {
+  for(let i=0; i<game.ui.inventoryLayer.length; i++) {
+    let item = game.ui.inventoryLayer.getChildAt(i)
+    item.setMicrowaveSelectionHandler()
+  }
+}
+
+Item.disableMicrowaveSelection = (game) => {
+  for(let i=0; i<game.ui.inventoryLayer.length; i++) {
+    let item = game.ui.inventoryLayer.getChildAt(i)
+    item.removeMicrowaveSelectionHandler()
+  }
 }

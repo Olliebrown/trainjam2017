@@ -1,3 +1,4 @@
+/* globals Game */
 import Phaser from 'phaser'
 import { Item } from './Item'
 import { XButton, StartButton } from './Buttons'
@@ -8,6 +9,9 @@ const MAX_MICROWAVE = 5;
 export class MicrowaveCrafting extends Phaser.Group {
   constructor (game) {
     super(game);
+
+    this.MAX_MICROWAVE = MAX_MICROWAVE
+    this.MIN_MICROWAVE = MIN_MICROWAVE
 
     this.underlayer = new Phaser.Image(this.game,
       this.game.width/2 - 35, this.game.height/2 - 50, 'background', 1);
@@ -26,6 +30,7 @@ export class MicrowaveCrafting extends Phaser.Group {
     this.door.scale.set(1.5);
     this.door.visible = false;
     this.add(this.door)
+    this.game.world.bringToTop(this.door)
 
     this.turnTheMicrowave = new StartButton(this.game,
       this.background.x + this.background.width/2 - 114,
@@ -88,7 +93,7 @@ export class MicrowaveCrafting extends Phaser.Group {
   microwave() {
     if(this.game.ui.microwave.getNumberOfItemsInMicrowave() >= MIN_MICROWAVE &&
        this.game.ui.microwave.getNumberOfItemsInMicrowave() <= MAX_MICROWAVE) {
-         this.game.ui.microwave.door.visible = true;
+      this.game.ui.microwave.door.visible = true;
       this.game.sounds.get('microwave_start').onStop.add(() => {
         this.game.sounds.play('microwave_done', 1)
         this.game.ui.microwave.microwavePhase2()
@@ -96,6 +101,7 @@ export class MicrowaveCrafting extends Phaser.Group {
       this.game.sounds.play('microwave_start', 1)
     } else {
       console.info('you need at least 2 items');
+      this.game.sounds.play('inventory_full', 1)
     }
   }
 
@@ -141,14 +147,17 @@ export class MicrowaveCrafting extends Phaser.Group {
 
     this.game.ui.microwave.alive = false;
     this.game.ui.microwave.visible = false;
+    Item.disableMicrowaveSelection(this.game)
   }
 
   getBack(){
     for(let i=0; i<this.game.ui.inventoryLayer.length; i++) {
       this.game.ui.inventoryLayer.getAt(i).inMicrowave = false;
     }
+
     this.game.ui.microwave.alive = false;
     this.game.ui.microwave.visible = false;
+    Item.disableMicrowaveSelection(this.game)
   }
 
   update() {
@@ -156,23 +165,23 @@ export class MicrowaveCrafting extends Phaser.Group {
       return;
     }
 
-    if(this.game.input.activePointer.justPressed()) {
-      for(let i=0; i<this.game.ui.inventoryLayer.length; i++){
-        let item = this.game.ui.inventoryLayer.getAt(i)
-        if(item.mouseOn(this.game.input.activePointer.x, this.game.input.activePointer.y)){
-          if(this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE) {
-            item.inMicrowave = !item.inMicrowave;
-            if(item.inMicrowave) {
-              this.game.sounds.play('microwave_button', 4)
-            }
-          }
-          else {
-            this.game.sounds.play('inventory_full', 4)
-          }
-          break;
-        }
-      }
-      this.game.input.activePointer.reset();
-    }
+    // if(this.game.input.activePointer.justPressed()) {
+    //   for(let i=0; i<this.game.ui.inventoryLayer.length; i++){
+    //     let item = this.game.ui.inventoryLayer.getAt(i)
+    //     if(item.mouseOn(this.game.input.activePointer.x, this.game.input.activePointer.y)){
+    //       if(this.getNumberOfItemsInMicrowave() < MAX_MICROWAVE) {
+    //         item.inMicrowave = !item.inMicrowave;
+    //         if(item.inMicrowave) {
+    //           this.game.sounds.play('microwave_button', 4)
+    //         }
+    //       }
+    //       else {
+    //         this.game.sounds.play('inventory_full', 4)
+    //       }
+    //       break;
+    //     }
+    //   }
+    //   this.game.input.activePointer.reset();
+    // }
   }
 }
