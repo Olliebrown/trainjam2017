@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { centerGameObjects, loadAudio, getScreenSizeScale } from '../utils'
-import { StartButton } from '../sprites/Buttons'
+import { StartButton, XButton } from '../sprites/Buttons'
 
 export default class extends Phaser.State {
   init () {}
@@ -8,6 +8,7 @@ export default class extends Phaser.State {
   preload () {
     this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')
     this.background.scale.set(getScreenSizeScale(this.background, this.game))
+
     this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
     this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
     centerGameObjects([this.background, this.loaderBg, this.loaderBar])
@@ -28,6 +29,7 @@ export default class extends Phaser.State {
     //
     this.game.load.tilemap('game', 'assets/tilemaps/game.json', null, Phaser.Tilemap.TILED_JSON)
 
+    this.game.load.image('title-credits', 'assets/images/title-credits.png')
     this.game.load.image('sewer-tiles', 'assets/images/sewer-tiles.png')
     this.game.load.image('item-tiles', 'assets/images/item-tiles.png')
     this.game.load.image('drawer', 'assets/images/inventory-drawer.png')
@@ -70,15 +72,53 @@ export default class extends Phaser.State {
     this.loaderBar.visible = false
 
     let splash = this
-    let startButton = new StartButton(this.game, this.game.world.centerX,
+    this.creditsScreen = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-credits')
+    this.creditsScreen.scale.set(getScreenSizeScale(this.creditsScreen, this.game))
+    this.creditsScreen.visible = false
+    this.creditsScreen.anchor.set(0.5)
+    this.add.existing(this.creditsScreen)
+
+    this.xButton = new XButton(this.game, 50, 50, () => {
+      splash.creditsScreen.visible = false
+      splash.xButton.visible = false
+
+      splash.startButton.visble = true
+      splash.startText.visble = true
+      splash.creditsButton.visble = true
+      splash.creditsText.visble = true
+    })
+    this.xButton.visible = false
+    this.add.existing(this.xButton)
+
+    this.startButton = new StartButton(this.game, this.game.world.centerX - 200,
       this.game.world.centerY + 300, () => {
         splash.musicLoop.fadeOut(500)
       })
-    let style = {fontSize:'36px', fill:'#ffffff'};
-    let startText = new Phaser.Text(this.game, startButton.x, startButton.y - 5,'Start', style);
-    startText.anchor.set(0.5);
 
-    this.add.existing(startButton)
-    this.add.existing(startText)
+    let style = {fontSize:'36px', fill:'#ffffff'};
+    this.startText = new Phaser.Text(this.game, this.startButton.x, this.startButton.y - 5,'Start', style);
+    this.startText.anchor.set(0.5);
+
+    this.add.existing(this.startButton)
+    this.add.existing(this.startText)
+
+    this.creditsButton = new StartButton(this.game, this.game.world.centerX + 200,
+      this.game.world.centerY + 300, () => {
+        splash.creditsScreen.visible = true
+        splash.xButton.visible = true
+
+        splash.startButton.visble = false
+        splash.startText.visble = false
+        splash.creditsButton.visble = false
+        splash.creditsText.visble = false
+      })
+    this.creditsText = new Phaser.Text(this.game, this.creditsButton.x, this.creditsButton.y - 5,'Credits', style);
+    this.creditsText.anchor.set(0.5);
+
+    this.add.existing(this.creditsButton)
+    this.add.existing(this.creditsText)
+
+    this.game.world.bringToTop(this.creditsScreen)
+    this.game.world.bringToTop(this.xButton)
   }
 }
