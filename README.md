@@ -1,68 +1,25 @@
-# Phaser + ES6 + Webpack.
-#### A bootstrap project to create games with Phaser + ES6 + Webpack.
+# Sewer-Vogue
+#### A 2017 TrainJam game
 
-![Phaser+ES6+Webpack](https://raw.githubusercontent.com/lean/phaser-es6-webpack/master/assets/images/phaser-es6-webpack.jpg)
+In the grim darkness of the future, there is only... competitive catwalks featuring scavenged junk.
 
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+Explore the sewers. Collect crud. Combine stuff with the awesome power of microwaves. Pit your creations against other denizen's efforts in the glare of the flash photography.
 
+## Developers
 
-## Features
-- JavaScript Standard Style
-- Next generation of Javascript
-- Webpack ready
-- Multiple browser testing
-- WebFont Loader
-- Responsive utilities!
+Programming:
+- Seth Berrier
+- Ahmed Khalifa
+- Tiger Finch
 
+Art/Design:
+- John Corn
 
-# Setup
-To use this bootstrap you’ll need to install a few things before you have a working copy of the project.
+Music/SFX:
+- Elie Abraham
+- Shane Yach
 
-## 1. Clone this repo:
+## Dependencies
 
-Navigate into your workspace directory.
-
-Run:
-
-```git clone https://github.com/lean/phaser-es6-webpack.git```
-
-## 2. Install node.js and npm:
-
-https://nodejs.org/en/
-
-
-## 3. Install dependencies:
-
-Navigate to the cloned repo’s directory.
-
-Run:
-
-```npm install```
-
-## 4. Run the development server:
-
-Run:
-
-```npm run dev```
-
-This will run a server so you can run the game in a browser.
-
-Open your browser and enter localhost:3000 into the address bar.
-
-Also this will start a watch process, so you can change the source and the process will recompile and refresh the browser
-
-
-## Build for deployment:
-
-Run:
-
-```npm run deploy```
-
-This will optimize and minimize the compiled bundle.
-
-## Credits
-Big thanks to this great repos:
-
-https://github.com/belohlavek/phaser-es6-boilerplate
-
-https://github.com/cstuncsik/phaser-es6-demo
+This project is based on the [Phaser + ES6 + Webpack](https://github.com/lean/phaser-es6-webpack) template.
+It is a node.js project managed via npm and deployed using Babel and Webpack.
