@@ -1,11 +1,11 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
-import { EnemyTrigger } from '../sprites/Enemy'
+import { EnemyTrigger, Enemy } from '../sprites/Enemy'
 import { Microwave } from '../sprites/Microwave'
 import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item, removeFromInventory } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
-import { centerGameObjects } from '../utils'
+import { centerGameObjects, getScreenSizeScale } from '../utils'
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -137,10 +137,12 @@ export default class extends Phaser.State {
     this.game.ui = this.makeUI()
     this.overlay = this.game.add.group()
 
-    // this.makeTestInventory()
+    //this.makeTestInventory()
 
-    // this.state = STATES.choosingItem
-    // this.triggerCatwalkIntro(37, 37)
+    // TODO: For testing only, remove
+    this.state = STATES.choosingItem
+    let testEnemy = new Enemy({ game: this.game, x: 0, y: 0, level: 1 })
+    this.triggerCatwalkIntro([37], [37], testEnemy)
   }
 
   showOverlay() {
@@ -308,7 +310,7 @@ export default class extends Phaser.State {
   // CATWALK: 3 -> Animate the catwalk intro
   triggerCatwalkIntro (player_item_indices, invIndex, enemy) {
     if (this.state == STATES.choosingItem) {
-      var enemy_item_tier = enemy.pickItemPowerTier()
+      var enemy_item_tiers = enemy.pickItemPowerTier()
       this.state = STATES.catwalkIntro
       this.hideOverlay()
       this.showOverlay()
@@ -322,44 +324,49 @@ export default class extends Phaser.State {
       this.overlay.add(grad)
 
       // Build and add versus strip
-      var strip = new Phaser.Sprite(this.game, 0, this.game.height / 2, 'catwalk-intro-strip')
+      var strip = new Phaser.Sprite(this.game, this.game.width + 100, - this.game.height/2 - 100, 'catwalk-intro-strip')
       strip.anchor.setTo(0.5)
       strip.fixedToCamera = true
       this.overlay.add(strip)
 
       var strip_tween = this.game.add.tween(strip.cameraOffset).to(
-        { x: this.game.width / 2 },
-        2000, Phaser.Easing.Bounce.Out, true)
+        { x: this.game.width / 2, y: this.game.height / 2 }, 1000, Phaser.Easing.Elastic.In, true)
 
-      strip_tween.onComplete.add((function() {
-        this.game.time.events.add(500, (function() {
-          this.camera.shake()
-          this.triggerCatwalk(player_item_indices, invIndex, enemy_item_tier, enemy)
-        }), this)
-      }), this)
+      strip_tween.onComplete.add(() => {
+        this.camera.shake()
+        this.camera.onShakeComplete.add(() => {
+          this.game.time.events.add(500, () => {
+            this.triggerCatwalk(player_item_indices, invIndex, enemy_item_tiers, enemy)
+          }, this)
+        })
+      }, this)
 
       // Build and add Player item
       var player_item = new Item({
         game: this.game,
-        x: 50,
-        y: 400,
-        scale: 2,
-        indices: player_item_indices
+        x: -256, y: 200,
+        scale: 2, indices: player_item_indices
       })
 
 
-      player_item.makeLocationTween({ startX: -100, finalLoc: { x: 400 }, time: 1500,
-        easing: Phaser.Easing.Bounce.Out, autostart: true })
+      player_item.makeLocationTween({
+        tweenData: { x: 300 }, time: 1500,
+        easing: Phaser.Easing.Bounce.Out, autostart: true
+      })
 
       this.overlay.add(player_item)
 
       // Build and add enemy item
       var enemy_item = Item.makeFromPowerTier({
-        game: this.game, x: 50, y: 550, powerTier: enemy_item_tier, scale: 2
+        game: this.game,
+        x: this.game.width + 256, y: 600,
+        scale: 2, powerTier: enemy_item_tiers
       })
 
-      enemy_item.makeLocationTween({ startX: -100, finalLoc: { x: 1250 }, time: 1500,
-        easing: Phaser.Easing.Bounce.Out, autostart: true })
+      enemy_item.makeLocationTween({
+        tweenData: { x: this.game.width - 300 }, time: 1500,
+        easing: Phaser.Easing.Bounce.Out, autostart: true
+      })
 
       this.overlay.add(enemy_item)
 
@@ -367,7 +374,7 @@ export default class extends Phaser.State {
   }
 
   // CATWALK: 4 -> Animate the catwalk
-  triggerCatwalk (player_item_indices, invIndex, enemy_item_tier, enemy) {
+  triggerCatwalk (player_item_indices, invIndex, enemy_item_tiers, enemy) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
@@ -376,85 +383,145 @@ export default class extends Phaser.State {
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
 
+      // Add the background gradient
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-gradient')
+      let scale = getScreenSizeScale(grad, this.game)
+      grad.scale.set(scale)
       grad.anchor.setTo(0.5)
       grad.fixedToCamera = true
       this.overlay.add(grad)
 
-      var player_board = new Phaser.Sprite(this.game, 0, this.game.height - 300, 'catwalk-bits', 0)
-      player_board.fixedToCamera = true
-      this.overlay.add(player_board)
+      // Create the floor and lights
+      var floor = new Phaser.Sprite(this.game, this.game.width, this.game.height, 'catwalk-floor')
+      floor.scale.set(scale)
+      floor.anchor.setTo(1.0)
+      floor.fixedToCamera = true
+      this.overlay.add(floor)
 
-      var enemy_board = new Phaser.Sprite(this.game, this.game.width - 601,  this.game.height - 300, 'catwalk-bits', 1)
-      enemy_board.fixedToCamera = true
-      this.overlay.add(enemy_board)
+      var lightsBack = new Phaser.Sprite(this.game, this.game.width + 90, this.game.height - 270, 'catwalk-lights-back')
+      lightsBack.scale.set(scale)
+      lightsBack.anchor.setTo(1.0)
+      lightsBack.fixedToCamera = true
+      this.overlay.add(lightsBack)
 
+      var lightsFront = new Phaser.Sprite(this.game, this.game.width + 45, this.game.height - 195, 'catwalk-lights-front')
+      lightsFront.scale.set(scale)
+      lightsFront.anchor.setTo(1.0)
+      lightsFront.fixedToCamera = true
+      this.overlay.add(lightsFront)
+
+      // Create and animate the player
       var player_item = new Item({
-        game: this.game,
-        x: 400,
-        y: 400,
-        scale: 2,
+        game: this.game, scale: 2,
+        x: this.game.width, y: this.game.height - 325,
         indices: player_item_indices
       })
 
+      // Steps Animation
+      let lastTween = null
 
-      player_item.sprites[0].scale.setTo(2)
-
-      this.overlay.add(player_item)
-
-      var enemy_item = Item.makeFromPowerTier({
-        game: this.game, x: 1250, y: 550, powerTier: enemy_item_tier
-      })
-
-      for(let i=0; i<enemy_item.sprites.length; i++){
-        enemy_item.sprites[i].scale.setTo(2)
+      let animX = this.game.width - floor.width/10, animY = this.game.height - 325
+      let locaitons = [ ]
+      for(let i=0; i<8; i++) {
+        locaitons.push({cameraOffset: { x: animX, y: animY }})
+        animX -= floor.width/10
       }
 
-
-      this.overlay.add(enemy_item)
-
-      var player_swell_tween = this.game.add.tween(player_item.sprites[0].scale).to(
-        {x: 5, y: 5},
-        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
-      )
-      player_item.makeScaleTween({
-        scale: 5,
-        time: 100000,
+      lastTween = player_item.makeLocationTween({
+        start: { x: this.game.width, y: this.game.height - 325},
         easing: Phaser.Easing.Sinusoidal.InOut,
-        autostart: true,
-        delay: 0,
-        repeat: -1,
-        yoyo: true
-      })
-      player_item.makeRotationTween({
-        rotation: {rotation: 90},
-        time: 100000,
-        easing: Phaser.Easing.Sinusoidal.InOut,
-        autostart: true,
-        delay: 0,
-        repeat: -1,
-        yoyo: true
+        tweenData: locaitons, time: 400, autoStart: true
       })
 
-      enemy_item.makeRotationTween({
-        rotation: {rotation: -90},
-        time: 100000,
-        easing: Phaser.Easing.Sinusoidal.InOut,
-        autostart: true,
-        delay: 0,
-        repeat: -1,
-        yoyo: true
+      // // Freeze (delay) then spin
+      // let spinTween = player_item.makeScaleTween({
+      //   startScaleX: 2.0, finalScale: { x: -2.0 }, time: 200,
+      //   easing: Phaser.Easing.Sinusoidal.In,
+      //   autostart: false, dealy: 400, repeat: 0, yoyo: true
+      // })
+      //
+      // for(let t in lastTween) {
+      //   lastTween[t].chain(spinTween[t])
+      // }
+      // lastTween = spinTween
+
+      // let aboutFace = player_item.makeScaleTween({
+      //   startScaleX: 2.0, finalScale: { x: -2.0 }, time: 200,
+      //   easing: Phaser.Easing.Sinusoidal.Out, autostart: false,
+      // })
+      //
+      // for(let t in lastTween) lastTween[t].chain(aboutFace[t])
+      // lastTween = aboutFace
+      //
+      // // Walk back
+      // for(let i=0; i<9; i++) {
+      //   let newTween = player_item.makeLocationTween({
+      //     startX: animX, startY: animY,
+      //     finalLoc: { x: animX + floor.width/10, y: animY }, time: 400,
+      //     easing: Phaser.Easing.Sinusoidal.InOut, autostart: (i == 0)
+      //   })
+      //
+      //   for(let t in lastTween) lastTween[t].chain(spinTween[t])
+      //   lastTween = newTween
+      //   animX += floor.width/10
+      // }
+
+      this.overlay.add(player_item)
+      this.overlay.bringToTop(lightsFront)
+
+      var enemy_item = Item.makeFromPowerTier({
+        game: this.game, x: 1250, y: 550, powerTier: enemy_item_tiers, scale: 2.0
       })
 
-      enemy_item.makeScaleTween({
-        scale: 5,
-        time: 100000,
-        easing: Phaser.Easing.Sinusoidal.InOut,
-        autostart: true,
-        delay: 0,
-        repeat: -1,
-        yoyo: true
-      })
+      // for(let i=0; i<enemy_item.sprites.length; i++){
+      //   enemy_item.sprites[i].scale.setTo(2)
+      // }
+      //
+      //
+      // this.overlay.add(enemy_item)
+      //
+      // var player_swell_tween = this.game.add.tween(player_item.sprites[0].scale).to(
+      //   {x: 5, y: 5},
+      //   2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
+      // )
+      // player_item.makeScaleTween({
+      //   scale: 5,
+      //   time: 100000,
+      //   easing: Phaser.Easing.Sinusoidal.InOut,
+      //   autostart: true,
+      //   delay: 0,
+      //   repeat: -1,
+      //   yoyo: true
+      // })
+      // player_item.makeRotationTween({
+      //   rotation: {rotation: 90},
+      //   time: 100000,
+      //   easing: Phaser.Easing.Sinusoidal.InOut,
+      //   autostart: true,
+      //   delay: 0,
+      //   repeat: -1,
+      //   yoyo: true
+      // })
+      //
+      // enemy_item.makeRotationTween({
+      //   rotation: {rotation: -90},
+      //   time: 100000,
+      //   easing: Phaser.Easing.Sinusoidal.InOut,
+      //   autostart: true,
+      //   delay: 0,
+      //   repeat: -1,
+      //   yoyo: true
+      // })
+      //
+      // enemy_item.makeScaleTween({
+      //   scale: 5,
+      //   time: 100000,
+      //   easing: Phaser.Easing.Sinusoidal.InOut,
+      //   autostart: true,
+      //   delay: 0,
+      //   repeat: -1,
+      //   yoyo: true
+      // })
 
       var player_power = player_item.getPowerRoll()
       var enemy_power = enemy_item.getPowerRoll()
@@ -466,7 +533,7 @@ export default class extends Phaser.State {
         outcome = 'lose'
       }
 
-      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, invIndex, enemy)}), this)
+//      this.game.time.events.add(Phaser.Timer.SECOND * 4, (function() {this.endCatwalk(outcome, invIndex, enemy)}), this)
 
     }
   }

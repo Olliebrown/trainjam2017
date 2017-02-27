@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { centerGameObjects, loadAudio } from '../utils'
+import { centerGameObjects, loadAudio, getScreenSizeScale } from '../utils'
 import { StartButton } from '../sprites/Buttons'
 
 export default class extends Phaser.State {
@@ -7,7 +7,7 @@ export default class extends Phaser.State {
 
   preload () {
     this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')
-    this.background.scale.set(Math.max(this.game.width / this.background.width, this.game.height / this.background.height))
+    this.background.scale.set(getScreenSizeScale(this.background, this.game))
     this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBg')
     this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 300, 'loaderBar')
     centerGameObjects([this.background, this.loaderBg, this.loaderBar])

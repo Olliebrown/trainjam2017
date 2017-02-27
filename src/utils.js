@@ -33,3 +33,7 @@ export const shuffleArray = (array, rnd) => {
     array[i2] = temp
   }
 }
+
+export const getScreenSizeScale = (displayObject, game) => {
+  return Math.max(game.width / displayObject.width, game.height / displayObject.height)
+}

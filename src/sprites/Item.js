@@ -64,6 +64,7 @@ export class Item extends Phaser.Group {
       let i1 = this.game.rnd.integerInRange(0, indices.length - 1);
       indices.splice(i1, 1);
     }
+
     for(let i=0; i<indices.length; i++) {
       let sprite = new Phaser.Sprite(game,
         x + Item.COMBINED_LOCATIONS[indices.length - 1][i].x,
@@ -88,19 +89,14 @@ export class Item extends Phaser.Group {
     }
 
     if(invIndex !== undefined) {
+      this.invIndex = invIndex
+
       // Make close button
       this.closeBtn = this.game.add.button(this.baseX + 20, this.baseY - 40, 'close-btn-sheet',
             onBtnClose, this, 2, 0, 1, 0)
       this.closeBtn.scale.set(0.333)
       this.closeBtn.fixedToCamera = true
       this.addChild(this.closeBtn)
-
-      // Make index number
-      this.invIndex = invIndex
-      // this.number = this.game.add.text(this.baseX - 40, this.baseY - 15, invIndex,
-      //   { font: 'Courier', fontSize: 24 })
-      // this.number.fixedToCamera = true
-      // this.addChild(this.number)
 
       if(animate !== undefined) { this.makeDrop() }
     }
@@ -206,48 +202,64 @@ export class Item extends Phaser.Group {
     }
   }
 
-  makeLocationTween({ startX, startY, finalLoc, time, easing, autostart }) {
+  makeLocationTween({ tweenData, time, easing, autostart, delay, repeat, yoyo }) {
+    let tweens = []
     for(let i=0; i<this.sprites.length; i++) {
-      if(startX !== undefined) this.sprites[i].cameraOffset.x = startX
-      if(startY !== undefined) this.sprites[i].cameraOffset.y = startY
+      let curTween = this.game.add.tween(this.sprites[i].cameraOffset)
+      curTween.to(tweenData, time, easing, autostart, delay, repeat, yoyo)
+      curTween.onComplete.add(() => {
+        this.game.time.events.add(1500, () => { console.info('done') }, this)
+      })
+      tweens.push(curTween)
+    }
 
-      this.game.add.tween(this.sprites[i].cameraOffset).to(
-        finalLoc, time, easing, autostart)
-    }
     if (this.eyes !== null) {
-      this.game.add.tween(this.eyes.cameraOffset).to(
-        finalLoc, time, easing, autostart)
+      let curTween = this.game.add.tween(this.eyes.cameraOffset)
+      curTween.to(tweenData, time, easing, autostart, delay, repeat, yoyo)
+      tweens.push(curTween)
     }
+
+    return tweens
   }
 
-  makeScaleTween({scale, time, easing, autostart, delay, repeat, yoyo}) {
+  makeScaleTween({ startScaleX, startScaleY, finalScale, time, easing, autostart, delay, repeat, yoyo }) {
+    let tweens = []
     for (var i in this.sprites) {
-      this.game.add.tween(this.sprites[i].scale).to(
-        {x: scale, y: scale},
-        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
-      )
+      if(startScaleX !== undefined) { this.sprites[i].scale.x = startScaleX }
+      if(startScaleY !== undefined) { this.sprites[i].scale.y = startScaleY }
+
+      tweens.push(this.game.add.tween(this.sprites[i].scale).to(
+        finalScale, time, easing, autostart, delay, repeat, yoyo))
     }
+
     if (this.eyes !== null) {
-      this.game.add.tween(this.eyes.scale).to(
-        {x: scale, y: scale},
-        2000, Phaser.Easing.Sinusoidal.Out, true, 0, -1, true
-      )
+      if(startScaleX !== undefined) { this.eyes.scale.x = startScaleX }
+      if(startScaleY !== undefined) { this.eyes.scale.y = startScaleY }
+
+      tweens.push(this.game.add.tween(this.eyes.scale).to(
+        finalScale, time, easing, autostart, delay, repeat, yoyo))
     }
+
+    return tweens
   }
 
-  makeRotationTween({rotation, time, easing, autostart, delay, repeat, yoyo}) {
+  makeRotationTween({ startRot, finalRot, time, easing, autostart, delay, repeat, yoyo }) {
+    let tweens = []
     for (var i in this.sprites) {
-      this.game.add.tween(this.sprites[i]).to(
-        {rotation: rotation},
-        time, easing, autostart, delay, repeat, yoyo
-      )
+      if(startRot !== undefined) { this.sprites[i].rotation = startRot }
+
+      tweens.push(this.game.add.tween(this.sprites[i].rotation).to(
+        finalRot, time, easing, autostart, delay, repeat, yoyo))
     }
+
     if (this.eyes !== null) {
-      this.game.add.tween(this.eyes.cameraOffset).to(
-        {rotation: rotation},
-        time, easing, autostart, delay, repeat, yoyo
-      )
+      if(startRot !== undefined) { this.eyes.rotation = startRot }
+
+      tweens.push(this.game.add.tween(this.eyes.rotation).to(
+        finalRot, time, easing, autostart, delay, repeat, yoyo))
     }
+
+    return tweens
   }
 
   mouseOn(x, y) {
@@ -419,7 +431,7 @@ Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, sca
   // }
 
   return new Item({ game, x, y, invIndex, indices: indeces, animate, scale,
-    name: "", description: "", powerTier: powerTier[powerTier.length - 1] })
+    name: '', description: '', powerTier: powerTier[powerTier.length - 1] })
 }
 
 Item.getMaxPowerTier = () => {
