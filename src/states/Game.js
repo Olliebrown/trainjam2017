@@ -6,7 +6,7 @@ import { MicrowaveCrafting } from '../sprites/MicrowaveCrafting'
 import { Item, removeFromInventory } from '../sprites/Item'
 import Pathfinder from '../ai/Pathfinder'
 import { centerGameObjects, getScreenSizeScale, getRandomIntInclusive } from '../utils'
-import Juicy from '../plugins/Juicy.js'
+import { ScreenFlash } from '../sprites/ScreenFlash'
 
 const OVERLAY_WIDTH = 1600
 const OVERLAY_HEIGHT = 900
@@ -29,11 +29,6 @@ export default class extends Phaser.State {
 
   create () {
     let thisState = this
-
-    // Screenflash effect
-    this.juicy = this.game.plugins.add(Juicy);
-    this.game.screenFlash = this.juicy.createScreenFlash();
-    this.game.add.existing(this.game.screenFlash);
 
     // tilemap / world setup
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -142,8 +137,6 @@ export default class extends Phaser.State {
     // Finish UI and overlay setup
     this.game.ui = this.makeUI()
     this.overlay = this.game.add.group()
-
-    this.game.world.bringToTop(this.game.screenFlash)
   }
 
   showOverlay() {
@@ -378,6 +371,9 @@ export default class extends Phaser.State {
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
 
+      // Make screen flash for use in animation
+      this.screenFlash = new ScreenFlash(this.game);
+
       // Add the background gradient
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-gradient')
       let scale = getScreenSizeScale(grad, this.game)
@@ -424,6 +420,9 @@ export default class extends Phaser.State {
       this.overlay.add(enemy_item)
       this.overlay.bringToTop(lightsFront)
 
+      // Add screen flash last so it's on top of everything
+      this.overlay.add(this.screenFlash)
+
       var player_power = player_item.getPowerRoll()
       var enemy_power = enemy_item.getPowerRoll()
       var outcome
@@ -433,7 +432,6 @@ export default class extends Phaser.State {
       } else {
         outcome = 'lose'
       }
-
 
       enemyAnim.onComplete.add(() => {
         this.game.time.events.add(1000, () => {
@@ -475,12 +473,14 @@ export default class extends Phaser.State {
       let which = getRandomIntInclusive(1, 3)
       this.game.sounds.play('pose' + which, 1)
       this.game.sounds.play('shutter_noise', 1)
-      this.game.time.events.add(getRandomIntInclusive(0, 500), () => { this.game.screenFlash.flash(); })
-      this.game.time.events.add(getRandomIntInclusive(100, 600), () => { this.game.screenFlash.flash(); })
-      this.game.time.events.add(getRandomIntInclusive(200, 700), () => { this.game.screenFlash.flash(); })
-      this.game.time.events.add(getRandomIntInclusive(300, 800), () => { this.game.screenFlash.flash(); })
-      this.game.time.events.add(getRandomIntInclusive(400, 900), () => { this.game.screenFlash.flash(); })
-      this.game.time.events.add(getRandomIntInclusive(500, 1000), () => { this.game.screenFlash.flash(); })
+
+      this.screenFlash.flash()
+      this.game.time.events.add(getRandomIntInclusive(0, 500), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(100, 600), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(200, 700), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(300, 800), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(400, 900), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(500, 1000), () => { this.screenFlash.flash() }, this)
     })
 
     // Spin Animation (with delay)
