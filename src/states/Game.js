@@ -424,38 +424,16 @@ export default class extends Phaser.State {
       this.overlay.add(enemy_item)
       this.overlay.bringToTop(lightsFront)
 
-      // Calcualte result
-      let player_item_tiers = Item.convertFrameToPowerTier(player_item.indices)
-      let player_max = Math.max(...player_item_tiers)
-      let player_min = Math.min(player_item_tiers.length, player_max)
-
-      let enemy_max = Math.min(...enemy_item_tiers)
-      let enemy_min = Math.min(enemy_item_tiers.length, enemy_max)
-
-      let tier_diff = player_max - enemy_max
-
+      var player_power = player_item.getPowerRoll()
+      var enemy_power = enemy_item.getPowerRoll()
       var outcome
-      console.info(`Player: ${player_min}/${player_max}`)
-      console.info(`Enemy:  ${enemy_min}/${enemy_max}`)
-      console.info('Tier difference is ' + tier_diff)
 
-      if (tier_diff > 1) {
-        outcome = 'win'
-      } else if (tier_diff < -1) {
+      if (player_power >= enemy_power) {
         outcome = 'win'
       } else {
-        // Roll the dice
-        let playerRoll = getRandomIntInclusive(player_min, player_max)
-        let enemyRoll = getRandomIntInclusive(enemy_min, enemy_max)
-
-        // Tie goes to the player
-        console.info(`Dice Roll: ${playerRoll} vs ${enemyRoll}`)
-        if (playerRoll >= enemyRoll) {
-          outcome = 'win'
-        } else {
-          outcome = 'lose'
-        }
+        outcome = 'lose'
       }
+
 
       enemyAnim.onComplete.add(() => {
         this.game.time.events.add(1000, () => {
