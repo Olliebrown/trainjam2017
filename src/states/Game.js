@@ -145,6 +145,7 @@ export default class extends Phaser.State {
     bm_data.ctx.rect(0, 0, this.game.width, this.game.height)
     bm_data.ctx.fillStyle = '#111111'
     bm_data.ctx.fill()
+
     var overlay_bg = new Phaser.Sprite(this.game, 0, 0, bm_data)
     overlay_bg.alpha = 0.9
     overlay_bg.fixedToCamera = true
@@ -155,6 +156,7 @@ export default class extends Phaser.State {
     obm_data.ctx.rect(0, 0, OVERLAY_WIDTH, OVERLAY_HEIGHT)
     obm_data.ctx.fillStyle = '#111111'
     obm_data.ctx.fill()
+
     var y_offset = (this.game.height - OVERLAY_HEIGHT) / 2
     var x_offset = (this.game.width - OVERLAY_WIDTH) / 2
     var overlay = new Phaser.Sprite(this.game, x_offset, y_offset, obm_data)
@@ -277,21 +279,22 @@ export default class extends Phaser.State {
         this.game.time.events.add(Phaser.Timer.SECOND * 2,
           () => { this.endCatwalk('noitems', -1, enemy) }, this);
       } else {
-        var yOffset = centerY - 100, xOffset = 200
+        var xInterval = this.game.width / 6
+        var yOffset = centerY - 100, xOffset = -2*xInterval
         for (var i in this.game.ui.inventory) {
           var id_ = this.game.ui.inventory[i]
           var new_item = Item.makeFromGlobalIDs({
-            game: this.game, x: xOffset, y: yOffset, idArray: id_, scale: 1.5
+            game: this.game, x: centerX + xOffset + 0.75*128, y: yOffset, idArray: id_, scale: 1.5
           })
 
           new_item.invIndexRef = i
           new_item.setCatwalkSelectionHandler(this, enemy)
           this.overlay.add(new_item)
 
-          xOffset += new_item.sprites[0].width + 10
+          xOffset += xInterval
           if(i == 3) {
-            yOffset += 200
-            xOffset = 200
+            yOffset += xInterval
+            xOffset = -2*xInterval
           }
         }
       }
@@ -341,21 +344,21 @@ export default class extends Phaser.State {
         scale: 2, indices: player_item_indices
       })
 
-      player_item.cameraOffset.set(-256, 200)
+      player_item.cameraOffset.set(-256, 200*scale)
       this.game.add.tween(player_item.cameraOffset).to(
-        { x: 300 }, 1500, Phaser.Easing.Bounce.Out, true)
+        { x: 300*scale }, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(player_item)
 
       // Build and add enemy item
       var enemy_item = Item.makeFromPowerTier({
-        game: this.game, x: this.game.width + 256, y: 600,
+        game: this.game, x: this.game.width + 256, y: this.game.height - 200,
         scale: 2, powerTier: enemy_item_tiers
       })
 
-      enemy_item.cameraOffset.set(this.game.width + 256, 600)
+      enemy_item.cameraOffset.set(this.game.width + 256, this.game.height - 200*scale)
       this.game.add.tween(enemy_item.cameraOffset).to(
-        { x: this.game.width - 300 }, 1500, Phaser.Easing.Bounce.Out, true)
+        { x: this.game.width - 300*scale }, 1500, Phaser.Easing.Bounce.Out, true)
 
       this.overlay.add(enemy_item)
     }
@@ -389,13 +392,13 @@ export default class extends Phaser.State {
       floor.fixedToCamera = true
       this.overlay.add(floor)
 
-      var lightsBack = new Phaser.Sprite(this.game, this.game.width + 90, this.game.height - 270, 'catwalk-lights-back')
+      var lightsBack = new Phaser.Sprite(this.game, this.game.width + 90*scale, this.game.height - 300*scale, 'catwalk-lights-back')
       lightsBack.scale.set(scale)
       lightsBack.anchor.setTo(1.0)
       lightsBack.fixedToCamera = true
       this.overlay.add(lightsBack)
 
-      var lightsFront = new Phaser.Sprite(this.game, this.game.width + 45, this.game.height - 195, 'catwalk-lights-front')
+      var lightsFront = new Phaser.Sprite(this.game, this.game.width + 45*scale, this.game.height - 220*scale, 'catwalk-lights-front')
       lightsFront.scale.set(scale)
       lightsFront.anchor.setTo(1.0)
       lightsFront.fixedToCamera = true
@@ -404,7 +407,7 @@ export default class extends Phaser.State {
       // Create the items
       var player_item = new Item({
         game: this.game, scale: 2,
-        x: this.game.width, y: this.game.height - 335,
+        x: this.game.width, y: this.game.height - 335*scale,
         indices: player_item_indices
       })
 
@@ -413,8 +416,8 @@ export default class extends Phaser.State {
       })
 
       // Animate them
-      let playerAnim = this.makeItemCatwalkAnimation(player_item, floor.width/10)
-      let enemyAnim = this.makeItemCatwalkAnimation(enemy_item, floor.width/10, playerAnim)
+      let playerAnim = this.makeItemCatwalkAnimation(player_item, floor.width/10, scale)
+      let enemyAnim = this.makeItemCatwalkAnimation(enemy_item, floor.width/10, scale, playerAnim)
 
       this.overlay.add(player_item)
       this.overlay.add(enemy_item)
@@ -441,9 +444,9 @@ export default class extends Phaser.State {
     }
   }
 
-  makeItemCatwalkAnimation(item, stepWidth, chainFrom) {
+  makeItemCatwalkAnimation(item, stepWidth, scale, chainFrom) {
     // Steps Animation
-    item.cameraOffset.set(this.game.width+256, this.game.height - 360)
+    item.cameraOffset.set(this.game.width + 256*scale, this.game.height - 360*scale)
     let stepTweens = [
       this.game.add.tween(item.cameraOffset)
         .to({ x: this.game.width-0*stepWidth }, 400, Phaser.Easing.Sinusoidal.InOut, chainFrom === undefined),
