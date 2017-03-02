@@ -380,6 +380,15 @@ Item.convertFrameToPowerTier = (frameIDs) => {
   return powerTiers
 }
 
+Item.convertPowerTiersToGlobalIDs = (powerTiers) => {
+  let globalIDs = []
+  for(let i=0; i<powerTiers.length; i++){
+    let item = Item.ITEM_BY_POWER_TIER[powerTiers[i]][0]
+    globalIDs.push(item.globalID);
+  }
+  return globalIDs
+}
+
 // Build a new Item from its ID (as specified in the Tiled file)
 Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => {
   let item, indices = []
@@ -396,27 +405,17 @@ Item.makeFromGlobalIDs = ({ game, idArray, x, y, invIndex, animate, scale }) => 
     name: item.name, description: item.description, powerTier: item.powerTier })
 }
 
-// Build a new Item from its power-tier plus an index
-Item.makeFromPowerTier = ({ game, powerTier, index, x, y, invIndex, animate, scale }) => {
-  // if(Item.ITEM_BY_POWER_TIER[powerTier] === undefined) {
-  //   console.error(`Unknown item power tier (${powerTier})`)
-  //   return null
-  // }
+// Build a new Item from its power-tier
+Item.makeFromPowerTier = ({ game, powerTiers, x, y, invIndex, animate, scale }) => {
 
-  if(index === undefined) index = 0
-  let indeces = [];
-  for(let i=0; i<powerTier.length; i++){
-    let item = Item.ITEM_BY_POWER_TIER[powerTier[i]][index]
-    indeces.push(item.frameID);
+  let indices = [];
+  for(let i=0; i<powerTiers.length; i++){
+    let item = Item.ITEM_BY_POWER_TIER[powerTiers[i]][0]
+    indices.push(item.frameID);
   }
 
-  // if(item === undefined) {
-  //   console.error(`Unknown item power tier index (${powerTier}[${index}])`)
-  //   return null
-  // }
-
-  return new Item({ game, x, y, invIndex, indices: indeces, animate, scale,
-    name: '', description: '', powerTier: powerTier[powerTier.length - 1] })
+  return new Item({ game, x, y, invIndex, indices: indices, animate, scale,
+    name: '', description: '', powerTier: Math.max(...powerTiers) })
 }
 
 Item.getMaxPowerTier = () => {

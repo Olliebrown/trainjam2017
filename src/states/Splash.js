@@ -3,7 +3,9 @@ import { centerGameObjects, loadAudio, getScreenSizeScale } from '../utils'
 import { StartButton, XButton } from '../sprites/Buttons'
 
 export default class extends Phaser.State {
-  init () {}
+  init () {
+    alert('hello changes')
+  }
 
   preload () {
     this.background = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title-splash')

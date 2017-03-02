@@ -16,16 +16,80 @@ export class Enemy extends Phaser.Sprite {
     this.body.collideWorldBounds = true
   }
 
-  pickItemPowerTier() {
-    let options = []
-    let random
-    switch(this.level) {
-    case 1: options = [ [1, 2],  [2, 3],  [3, 4], [4, 5], [5, 6]]; random = getRandomIntInclusive(0, options.length - 1); break;
-    case 2: options = [ [4, 5],  [5, 6],  [6, 7],  [7, 8], [8, 9]]; random = getRandomIntInclusive(0, options.length - 1); break;
-    case 3: options = [ [8,9,10] ,  [9, 10, 11], [10, 11, 12], [11, 12, 13]]; random = getRandomIntInclusive(0, options.length - 1); break;
-    case 4: options = [[1, 2, 12, 13], [5, 6, 14, 15]]; random = getRandomIntInclusive(0, options.length - 1); break;
+  permute(input, permArr, usedChars) {
+    if(permArr === undefined) permArr = []
+    if(usedChars === undefined) usedChars = []
+
+    var i, ch
+    for (i = 0; i < input.length; i++) {
+      ch = input.splice(i, 1)[0]
+      usedChars.push(ch)
+      if (input.length == 0) {
+        permArr.push(usedChars.slice())
+      }
+
+      this.permute(input, permArr, usedChars)
+      input.splice(i, 0, ch);
+      usedChars.pop();
     }
 
+    return permArr
+  }
+
+  pickItemPowerTier() {
+    let options = []
+    switch(this.level) {
+
+    case 1: // Power levels 1 and 2 only, 1 or 2-combos
+      options = [[1], [2], [1, 2], [2, 1], [1, 1], [2, 2]];
+      break;
+
+    case 2: // Power levels 3 and 4 only, 1 or 2-combos
+      options = [[3], [4], [3, 4], [4, 3], [3, 3], [4, 4]];
+      break;
+
+    case 3: // Power levels, 5, 6, 7 & 8, 1 or 2-combos
+      options = [[5], [6], [7], [8],
+                 [5, 6], [6, 7], [7, 8],
+                 [5, 7], [6, 8], [5, 8],
+                 [5, 5], [6, 6], [7, 7], [8, 8]];
+      break;
+
+    case 4: // Power levels 7 - 10, 1 or 2-combos
+      options = [[7, 8], [8, 9], [9, 10],
+                 [7, 9], [8, 10], [7, 10],
+                 [7, 7], [8, 8], [9, 9], [10, 10]];
+      break;
+
+    case 5: // Power levels 5 - 8, 2 or 3-combos
+      options = [[5, 6], [6, 7], [7, 8],
+        [5, 7], [6, 8], [5, 8],
+        [5, 5], [6, 6], [7, 7], [8, 8],
+        this.permute([5, 6, 7]), this.permute([6, 7, 8])]
+      break;
+
+    case 6: // Power levels 7 - 10, 2 or 3 combos
+      options = [[7, 8], [8, 9], [9, 10],
+        [7, 9], [8, 10], [7, 10],
+        [7, 7], [8, 8], [9, 9], [10, 10],
+        this.permute([7, 8, 9]), this.permute([8, 9, 10])]
+      break;
+
+    case 7: // Power levels 11 - 14, 2 or 3 combos
+      options = [[11, 12], [12, 13], [13, 14],
+        [11, 13], [12, 14], [11, 14],
+        [11, 11], [12, 12], [13, 13], [14, 14],
+        this.permute([11, 12, 13]), this.permute([12, 13, 14])]
+      break;
+
+    case 8: // Power levels 12 - 15, 3 or 4 combos
+      options = [this.permute([12, 13, 14]), this.permute([13, 14, 15]),
+        this.permute([12, 13, 15]), this.permute([12, 14, 15]),
+        this.permute([12, 13, 14, 15])]
+      break;
+    }
+
+    let random = getRandomIntInclusive(0, options.length - 1);
     return options[random]
   }
 

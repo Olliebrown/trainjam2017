@@ -18,6 +18,7 @@ export class ScreenFlash extends Phaser.Sprite {
     super(game, 0, 0, bmd)
     this.alpha = 0
     this.game = game
+    this.fixedToCamera = true
   }
 
   flash(maxAlpha, duration) {

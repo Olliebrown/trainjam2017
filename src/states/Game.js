@@ -213,7 +213,7 @@ export default class extends Phaser.State {
     this.tilemap.removeTile(item.x, item.y, 'interact')
     this.game.ui.inventory.push([item.index])
     this.game.sounds.play('item_pickup', 1)
-    this.updateInventory()
+    this.game.ui.inventoryNeedsUpdate = true
   }
 
   makeUI() {
@@ -312,6 +312,13 @@ export default class extends Phaser.State {
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
 
+      this.catwalk_player_indices = player_item_indices
+      this.catwalk_enemy_tiers = enemy_item_tiers
+
+      console.info('Catwalk Intro: ')
+      console.info(Item.convertFrameToPowerTier(this.catwalk_player_indices))
+      console.info(this.catwalk_enemy_tiers)
+
       var grad = new Phaser.Sprite(this.game, centerX, centerY, 'catwalk-intro-gradient')
       let scale = getScreenSizeScale(grad, this.game)
       grad.scale.set(scale)
@@ -332,8 +339,13 @@ export default class extends Phaser.State {
       strip_tween.onComplete.add(() => {
         this.camera.shake()
         this.camera.onShakeComplete.add(() => {
+          this.camera.onShakeComplete.removeAll()
           this.game.time.events.add(500, () => {
-            this.triggerCatwalk(player_item_indices, invIndex, enemy_item_tiers, enemy)
+            console.info('Catwalk Intermediate: ')
+            console.info(Item.convertFrameToPowerTier(this.catwalk_player_indices))
+            console.info(this.catwalk_enemy_tiers)
+
+            this.triggerCatwalk(invIndex)
           }, this)
         })
       }, this)
@@ -353,7 +365,7 @@ export default class extends Phaser.State {
       // Build and add enemy item
       var enemy_item = Item.makeFromPowerTier({
         game: this.game, x: this.game.width + 256, y: this.game.height - 200,
-        scale: 2, powerTier: enemy_item_tiers
+        scale: 2, powerTiers: enemy_item_tiers
       })
 
       enemy_item.cameraOffset.set(this.game.width + 256, this.game.height - 200*scale)
@@ -365,11 +377,15 @@ export default class extends Phaser.State {
   }
 
   // CATWALK: 4 -> Animate the catwalk
-  triggerCatwalk (player_item_indices, invIndex, enemy_item_tiers, enemy) {
+  triggerCatwalk (invIndex) {
     if (this.state == STATES.catwalkIntro) {
       this.state = STATES.catwalk
       this.hideOverlay()
       this.showOverlay()
+
+      console.info('Catwalk: ')
+      console.info(Item.convertFrameToPowerTier(this.catwalk_player_indices))
+      console.info(this.catwalk_enemy_tiers)
 
       var centerX = this.game.width / 2
       var centerY = this.game.height / 2
@@ -408,11 +424,11 @@ export default class extends Phaser.State {
       var player_item = new Item({
         game: this.game, scale: 2,
         x: this.game.width, y: this.game.height - 335*scale,
-        indices: player_item_indices
+        indices: this.catwalk_player_indices
       })
 
       var enemy_item = Item.makeFromPowerTier({
-        game: this.game, x: 1250, y: 550, powerTier: enemy_item_tiers, scale: 2.0
+        game: this.game, x: 1250, y: 550, powerTiers: this.catwalk_enemy_tiers, scale: 2.0
       })
 
       // Animate them
@@ -438,7 +454,7 @@ export default class extends Phaser.State {
 
       enemyAnim.onComplete.add(() => {
         this.game.time.events.add(1000, () => {
-          this.endCatwalk(outcome, invIndex, enemy)
+          this.endCatwalk(outcome, invIndex)
         })
       })
     }
@@ -478,12 +494,12 @@ export default class extends Phaser.State {
       this.game.sounds.play('shutter_noise', 1)
 
       this.screenFlash.flash()
-      this.game.time.events.add(getRandomIntInclusive(0, 500), () => { this.screenFlash.flash() }, this)
-      this.game.time.events.add(getRandomIntInclusive(100, 600), () => { this.screenFlash.flash() }, this)
-      this.game.time.events.add(getRandomIntInclusive(200, 700), () => { this.screenFlash.flash() }, this)
-      this.game.time.events.add(getRandomIntInclusive(300, 800), () => { this.screenFlash.flash() }, this)
-      this.game.time.events.add(getRandomIntInclusive(400, 900), () => { this.screenFlash.flash() }, this)
-      this.game.time.events.add(getRandomIntInclusive(500, 1000), () => { this.screenFlash.flash() }, this)
+      this.game.time.events.add(getRandomIntInclusive(0, 500), () => { this.screenFlash.flash(0.5) }, this)
+      this.game.time.events.add(getRandomIntInclusive(100, 600), () => { this.screenFlash.flash(0.5) }, this)
+      this.game.time.events.add(getRandomIntInclusive(200, 700), () => { this.screenFlash.flash(0.5) }, this)
+      this.game.time.events.add(getRandomIntInclusive(300, 800), () => { this.screenFlash.flash(0.5) }, this)
+      this.game.time.events.add(getRandomIntInclusive(400, 900), () => { this.screenFlash.flash(0.75) }, this)
+      this.game.time.events.add(getRandomIntInclusive(500, 1000), () => { this.screenFlash.flash(1.0) }, this)
     })
 
     // Spin Animation (with delay)
@@ -530,7 +546,7 @@ export default class extends Phaser.State {
   }
 
   // CATWALK: 5 -> Finish the catwalk sequence
-  endCatwalk(outcome, invIndex, enemy) {
+  endCatwalk(outcome, invIndex) {
     this.hideOverlay()
     this.showOverlay()
 
@@ -551,8 +567,13 @@ export default class extends Phaser.State {
       boundsAlignV: 'center'
     }
 
-    let textString = 'You WON!'
-    if(outcome == 'lose') {
+    let textString = ''
+    if(outcome.toLowerCase().includes('win')) {
+      textString = 'You WON!'
+      let newIndices = Item.convertPowerTiersToGlobalIDs(this.catwalk_enemy_tiers)
+      this.game.ui.inventory.push(newIndices)
+      this.game.ui.inventoryNeedsUpdate = true
+    } else if(outcome.toLowerCase().includes('lose')) {
       textString = 'You Lost'
       removeFromInventory(invIndex)
     }
@@ -574,6 +595,7 @@ export default class extends Phaser.State {
   // CATWALK: 1 -> First funtion called to begin catwalk sequence
   triggerCatwalkStart(player, enemy) {
     if (this.state == STATES.main) {
+      this.camera.shake(0.02, 250)
       this.state = STATES.initCatwalk
       this.game.time.events.add(Phaser.Timer.SECOND * 2, this.triggerItemChoice, this, player, enemy)
       this.fadeToCatwalkBGM()

@@ -1,0 +1,5 @@
+1487858400|Train Departs Chicago
+1487894400|Day 1 Ends (10 hours)
+1487980800|Day 2 Ends (35 hours)
+1488038400|Train Arrives Emoryville (52 hours)
+1488139200|Submission Deadline
