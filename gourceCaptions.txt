@@ -1,5 +1,5 @@
 1487860000|Train Departs Chicago
 1487916000|Day 1 Ends (10 hours)
 1488002400|Day 2 Ends (35 hours)
-1488080000|Train Arrives Emoryville (52 hours)
+1488080000|Train Arrives Emeryville (52 hours)
 1488160800|Submission Deadline
